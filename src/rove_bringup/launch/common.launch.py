@@ -113,7 +113,7 @@ def generate_launch_description():
             # robot_localization_node_global,
             #navsat_transform,
             twist_mux,
-            rviz,
+            #rviz,
             teleop,
-            autonomy,
+            #autonomy,
             ])
