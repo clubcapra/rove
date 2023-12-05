@@ -1,0 +1,9 @@
+repositories:
+  rove_interfaces:
+    type: git
+    url: https://github.com/clubcapra/rove_interfaces.git
+    version: master
+  rove_description:
+    type: git
+    url: https://github.com/clubcapra/rove_description.git
+    version: master
