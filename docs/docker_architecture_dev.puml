@@ -9,7 +9,7 @@ rectangle "clubcapra/rove_behavior" as behavior
 rectangle "clubcapra/rove_vision" as vision
 rectangle "clubcapra/rove_autonomie" as autonomie
 rectangle "clubcapra/rove_simulation" as simulation
-rectangle "clubcapra/rove_tts" as tts 
+rectangle "clubcapra/rove_tts" as tts
 rectangle "clubcapra/rove_stt" as stt
 rectangle "clubcapra/rove_nlu" as nlu
 
