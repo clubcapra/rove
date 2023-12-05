@@ -1,0 +1,23 @@
+# Ignore build and log directories
+build/
+log/
+install/
+
+# Ignore everything in src except rove_*
+src/*
+!src/rove_*
+
+# Ignore Python bytecodes
+__pycache__/
+*.pyc
+
+# Ignore temp files
+*.tmp
+*.temp
+
+# Ignore files related to your dev environment
+.devcontainer/
+.vscode/
+
+# Environnement file
+.env

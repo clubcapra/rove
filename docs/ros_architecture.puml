@@ -1,0 +1,16 @@
+@startuml
+package "Rove Interface" {
+}
+
+package "Rove Navigation" {
+}
+
+package "Rove SLAM" {
+}
+
+package "Rove Vision" {
+}
+
+package "Rove Hardware Interface" {
+}
+@enduml
