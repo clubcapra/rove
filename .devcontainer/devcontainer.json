@@ -16,7 +16,8 @@
         "ms-iot.vscode-ros",
         "GitHub.copilot",
         "GitHub.copilot-chat",
-        "ms-python.python"
+        "ms-python.python",
+        "mhutchie.git-graph"
       ]
     }
   }
