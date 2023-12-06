@@ -13,7 +13,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-iot.vscode-ros"
+        "ms-iot.vscode-ros",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-python.python"
       ]
     }
   }
