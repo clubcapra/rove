@@ -16,7 +16,6 @@ __pycache__/
 *.temp
 
 # Ignore files related to your dev environment
-.devcontainer/
 .vscode/
 
 # Environnement file
