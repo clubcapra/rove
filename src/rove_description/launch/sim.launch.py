@@ -5,22 +5,14 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 import os
 import xacro
-from launch.actions import SetEnvironmentVariable
-
-
 
 def generate_launch_description():
     world_file_name = 'worlds/base_world.world'
     urdf_file_name = 'urdf/rove.urdf.xacro'
     world = os.path.join(get_package_share_directory('rove_description'),world_file_name)
     urdf = os.path.join(get_package_share_directory('rove_description'),urdf_file_name)
+
     
-    ign_gazebo_resource_path = "/workspace/rove/install/rove_description/share"
-
-    existing_path = os.environ.get('IGN_GAZEBO_RESOURCE_PATH', '')
-    if existing_path:
-        ign_gazebo_resource_path += ':' + existing_path
-
     doc = xacro.process_file(urdf)
     robot_desc = doc.toxml()
 
@@ -28,7 +20,6 @@ def generate_launch_description():
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     
     return LaunchDescription([
-        SetEnvironmentVariable('IGN_GAZEBO_RESOURCE_PATH', ign_gazebo_resource_path),
         IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
