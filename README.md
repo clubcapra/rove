@@ -22,7 +22,6 @@ To add a package for Rove, create it using the ROS2 command ([Creating Your Firs
 
 Update Rove-specific packages directly in this repository. For Capra-related or external packages, update their references in `rove.repos`. Change the Git branch in `rove.repos` as needed and apply updates with `vcs import src < rove.repos`.
 
-
 ## Docker architecture
 
 It's possible to run the entire project into multiple docker containers. Each container can be run independantly and are built using the following structure :
