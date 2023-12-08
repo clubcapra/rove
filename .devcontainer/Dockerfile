@@ -11,17 +11,18 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
-# Switch from root to user
-USER $USERNAME
 
 # Add user to video group to allow access to webcam
-RUN sudo usermod --append --groups video $USERNAME
+RUN usermod --append --groups video $USERNAME
 
 # Update all packages
-RUN sudo apt update && sudo apt upgrade -y
+RUN apt upgrade -y
 
 # Install Git
-RUN sudo apt install -y git
+RUN apt install -y git
+
+# Switch from root to user
+USER $USERNAME
 
 # Rosdep update
 RUN rosdep update
