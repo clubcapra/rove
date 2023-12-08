@@ -21,8 +21,11 @@ def generate_launch_description():
     if existing_path:
         ign_gazebo_resource_path += ':' + existing_path
 
-    doc = xacro.process_file(urdf)
-    robot_desc = doc.toxml()
+    robot_description_file = os.path.join(get_package_share_directory('rove_description'),urdf_file_name)
+    robot_description_config = xacro.process_file(
+        robot_description_file
+    )
+    robot_description = {'robot_description': robot_description_config.toxml()}
 
     # Gazebo Sim
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
@@ -39,9 +42,9 @@ def generate_launch_description():
             package='robot_state_publisher',
             executable='robot_state_publisher',
             name='robot_state_publisher',
-            output='screen',
-            parameters=[{'robot_description': robot_desc , 'use_sim_time': True}],
-            arguments=[urdf]),
+            output='both',
+            parameters=[robot_description],
+        ),
 
         Node(package='ros_gz_sim', executable='create', arguments=[
             '-name', 'rove',
