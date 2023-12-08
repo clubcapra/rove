@@ -10,6 +10,10 @@ vcs import src < rove.repos
 colcon build
 ```
 
+## Work in a docker container
+
+You need to have docker installed and running on your computer. If you use Windows, you will need Xserver to display the GUI. You will also need to copy the sample.env file to .env and change the values to match your system. (Default should work for most setup)
+
 ## Adding New Packages
 
 To add a package for Rove, create it using the ROS2 command ([Creating Your First ROS2 Package](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)). Name it starting with `rove_` to ensure Git tracking. For non-Rove specific packages, create a separate repository and add it to `rove.repos`.
@@ -17,7 +21,6 @@ To add a package for Rove, create it using the ROS2 command ([Creating Your Firs
 ## Updating Packages
 
 Update Rove-specific packages directly in this repository. For Capra-related or external packages, update their references in `rove.repos`. Change the Git branch in `rove.repos` as needed and apply updates with `vcs import src < rove.repos`.
-
 
 ## Docker architecture
 
