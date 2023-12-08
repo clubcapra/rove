@@ -13,4 +13,3 @@ services:
     command: sleep infinity
     network_mode: "host"
     privileged: true
-  
