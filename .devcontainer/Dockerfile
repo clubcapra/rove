@@ -1,7 +1,7 @@
 FROM ghcr.io/clubcapra/gazebo:latest
 
 # Update all packages
-RUN apt update && sudo apt upgrade -y
+RUN apt update && apt upgrade -y
 
 # Install Git
 RUN apt install -y git
