@@ -5,7 +5,6 @@
   <version>0.0.0</version>
   <description>The rove_bringup package</description>
   <maintainer email="capra@ens.etsmtl.ca">Capra</maintainer>
-  <license></license>
   <license>GPLv3</license>
 
   <buildtool_depend>catkin</buildtool_depend>
