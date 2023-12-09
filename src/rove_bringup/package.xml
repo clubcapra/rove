@@ -3,16 +3,25 @@
 <package format="3">
   <name>rove_bringup</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="denis@todo.todo">denis</maintainer>
-  <license>TODO: License declaration</license>
+  <description>The rove_bringup package</description>
+  <maintainer email="capra@ens.etsmtl.ca">Capra</maintainer>
+  <license></license>
+  <license>GPLv3</license>
 
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
-  <test_depend>python3-pytest</test_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>joy</build_depend>
+  <build_depend>teleop_twist_joy</build_depend>
+
+  <exec_depend>joy</exec_depend>
+  <exec_depend>teleop_twist_joy</exec_depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
-    <build_type>ament_python</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>
