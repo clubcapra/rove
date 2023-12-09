@@ -12,12 +12,12 @@ enum {
   JOY_BTN_RB = 5,
 };
 
-class JoyListener : public rclcpp::Node {
+class RoveController : public rclcpp::Node {
 public:
-  JoyListener() : Node("joy_listener") {
+  RoveController() : Node("rove_controller") {
     // Subscribe to the joy topic
     joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
-      "joy", 10, std::bind(&JoyListener::joyCallback, this, std::placeholders::_1)
+      "joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
     );
   }
 
@@ -35,7 +35,7 @@ private:
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<JoyListener>();
+  auto node = std::make_shared<RoveController>();
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
