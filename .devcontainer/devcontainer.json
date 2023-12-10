@@ -9,11 +9,16 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-iot.vscode-ros",
-        "GitHub.copilot",
         "GitHub.copilot-chat",
+        "GitHub.copilot",
+        "medo64.render-crlf",
+        "mhutchie.git-graph",
+        "ms-iot.vscode-ros",
+        "ms-python.autopep8",
+        "ms-python.flake8",
+        "ms-python.isort",
         "ms-python.vscode-pylance",
-        "mhutchie.git-graph"
+        "njpwerner.autodocstring"
       ]
     }
   }
