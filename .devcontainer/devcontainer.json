@@ -18,7 +18,8 @@
         "ms-python.flake8",
         "ms-python.isort",
         "ms-python.vscode-pylance",
-        "njpwerner.autodocstring"
+        "njpwerner.autodocstring",
+        "VisualStudioExptTeam.vscodeintellicode"
       ]
     }
   }
