@@ -38,33 +38,61 @@ enum JoyStick{
     RT = 5,
 };
 
+enum ControllerMode{
+    FLIPPER_MODE = 0,
+    ARM_MODE = 1,
+};
+
 class RoveController : public rclcpp::Node {
 public:
-  RoveController() : Node("rove_controller") {
-    // Subscribe to the joy topic
-    joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
-      "joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
-    );
-  }
+    RoveController() : Node("rove_controller") {
+        // Subscribe to the joy topic
+        joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
+            "joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
+        );
+    }
 
 private:
-  void joyCallback(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-    // Handle joystick input here
-    // For example, print the values of the axes
-    for (size_t i = 0; i < joy_msg->axes.size(); ++i) {
-        if(i == LS_X){
-            RCLCPP_INFO(get_logger(), "Axis %zu: %f", i, joy_msg->axes[i]);
+    int selected_mode = FLIPPER_MODE;
+
+    void nextMode(){
+        selected_mode = (selected_mode + 1) % 2; // Number of modes
+    }
+
+    void commonAction(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        if (joy_msg->buttons[Y]){
+            nextMode();
+            RCLCPP_INFO(get_logger(), "profil %i", selected_mode);
         }
     }
-  }
 
-  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
+    void armAction(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        RCLCPP_INFO(get_logger(), "Arm...");
+    }
+
+    void flipperAction(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        RCLCPP_INFO(get_logger(), "Flipper...");
+    }
+
+    void joyCallback(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        commonAction(joy_msg);
+        switch (selected_mode){
+            case ARM_MODE:
+                armAction(joy_msg);
+                break;
+            case FLIPPER_MODE:
+                flipperAction(joy_msg);
+                break;
+        }
+    }
+
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
 };
 
 int main(int argc, char **argv) {
-  rclcpp::init(argc, argv);
-  auto node = std::make_shared<RoveController>();
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-  return 0;
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<RoveController>();
+    rclcpp::spin(node);
+    rclcpp::shutdown();
+    return 0;
 }
