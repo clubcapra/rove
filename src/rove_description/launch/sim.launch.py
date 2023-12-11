@@ -75,7 +75,7 @@ def generate_launch_description():
         executable='parameter_bridge',
         parameters=[{
             'config_file': os.path.join(pkg_rove_description, 'config',
-                                        'amazon_bridge.yaml'),
+                                        'default_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
             "use_sim_time": True,
         }],
