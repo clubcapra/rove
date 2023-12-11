@@ -42,34 +42,34 @@ def generate_launch_description():
 
     # Robot state publisher
     robot_state_publisher = Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': True,
-                         'robot_description': robot_desc}],
-            arguments=[])
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        output='screen',
+        parameters=[{'use_sim_time': True,
+                     'robot_description': robot_desc}],
+        arguments=[])
 
     # Visualize in RViz
     rviz = Node(
-       package='rviz2',
-       executable='rviz2',
-       arguments=['-d', os.path.join(pkg_rove_description, 'config',
-                                     'basic.rviz')],
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', os.path.join(pkg_rove_description, 'config',
+                                      'basic.rviz')],
     )
 
     # Bridge between ROS and Gazebo
     bridge = Node(
-            package='ros_gz_bridge',
-            executable='parameter_bridge',
-            parameters=[{
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        parameters=[{
                 'config_file': os.path.join(pkg_rove_description, 'config',
                                             'robot_bridge.yaml'),
                 'qos_overrides./tf_static.publisher.durability':
                 'transient_local',
-            }],
-            output='screen'
-        )
+        }],
+        output='screen'
+    )
 
     # Spawn robot in Gazebo
     spawn_rove = Node(
