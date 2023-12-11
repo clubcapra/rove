@@ -2,7 +2,7 @@ FROM ghcr.io/clubcapra/gazebo:latest
 
 # Add vscode user with same UID and GID as your host system
 # (copied from https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user)
-ARG USERNAME=vscode
+ARG USERNAME=rove
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 RUN groupadd --gid $USER_GID $USERNAME \
@@ -12,20 +12,21 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Add user to video group to allow access to webcam
-RUN usermod --append --groups video $USERNAME
-
 # Update all packages
 RUN apt upgrade -y
 
 # Install Git
 RUN apt install -y git
 
-# Switch from root to user
-USER $USERNAME
-
+# Install ROS dependencies
+RUN apt install -y ros-humble-xacro ros-humble-ros-gz-bridge ros-humble-rviz2
+# apt-get -y install ros-humble-velodyne-gazebo-plugins
 # Rosdep update
 RUN rosdep update
 
+# Change user
+USER $USERNAME
+
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
+RUN echo "source /gazebo/gazebo_ws/install/setup.bash" >> ~/.bashrc

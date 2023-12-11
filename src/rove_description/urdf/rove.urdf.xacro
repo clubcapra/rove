@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<robot name="rove" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <material name="rubber_color">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+    </material>
+    <material name="frame_color">
+        <color rgba="0.5 0.5 0.5 1.0"/>
+    </material>
+    <material name="lidar_color">
+        <color rgba="1 0 0 1.0"/>
+    </material>
+
+
+    <joint name="laser_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="laser_frame"/>
+        <origin xyz="0.1 0 0.4" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Laser model -->
+    <link name="laser_frame">
+        <visual>
+            <geometry>
+                <cylinder radius="0.05" length="0.04"/>
+            </geometry>
+            <material name="lidar_color"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.05" length="0.04"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Laser sensor -->
+    <gazebo reference="laser_frame">
+        <material>Gazebo/Red</material>
+        <sensor name='laser' type='gpu_lidar'>"
+            <ignition_frame_id>base_link</ignition_frame_id>
+            <topic>/model/rove/lidar</topic>
+            <pose> 0 0 0 0 0 0 </pose>
+            <visualize>true</visualize>
+            <always_on>true</always_on>
+            <update_rate>10</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <min_angle>-15</min_angle>
+                        <max_angle>15</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>50</max>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </ray>
+        </sensor>
+    </gazebo>
+    
+    <!-- Flipper xacro-->
+    <xacro:macro name="flipper" params="suffix">
+        <xacro:property name="flipper_j_x" value="0.2667" />
+        <xacro:property name="flipper_j_y" value="0.1905" />
+        <xacro:property name="flipper_j_z" value="0.0889" />
+
+        <xacro:if value="${(suffix == 'fr')}">
+            <xacro:property name="mesh_rotation" value="0 0 ${pi}"/>
+            <xacro:property name="joint_origin" value="${flipper_j_x} ${-flipper_j_y} ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 -1 0"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'fl')}">
+            <xacro:property name="mesh_rotation" value="0 ${pi} 0" />
+            <xacro:property name="joint_origin" value="${flipper_j_x} ${flipper_j_y}  ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 -1 0"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'rr')}">
+            <xacro:property name="mesh_rotation" value="${pi} 0 0" />
+            <xacro:property name="joint_origin" value="${-flipper_j_x} ${-flipper_j_y}  ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 1 0"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'rl')}">
+            <xacro:property name="mesh_rotation" value="0 0 0" />
+            <xacro:property name="joint_origin" value="${-flipper_j_x} ${flipper_j_y} ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 1 0"/>
+        </xacro:if>
+
+        <joint name="flipper_${suffix}_j" type="continuous">
+            <origin xyz="${joint_origin}" rpy="0 0 0"/>
+            <axis xyz="${joint_axis}"/>
+            <parent link="base_link"/>
+            <child link="flipper_${suffix}"/>
+            <limit effort="10.0" velocity="0.5"/>
+            <dynamics damping="50.0" friction="50"/>
+        </joint>
+
+       
+
+
+        <link name="flipper_${suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="${mesh_rotation}"/>
+                <geometry>
+                    <mesh filename="package://rove_description/meshes/flipper.stl"/>
+                </geometry>
+                <material name="rubber_color"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0 0 0" rpy="${mesh_rotation}"/>
+                <geometry>
+                    <mesh filename="package://rove_description/meshes/flipper.stl"/>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.65</mu>
+                            <mu2>0.85</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode/>
+                    </contact>
+                </surface>
+            </collision>
+            <max_contacts>20</max_contacts>
+            
+            <!-- TODO PUT ACTUAL INERTIAL VALUES I DON'T KNOW WHAT THIS REPRESENTS NOW -->
+            <inertial>
+                <origin xyz="0 0 0.5" rpy="0 0 0"/>
+                <mass value="1"/>
+                <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+            </inertial>
+        </link>
+        <gazebo>
+            <plugin name='gz::sim::systems::TrackController' filename='libignition-gazebo-track-controller-system.so'>
+                    <link>flipper_${suffix}</link>
+                    <min_velocity>-1.0</min_velocity>
+                    <max_velocity>1.0</max_velocity>
+                    <!--debug>1</debug-->
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+
+    <!--Track xacro-->
+    <xacro:macro name="track" params="suffix">
+        <xacro:property name="track_j_x" value="0" />
+        <xacro:property name="track_j_y" value="0.1016" />
+        <xacro:property name="track_j_z" value="0.0889" />
+
+        <xacro:if value="${(suffix == 'r')}">
+            <xacro:property name="joint_origin" value="${track_j_x} ${-track_j_y} ${track_j_z}"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'l')}">
+            <xacro:property name="joint_origin" value="${track_j_x} ${track_j_y}  ${track_j_z}"/>
+        </xacro:if>
+
+        <joint name="track_${suffix}_j" type="fixed">
+            <origin xyz="${joint_origin}" rpy="0 0 0"/>
+            <parent link="base_link"/>
+            <child link="track_${suffix}"/>
+        </joint>
+
+        <link name="track_${suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rove_description/meshes/track.stl"/>
+                </geometry>
+                <material name="rubber_color"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://rove_description/meshes/track.stl"/>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.65</mu>
+                            <mu2>0.85</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode/>
+                    </contact>
+                </surface>
+            </collision>
+            <max_contacts>20</max_contacts>
+            <!-- TODO PUT ACTUAL INERTIAL VALUES I DON'T KNOW WHAT THIS REPRESENTS NOW -->
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="1"/>
+                <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+            </inertial>
+        </link>
+        <gazebo>
+            <plugin name='gz::sim::systems::TrackController' filename='libignition-gazebo-track-controller-system.so'>
+                    <link>track_${suffix}</link>
+                    <min_velocity>-1.0</min_velocity>
+                    <max_velocity>1.0</max_velocity>
+                    <!--debug>1</debug-->
+            </plugin>
+        </gazebo>
+        <!-- Required to prevent fixed joint being merged -->
+        <gazebo reference="track_${suffix}_j">
+            <preserveFixedJoint>true</preserveFixedJoint>
+        </gazebo>
+        <gravity>1</gravity>
+        <kinematic>0</kinematic>
+    </xacro:macro>
+
+
+    <xacro:flipper suffix="fr"/>
+    <xacro:flipper suffix="fl"/>
+    <xacro:flipper suffix="rr"/>
+    <xacro:flipper suffix="rl"/>
+
+    <xacro:track suffix="r"/>
+    <xacro:track suffix="l"/>
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rove_description/meshes/base.stl"/>
+            </geometry>
+            <material name="frame_color"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://rove_description/meshes/base.stl"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0.5" rpy="0 0 0"/>
+            <mass value="80"/>
+            <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+        </inertial>
+    </link>
+
+    <gazebo>
+        <plugin name="gz::sim::systems::TrackedVehicle" filename="ignition-gazebo-tracked-vehicle-system">
+            <left_track><link>track_l</link></left_track>
+            <left_track><link>flipper_fl</link></left_track>
+            <left_track><link>flipper_rl</link></left_track>
+            <right_track><link>track_r</link></right_track>
+            <right_track><link>flipper_fr</link></right_track>
+            <right_track><link>flipper_rr</link></right_track>
+
+             <!-- TODO PUT ACTUAL VALUES -->
+            <tracks_separation>0.4</tracks_separation>
+            <tracks_height>0.18094</tracks_height>
+            <steering_efficiency>0.5</steering_efficiency>
+        </plugin>
+    </gazebo>
+</robot>
