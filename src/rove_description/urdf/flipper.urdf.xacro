@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Flipper xacro-->
+    <xacro:macro name="flipper" params="suffix">
+        <xacro:property name="flipper_j_x" value="0.2667" />
+        <xacro:property name="flipper_j_y" value="0.1905" />
+        <xacro:property name="flipper_j_z" value="0.0889" />
+
+        <xacro:if value="${(suffix == 'fr')}">
+            <xacro:property name="mesh_rotation" value="0 0 ${pi}"/>
+            <xacro:property name="joint_origin" value="${flipper_j_x} ${-flipper_j_y} ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 -1 0"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'fl')}">
+            <xacro:property name="mesh_rotation" value="0 ${pi} 0" />
+            <xacro:property name="joint_origin" value="${flipper_j_x} ${flipper_j_y}  ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 -1 0"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'rr')}">
+            <xacro:property name="mesh_rotation" value="${pi} 0 0" />
+            <xacro:property name="joint_origin" value="${-flipper_j_x} ${-flipper_j_y}  ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 1 0"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'rl')}">
+            <xacro:property name="mesh_rotation" value="0 0 0" />
+            <xacro:property name="joint_origin" value="${-flipper_j_x} ${flipper_j_y} ${flipper_j_z}"/>
+            <xacro:property name="joint_axis" value="0 1 0"/>
+        </xacro:if>
+
+        <joint name="flipper_${suffix}_j" type="continuous">
+            <origin xyz="${joint_origin}" rpy="0 0 0"/>
+            <axis xyz="${joint_axis}"/>
+            <parent link="base_link"/>
+            <child link="flipper_${suffix}"/>
+            <limit effort="10.0" velocity="0.5"/>
+            <dynamics damping="50.0" friction="50"/>
+        </joint>
+
+       
+
+
+        <link name="flipper_${suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="${mesh_rotation}"/>
+                <geometry>
+                    <mesh filename="file://$(find rove_description)/meshes/flipper.stl"/>
+                </geometry>
+                <material name="rubber_color"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0 0 0" rpy="${mesh_rotation}"/>
+                <geometry>
+                    <mesh filename="file://$(find rove_description)/meshes/flipper.stl"/>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.65</mu>
+                            <mu2>0.85</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode/>
+                    </contact>
+                </surface>
+            </collision>
+            <max_contacts>20</max_contacts>
+            
+            <!-- TODO PUT ACTUAL INERTIAL VALUES I DON'T KNOW WHAT THIS REPRESENTS NOW -->
+            <inertial>
+                <origin xyz="0 0 0.5" rpy="0 0 0"/>
+                <mass value="1"/>
+                <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+            </inertial>
+        </link>
+        <gazebo>
+            <plugin name='ignition::gazebo::systems::TrackController' filename='libignition-gazebo-track-controller-system.so'>
+                    <link>flipper_${suffix}</link>
+                    <min_velocity>-1.0</min_velocity>
+                    <max_velocity>1.0</max_velocity>
+                    <!--debug>1</debug-->
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:flipper suffix="fr"/>
+    <xacro:flipper suffix="fl"/>
+    <xacro:flipper suffix="rr"/>
+    <xacro:flipper suffix="rl"/>
+    
+</robot>
