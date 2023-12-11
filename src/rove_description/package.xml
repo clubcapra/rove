@@ -3,9 +3,9 @@
 <package format="3">
   <name>rove_description</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="capra@etsmtl.ca">user</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Rove description (urdf and world)</description>
+  <maintainer email="capra@ens.etsmtl.ca">Capra</maintainer>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -8,7 +8,9 @@ ENV ROS_DISTRO=humble
 COPY . /root/workspace/src/rove_description
 
 # Build the rove_description ROS packages
-RUN /bin/bash -c '. /opt/ros/${ROS_DISTRO}/setup.bash; cd ~/workspace; colcon build --symlink-install --packages-select rove_description --merge-install'
+RUN /bin/bash -c '. /opt/ros/${ROS_DISTRO}/setup.bash; \
+    cd ~/workspace; \
+    colcon build --symlink-install --packages-select rove_description --merge-install'
 
 # Create entrypoint
 RUN echo '#!/bin/bash \n\
