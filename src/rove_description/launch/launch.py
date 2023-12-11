@@ -1,17 +1,19 @@
+import os
+
+import xacro
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
-import os
-import xacro
 
 
 def generate_launch_description():
     urdf_file_name = 'urdf/rove.urdf.xacro'
-    urdf = os.path.join(get_package_share_directory('rove_description'),urdf_file_name)
-    
+    urdf = os.path.join(get_package_share_directory(
+        'rove_description'), urdf_file_name)
+
     doc = xacro.process_file(urdf)
     robot_desc = doc.toxml()
-    
+
     return LaunchDescription([
         # A GUI to manipulate the joint state values
         Node(
@@ -30,6 +32,12 @@ def generate_launch_description():
             namespace='',
             executable='rviz2',
             name='rviz2',
-            arguments=['-d' + os.path.join(get_package_share_directory('rove_description'), 'rviz', 'conf.rviz')]
+            arguments=[
+                '-d' + os.path.join(
+                    get_package_share_directory('rove_description'),
+                    'rviz',
+                    'conf.rviz'
+                )
+            ]
         )
     ])
