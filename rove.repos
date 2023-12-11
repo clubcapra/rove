@@ -1,5 +1,5 @@
 repositories:
-  alpha_interfaces:
+  capra_gazebo:
     type: git
-    url: https://github.com/clubcapra/exemple.git
-    version: master
+    url: https://github.com/clubcapra/capra_gazebo.git
+    version: main

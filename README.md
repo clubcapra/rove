@@ -2,17 +2,46 @@
 
 Rove is a robot developed by the Capra team at ÉTS. Utilizing ROS2 Humble, Rove is designed for advanced applications in search and rescue robotics.
 
-## Native installation
+## Work in a docker container (Preferred)
+
+Working in a dev container will allow you to have the same environnement as the CI and make sure that your code will work on another computer. It will also allow you to easily switch package version and test thing without breaking your computer.
+
+### Windows installation
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
+2. Install [Visual Studio Code](https://code.visualstudio.com/)
+3. Install Xserver (We recommend [VcXsrv](https://sourceforge.net/projects/vcxsrv/))
+4. Install the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in VSCode
+5. Clone the repository
+6. Open the repository in VSCode
+7. Copy the file ```sample.env``` and rename it to ```.env```
+8. Click on the green button in the bottom left corner of VSCode and select "Remote-Containers: Reopen in Container"
+9. Wait for the container to build
+10. Start Xserver with the ```-nowgl``` option (double click on the shortcut to open it if you use VcXsrv)
+
+### Linux installation
+
+To be tested, but it should be similar to the Windows installation without the Xserver part.
+
+## Native installation (Ubuntu 22.04 LTS, other distros not supported)
 
 ```bash
 git clone https://github.com/clubcapra/rove.git
 vcs import src < rove.repos
-colcon build
+colcon build --symlink-install
+source install/setup.bash
 ```
 
-## Work in a docker container
+## Running Rove in simulation
 
-You need to have docker installed and running on your computer. If you use Windows, you will need Xserver to display the GUI. You will also need to copy the sample.env file to .env and change the values to match your system. (Default should work for most setup)
+```bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch rove_description sim.launch.py
+```
+
+**Note:** To move the robot, you need to use gazebo as there is no controller yet
+
 
 ## Adding New Packages
 
