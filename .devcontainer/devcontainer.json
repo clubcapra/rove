@@ -22,5 +22,12 @@
         "VisualStudioExptTeam.vscodeintellicode"
       ]
     }
+  },
+  "features": {
+    "desktop-lite": {
+        "password": "vscode",
+        "webPort": "6080",
+        "vncPort": "5901"
+    }
   }
 }
