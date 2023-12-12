@@ -50,6 +50,8 @@ public:
         joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
             "joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
         );
+
+        joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 10);
     }
 
 private:
@@ -72,6 +74,7 @@ private:
 
     void flipperAction(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
         RCLCPP_INFO(get_logger(), "Flipper...");
+        joy_pub_->publish(*joy_msg);
     }
 
     void joyCallback(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
@@ -87,6 +90,7 @@ private:
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
+    rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
 };
 
 int main(int argc, char **argv) {
