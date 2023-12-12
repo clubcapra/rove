@@ -2,13 +2,11 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-from launch.actions import DeclareLaunchArgument
 
 
 def generate_launch_description():
@@ -23,14 +21,16 @@ def generate_launch_description():
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
     robot_desc = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
-    world_file_name = 'worlds/base_world.world'
-    world = os.path.join(pkg_rove_description, world_file_name)
 
     # Setup to launch the simulator and Gazebo world
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        launch_arguments={'gz_args': "-v 4 -r " + world}.items(),
+            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
+        ),
+        launch_arguments={
+            'gz_args': "-r 'https://fuel.gazebosim.org/" +
+            "1.0/OpenRobotics/worlds/industrial-warehouse'"
+        }.items(),
     )
 
     # Spawn robot
@@ -74,7 +74,7 @@ def generate_launch_description():
         executable='parameter_bridge',
         parameters=[{
             'config_file': os.path.join(pkg_rove_description, 'config',
-                                        'default_bridge.yaml'),
+                                        'amazon_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
             "use_sim_time": True,
         }],
@@ -103,13 +103,13 @@ def generate_launch_description():
                    )
 
     return LaunchDescription([
-            gz_sim,
-            DeclareLaunchArgument('rviz', default_value='true',
-                                  description='Open RViz.'),
-            bridge,
-            robot_state_publisher,
-            robot_localization_node,
-            rviz,
-            slam,
-            create,
-            ])
+        gz_sim,
+        DeclareLaunchArgument('rviz', default_value='true',
+                              description='Open RViz.'),
+        bridge,
+        robot_state_publisher,
+        robot_localization_node,
+        rviz,
+        slam,
+        create,
+    ])

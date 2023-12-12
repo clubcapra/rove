@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!--Track xacro-->
+    <xacro:macro name="track" params="suffix">
+        <xacro:property name="track_j_x" value="0" />
+        <xacro:property name="track_j_y" value="0.1016" />
+        <xacro:property name="track_j_z" value="0.0889" />
+
+        <xacro:if value="${(suffix == 'r')}">
+            <xacro:property name="joint_origin" value="${track_j_x} ${-track_j_y} ${track_j_z}"/>
+        </xacro:if>
+        <xacro:if value="${(suffix == 'l')}">
+            <xacro:property name="joint_origin" value="${track_j_x} ${track_j_y}  ${track_j_z}"/>
+        </xacro:if>
+
+        <joint name="track_${suffix}_j" type="fixed">
+            <origin xyz="${joint_origin}" rpy="0 0 0"/>
+            <parent link="base_link"/>
+            <child link="track_${suffix}"/>
+        </joint>
+
+        <link name="track_${suffix}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find rove_description)/meshes/track.stl"/>
+                </geometry>
+                <material name="rubber_color"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find rove_description)/meshes/track.stl"/>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.65</mu>
+                            <mu2>0.85</mu2>
+                        </ode>
+                    </friction>
+                    <contact>
+                        <ode/>
+                    </contact>
+                </surface>
+            </collision>
+            <max_contacts>20</max_contacts>
+            <!-- TODO PUT ACTUAL INERTIAL VALUES I DON'T KNOW WHAT THIS REPRESENTS NOW -->
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="1"/>
+                <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+            </inertial>
+        </link>
+        <gazebo>
+            <plugin name='gz::sim::systems::TrackController' filename='libignition-gazebo-track-controller-system.so'>
+                    <link>track_${suffix}</link>
+                    <min_velocity>-1.0</min_velocity>
+                    <max_velocity>1.0</max_velocity>
+                    <!--debug>1</debug-->
+            </plugin>
+        </gazebo>
+        <!-- Required to prevent fixed joint being merged -->
+        <gazebo reference="track_${suffix}_j">
+            <preserveFixedJoint>true</preserveFixedJoint>
+        </gazebo>
+        <gravity>1</gravity>
+        <kinematic>0</kinematic>
+    </xacro:macro>
+
+    <xacro:track suffix="r"/>
+    <xacro:track suffix="l"/>
+</robot>
