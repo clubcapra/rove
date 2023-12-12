@@ -2,15 +2,13 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import (
-    IncludeLaunchDescription,
-    SetEnvironmentVariable,
-)
+from launch.actions import IncludeLaunchDescription
+
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
 
 
 def generate_launch_description():
@@ -68,7 +66,6 @@ def generate_launch_description():
        executable='rviz2',
        arguments=['-d', os.path.join(pkg_rove_description, 'config',
                                      'basic.rviz')],
-       condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -106,13 +103,13 @@ def generate_launch_description():
                    )
 
     return LaunchDescription([
-        gz_sim,
-        DeclareLaunchArgument('rviz', default_value='true',
-                              description='Open RViz.'),
-        bridge,
-        robot_state_publisher,
-        robot_localization_node,
-        rviz,
-        slam,
-        create,
-    ])
+            gz_sim,
+            DeclareLaunchArgument('rviz', default_value='true',
+                                  description='Open RViz.'),
+            bridge,
+            robot_state_publisher,
+            robot_localization_node,
+            rviz,
+            slam,
+            create,
+            ])
