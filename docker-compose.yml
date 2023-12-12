@@ -6,8 +6,6 @@ services:
       dockerfile: ./.devcontainer/Dockerfile
     volumes:
       - ./:/workspace/rove
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - /tmp/.Xauthority:/tmp/.Xauthority:rw
     env_file:
       - .env
     command: sleep infinity
