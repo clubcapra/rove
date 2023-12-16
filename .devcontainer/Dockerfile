@@ -20,7 +20,7 @@ RUN apt install -y git
 
 # Install ROS dependencies
 RUN apt install -y ros-humble-xacro ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-robot-localization
-# RUN apt install -y ros-humble-joy teleop-twist-joy usbutils
+RUN apt install -y ros-humble-joy teleop-twist-joy
 # apt-get -y install ros-humble-velodyne-gazebo-plugins
 # Rosdep update
 RUN rosdep update
