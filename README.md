@@ -12,12 +12,10 @@ Working in a dev container will allow you to have the same environnement as the 
 2. Install [Visual Studio Code](https://code.visualstudio.com/)
 3. Install Xserver (We recommend [VcXsrv](https://sourceforge.net/projects/vcxsrv/))
 4. Install the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in VSCode
-5. Clone the repository
-6. Open the repository in VSCode
-7. Copy the file ```sample.env``` and rename it to ```.env```
-8. Click on the green button in the bottom left corner of VSCode and select "Remote-Containers: Reopen in Container"
-9. Wait for the container to build
-10. Start Xserver with the ```-nowgl``` option (double click on the shortcut to open it if you use VcXsrv)
+5. Clone and open the repository
+6. Click on the green button in the bottom left corner of VSCode and select "Remote-Containers: Reopen in Container" or use the command palette to do it.
+7. Wait for the container to build
+8. Start Xserver with the ```-nowgl``` option (double click on the shortcut to open it if you use VcXsrv)
 
 ### Linux installation
 
