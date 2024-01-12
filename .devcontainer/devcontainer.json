@@ -19,7 +19,8 @@
         "ms-python.isort",
         "ms-python.vscode-pylance",
         "njpwerner.autodocstring",
-        "VisualStudioExptTeam.vscodeintellicode"
+        "VisualStudioExptTeam.vscodeintellicode",
+        "jebbs.plantuml"
       ]
     }
   }
