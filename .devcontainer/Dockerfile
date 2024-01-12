@@ -1,7 +1,5 @@
 FROM ghcr.io/clubcapra/gazebo:harmonic
 
-
-
 # Add vscode user with same UID and GID as your host system
 # (copied from https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user)
 ARG USERNAME=rove
@@ -24,8 +22,12 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git
 
-# Copy to preload the ros packages
-COPY ./ /workspace/$USERNAME/
+# Install ROS dependencies
+RUN apt install -y ros-humble-xacro ros-humble-ros-gz-bridge ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-robot-localization
+# RUN apt install -y ros-humble-joy teleop-twist-joy usbutils
+# apt-get -y install ros-humble-velodyne-gazebo-plugins
+# Rosdep update
+RUN rosdep update
 
 # Change user
 USER $USERNAME
