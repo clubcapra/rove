@@ -32,8 +32,8 @@
     <gazebo reference="laser_frame">
         <material>Gazebo/Black</material>
 
-        <sensor name='laser_sensor_frame' type='gpu_lidar'>"
-            <ignition_frame_id>rove/laser_frame</ignition_frame_id>
+        <sensor name='laser_sensor_frame' type='gpu_lidar'>
+            <gz_frame_id>rove/laser_frame</gz_frame_id>
             <pose> 0 0 0 0 0 0 </pose>
             <visualize>false</visualize>
             <always_on>false</always_on>
