@@ -5,8 +5,10 @@ FROM ghcr.io/clubcapra/gazebo:harmonic
 ARG USERNAME=rove
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+
 RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && groupadd -g 107 input \
+    && useradd -s /bin/bash --uid $USER_UID -g $USER_GID -G 107 -m $USERNAME \
     && apt-get update \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
@@ -20,7 +22,7 @@ RUN apt install -y git
 
 # Install ROS dependencies
 RUN apt install -y ros-humble-xacro ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-robot-localization
-RUN apt install -y ros-humble-joy ros-humble-teleop-twist-joy
+RUN sudo apt install -y ros-humble-joy ros-humble-teleop-twist-joy
 # apt-get -y install ros-humble-velodyne-gazebo-plugins
 # Rosdep update
 RUN rosdep update
