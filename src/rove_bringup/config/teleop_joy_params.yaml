@@ -1,15 +1,15 @@
 /teleop_twist_joy_node:
   ros__parameters:
     axis_angular:
-      pitch: 0 #LS_X
-      roll: 1 #LS_Y
-      yaw: -1 #not set
+      pitch: -1 #not set
+      roll: -1 #not set
+      yaw: 0 #LS_X
     axis_linear:
-      x: 5
-      y: -1
-      z: -1
+      x: 1 #LS_Y
+      y: -1 #not set
+      z: -1 #not set
     enable_button: 0 #A
-    enable_turbo_button: -1
+    enable_turbo_button: -1 # not set
     qos_overrides:
       /parameter_events:
         publisher:
@@ -19,12 +19,12 @@
           reliability: reliable
     require_enable_button: true
     scale_angular:
-      pitch: 0.5
-      roll: 0.5
+      pitch: 0.0
+      roll: 0.0
       yaw: 0.5
     scale_angular_turbo:
-      pitch: 1.0
-      roll: 1.0
+      pitch: 0.0
+      roll: 0.0
       yaw: 1.0
     scale_linear:
       x: 0.5
