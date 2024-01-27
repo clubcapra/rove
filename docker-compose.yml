@@ -8,9 +8,11 @@ services:
       - ./:/workspace/rove
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /tmp/.Xauthority:/tmp/.Xauthority:rw
-      - /dev/input:/dev/input
-    device_cgroup_rules:
-      - 'c 13:* rmw'
+      - /dev/input:/dev/input:rw
+    devices:
+      - /dev/input:/dev/input:rw
+    # device_cgroup_rules:
+    #    - 'c 13:* rmw'
     env_file:
       - .env
     command: sleep infinity
