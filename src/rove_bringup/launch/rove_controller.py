@@ -23,7 +23,7 @@ def generate_launch_description():
             parameters=[teleope_joy_params_file],
             remappings=[
                 ('/joy', '/rove/joy'),
-                ('/cmd_vel', '/model/rove/cmd_vel')
+                # ('/cmd_vel', '/model/rove/cmd_vel')
             ],
         ),
         Node(
