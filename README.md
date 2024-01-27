@@ -19,7 +19,14 @@ Working in a dev container will allow you to have the same environnement as the 
 
 ### Linux installation
 
-To be tested, but it should be similar to the Windows installation without the Xserver part.
+Same as the windows installation, step 4 and 8 can be skiped.
+
+Replace the DISPLAY value in the env file for the host one.
+The value may be different for each user. 
+
+In the docker container. The user need to be able to "cat" any device in /dev/input to be able to use the controller.
+
+Can configure docker to be run as non-root user https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 
 ## Native installation (Ubuntu 22.04 LTS, other distros not supported)
 
