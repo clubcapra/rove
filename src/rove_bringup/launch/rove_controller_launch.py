@@ -28,8 +28,8 @@ def generate_launch_description():
         ),
         Node(
             package=package_name,
-            executable='rove_controller',
-            name='rove_controller',
+            executable='rove_controller_node',
+            name='rove_controller_node',
             output='screen',
         ),
     ])
