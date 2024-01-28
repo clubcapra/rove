@@ -65,6 +65,7 @@ private:
 
     void nextMode(){
         selected_mode = (selected_mode + 1) % 2; // Number of modes
+        RCLCPP_INFO(get_logger(), "profil %i", selected_mode);
     }
 
     void common_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
@@ -79,7 +80,6 @@ private:
 
         if (buttton_down(joy_msg, Y)){
             nextMode();
-            RCLCPP_INFO(get_logger(), "profil %i", selected_mode);
         }
     }
 
@@ -128,10 +128,6 @@ private:
         }
 
         previous_msg_ = *joy_msg;
-    }
-
-    void modeCallback(const ControllerMode mode) {
-        selected_mode = mode;
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
