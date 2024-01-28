@@ -1,7 +1,7 @@
 /game_controller_node:
   ros__parameters:
     # 0 (publish on change)
-    autorepeat_rate: 0.0
+    autorepeat_rate: 20.0
     # 1000ms / 20 (refresh rate in Hz) = 50
     coalesce_interval_ms: 50
     deadzone: 0.05
