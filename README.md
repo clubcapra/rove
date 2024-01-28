@@ -45,6 +45,12 @@ source install/setup.bash
 ros2 launch rove_description sim.launch.py
 ```
 
+## Running the controller with joy
+```bash
+source install/setup.bash
+ros2 launch rove_bringup rove_controller_launch.py
+```
+
 **Note:** To move the robot, you need to use gazebo as there is no controller yet
 
 
