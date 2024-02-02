@@ -3,9 +3,14 @@
 <package format="3">
   <name>rove_slam</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="simonroy99@hotmail.ca">rove</maintainer>
+  <description>SLAM package for rove</description>
+  <maintainer email="capra@ens.etsmtl.ca">rove</maintainer>
   <license>TODO: License declaration</license>
+
+
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
