@@ -1,42 +1,6 @@
 // rove_controller.cpp
-
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
-
-enum JoyBtn{
-  A = 0,
-  B = 1,
-  X = 2,
-  Y = 3,
-  VIEW = 4,
-  XBOX = 5,
-  MENU = 6,
-  LS = 7,
-  RS = 8,
-  LB = 9,
-  RB = 10,
-  D_UP = 11,
-  D_DOWN = 12,
-  D_LEFT = 13,
-  D_RIGHT = 14,
-//   // Paddles
-//   P_ = 15,
-//   P_ = 16,
-//   P_ = 17,
-//   P_ = 18,
-//   P_ = 19,
-//   P_ = 20,
-//   P_ = 21,
-};
-
-enum JoyStick{
-    LS_X = 0,
-    LS_Y = 1,
-    RS_X = 2,
-    RS_Y = 3,
-    LT = 4,
-    RT = 5,
-};
 
 enum ControllerMode{
     FLIPPER_MODE = 0,
@@ -47,6 +11,30 @@ enum ControllerMode{
 class RoveController : public rclcpp::Node {
 public:
     RoveController() : Node("rove_controller_node") {
+        // Buttons
+        A = declare_parameter("A", 0);
+        B = declare_parameter("B", 1);
+        X = declare_parameter("X", 2);
+        Y = declare_parameter("Y", 3);
+        LB = declare_parameter("LB", 4);
+        RB = declare_parameter("RB", 5);
+        VIEW = declare_parameter("VIEW", 6);
+        MENU = declare_parameter("MENU", 7);
+        XBOX = declare_parameter("XBOX", 8);
+        LS = declare_parameter("LS", 9);
+        RS = declare_parameter("RS", 10);
+        SHARE = declare_parameter("SHARE", 11);
+
+        // Axes
+        LS_X = declare_parameter("LS_X", 0);
+        LS_Y = declare_parameter("LS_Y", 1);
+        LT = declare_parameter("LT", 2);
+        RS_X = declare_parameter("RS_X", 3);
+        RS_Y = declare_parameter("RS_Y", 4);
+        RT = declare_parameter("RT", 5);
+        D_PAD_X = declare_parameter("D_PAD_X", 6);
+        D_PAD_Y = declare_parameter("D_PAD_Y", 7);
+
         // Subscribe to the joy topic
         joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
             "/joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
@@ -57,10 +45,15 @@ public:
         previous_msg_ = sensor_msgs::msg::Joy();
         previous_msg_.axes.resize(6, 0.0);
         previous_msg_.buttons.resize(10, 0);
+
+        teleop_msg_ = sensor_msgs::msg::Joy();
+        teleop_msg_.axes.resize(2,0);
+        teleop_msg_.buttons.resize(1,0);
     }
 
 private:
-    std::unordered_map<int, std::unordered_map<size_t, std::function<void()>>> button_handlers_;
+    int A, B, X, Y, LB, RB, VIEW, MENU, XBOX, LS, RS, SHARE, LS_X, LS_Y, LT, RS_X, RS_Y, RT, D_PAD_X, D_PAD_Y;
+
     int selected_mode = FLIPPER_MODE;
 
     void nextMode(){
@@ -99,7 +92,10 @@ private:
 
     void flipper_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
         log("Flipper...");
-        joy_pub_->publish(*joy_msg);
+        teleop_msg_.axes[0] = joy_msg->axes[LS_X];
+        teleop_msg_.axes[1] = joy_msg->axes[LS_Y];
+        teleop_msg_.buttons[0] = joy_msg->buttons[A];
+        joy_pub_->publish(teleop_msg_);
     }
 
     bool buttton_down(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
@@ -132,7 +128,8 @@ private:
 
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
-    sensor_msgs::msg::Joy previous_msg_;
+    sensor_msgs::msg::Joy previous_msg_; 
+    sensor_msgs::msg::Joy teleop_msg_;
     
 };
 
