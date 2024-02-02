@@ -1,18 +1,17 @@
 /game_controller_node:
   ros__parameters:
-    # 0 (publish on change)
+    autorepeat_rate: 20.0 # 0 (publish on change)
+    coalesce_interval_ms: 50 # 1000ms / 20 (refresh rate in Hz) = 50
+    deadzone: 0.05
+    # device_id: 0
+    # device_name: ''
+    sticky_buttons: false
+
+/joy_node:
+  ros__parameters:
     autorepeat_rate: 20.0
-    # 1000ms / 20 (refresh rate in Hz) = 50
     coalesce_interval_ms: 50
     deadzone: 0.05
-    device_id: 0
-    device_name: ''
-    qos_overrides:
-      /parameter_events:
-        publisher:
-          depth: 1000
-          durability: volatile
-          history: keep_last
-          reliability: reliable
+    # device_id: 0
+    # device_name: ''
     sticky_buttons: false
-    use_sim_time: false
