@@ -37,6 +37,3 @@ RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 RUN echo "source /gazebo/gazebo_ws/install/setup.bash" >> ~/.bashrc
-
-
-
