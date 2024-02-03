@@ -22,12 +22,8 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git
 
-# Install ROS dependencies
-RUN apt install -y ros-humble-xacro ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-robot-localization
-RUN sudo apt install -y ros-humble-joy ros-humble-teleop-twist-joy
-# apt-get -y install ros-humble-velodyne-gazebo-plugins
-# Rosdep update
-RUN rosdep update
+# Copy to preload the ros packages
+COPY ./ /workspace/$USERNAME/
 
 # Change user
 USER $USERNAME
