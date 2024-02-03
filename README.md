@@ -55,14 +55,14 @@ ros2 launch rove_description sim.launch.py
 
 ```bash
 source install/setup.bash
-ros2 launch rove_bringup rove_controller_usb_launch.py
+ros2 launch rove_bringup rove_controller_usb.launch.py
 ```
 
 ## Running the controller with a usb cable
 
 ```bash
 source install/setup.bash
-ros2 launch rove_bringup rove_controller_bluethoot_launch.py
+ros2 launch rove_bringup rove_controller_bluethoot.launch.py
 ```
 
 ## Adding New Packages
