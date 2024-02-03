@@ -11,8 +11,6 @@ services:
       - /dev/input:/dev/input:rw
     devices:
       - /dev/input:/dev/input:rw
-    # device_cgroup_rules:
-    #    - 'c 13:* rmw'
     env_file:
       - .env
     command: sleep infinity

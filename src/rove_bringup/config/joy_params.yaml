@@ -3,8 +3,6 @@
     autorepeat_rate: 20.0 # 0 (publish on change)
     coalesce_interval_ms: 50 # 1000ms / 20 (refresh rate in Hz) = 50
     deadzone: 0.05
-    # device_id: 0
-    # device_name: ''
     sticky_buttons: false
 
 /joy_node:
@@ -12,6 +10,4 @@
     autorepeat_rate: 20.0
     coalesce_interval_ms: 50
     deadzone: 0.05
-    # device_id: 0
-    # device_name: ''
     sticky_buttons: false
