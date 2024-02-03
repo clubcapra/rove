@@ -4,14 +4,16 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     package_name = 'rove_bringup'
+    dir = get_package_share_directory(package_name)
     # Get params files
-    joy_params_file = get_package_share_directory(package_name) + '/config/joy_params.yaml'
-    teleope_joy_params_file = get_package_share_directory(package_name) + '/config/teleop_joy_params.yaml'
+    joy_params_file = dir + '/config/joy_params.yaml'
+    teleope_joy_params_file = dir + '/config/teleop_joy_params.yaml'
+    usb_mapping_file = dir + '/config/usb_mapping.yaml'
 
     return LaunchDescription([
         Node(
             package='joy',
-            executable='game_controller_node',
+            executable='joy_node',
             name='game_controller_node',
             output='screen',
             parameters=[joy_params_file],
@@ -23,13 +25,14 @@ def generate_launch_description():
             parameters=[teleope_joy_params_file],
             remappings=[
                 ('/joy', '/rove/joy'),
-                ('/cmd_vel', '/model/rove/cmd_vel')
+                # ('/cmd_vel', '/model/rove/cmd_vel')
             ],
         ),
         Node(
             package=package_name,
-            executable='rove_controller',
-            name='rove_controller',
+            executable='rove_controller_node',
+            name='rove_controller_node',
+            parameters=[usb_mapping_file],
             output='screen',
         ),
     ])

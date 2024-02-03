@@ -19,7 +19,20 @@ Working in a dev container will allow you to have the same environnement as the 
 
 ### Linux installation
 
-To be tested, but it should be similar to the Windows installation without the Xserver part.
+Same as the windows installation, step 4 and 8 can be skiped.
+
+Replace the DISPLAY environemnt variable in the .env file
+```bash
+echo DISPLAY=$DISPLAY
+```
+
+To be able to use the controller node, the user need read/write permissions on the inputs.
+Exemple:
+```bash
+cat /dev/input/event0
+```
+
+**Suggestion:** Configure docker to be able to run as non-root user https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 
 ## Native installation (Ubuntu 22.04 LTS, other distros not supported)
 
@@ -38,8 +51,19 @@ source install/setup.bash
 ros2 launch rove_description sim.launch.py
 ```
 
-**Note:** To move the robot, you need to use gazebo as there is no controller yet
+## Running the controller with a usb cable
 
+```bash
+source install/setup.bash
+ros2 launch rove_bringup rove_controller_usb.launch.py
+```
+
+## Running the controller with a usb cable
+
+```bash
+source install/setup.bash
+ros2 launch rove_bringup rove_controller_bluethoot.launch.py
+```
 
 ## Adding New Packages
 

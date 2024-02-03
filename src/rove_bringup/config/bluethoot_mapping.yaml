@@ -1,0 +1,24 @@
+/rove_controller_node:
+  ros__parameters:
+  # Buttons
+    A: 0
+    B: 1
+    X: 3
+    Y: 4
+    LB: 6
+    RB: 7
+    VIEW: 10
+    MENU: 11
+    XBOX: 12
+    LS: 13
+    RS: 14
+    SHARE: 15
+  # Axes
+    LS_X: 0
+    LS_Y: 1
+    LT: 5
+    RS_X: 2
+    RS_Y: 3
+    RT: 4
+    D_PAD_X: 6
+    D_PAD_Y: 7
