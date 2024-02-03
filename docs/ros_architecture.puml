@@ -1,16 +1,61 @@
 @startuml
-package "Rove Interface" {
+
+folder "Rove" as rove {
+    [gazebo]
+    [hardware]
+    [slam]
+    [navigation]
+    [description]
+    [bringup]
+    [control]
+    [nlp]
 }
 
-package "Rove Navigation" {
+package "Rove control" as control {
+    [control.launch.py]
+    [teleop.launch.py]
+    [keyboard.launch.py]
+    [joy.launch.py]
 }
 
-package "Rove SLAM" {
+package "Natural Language Processing" as nlp {
+    [capra_gpt.launch.py]
+    [web_server.launch.py]
+    [local_chat.launch.py]
 }
 
-package "Rove Vision" {
+package "Rove hardware" as hardware {
+    [camera.launch.py]
+    [imu.launch.py]
+    [lidar.launch.py]
+    [flipper.launch.py]
+    [track.launch.py]
+    node "motor controller" as motor {
+    }
 }
 
-package "Rove Hardware Interface" {
+package "Rove description" as description {
+    [description.launch.py]
 }
+
+package "Rove Gazebo" as gazebo {
+    [sim.launch.py]
+}
+
+package "Rove Bringup" as bringup {
+    [rove.launch.py]
+    [base.launch.py]
+    [top.launch.py]
+}
+
+package "Rove Navigation" as navigation {
+    [nav2.launch.py]
+}
+
+package "Rove SLAM" as slam {
+    [slam.launch.py]
+    [ekf.launch.py]
+    [slam_3d.launch.py]
+}
+
 @enduml

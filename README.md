@@ -73,11 +73,34 @@ To add a package for Rove, create it using the ROS2 command ([Creating Your Firs
 
 Update Rove-specific packages directly in this repository. For Capra-related or external packages, update their references in `rove.repos`. Change the Git branch in `rove.repos` as needed and apply updates with `vcs import src < rove.repos`.
 
+## Package structure
+
+**Bringup:**
+This essential package is responsible for initializing the rover in real-world settings. It activates all necessary subsidiary packages tailored for specific operational scenarios.
+
+**Description:**
+This package is specifically designed for detailing the rover's structure in URDF (Unified Robot Description Format).
+
+**Gazebo:**
+This package facilitates the simulation of the rover within the Gazebo environment, providing a virtual testing ground.
+
+**Hardware:**
+Dedicated to initializing all sensors and actuators on the rover, this package is pivotal for operational readiness. It is specifically designed for use with the actual hardware and is not suitable for development machines.
+
+**Navigation:**
+This is a wrapper package that integrates navigation functionalities, primarily based on the nav2 framework.
+
+**NLP (Natural Language Processing):**
+This package manages the deployment of the NLP server and chatbot, facilitating advanced communication and processing capabilities.
+
+**SLAM (Simultaneous Localization and Mapping):**
+This package serves as a comprehensive wrapper for SLAM operations, incorporating tools like slam_toolbox, rtab map, and sensor filters for effective environment mapping and rover localization.
+
 ## Docker architecture
 
 It's possible to run the entire project into multiple docker containers. Each container can be run independantly and are built using the following structure :
 
-![Docker structure](https://www.plantuml.com/plantuml/svg/VP6zaeGm2CTxdo9Zxrn_nSqMsznJt63aTZERZqmWFlz573UU1ON27twWm8qO2jVW1tRiqOptP5zOp7U01vexPemBHkkGnc4eQ1dYOyDAee_sV3vhc3rE2zABKnuDa6dXCsbzdIta0erVyMS6Gi4sH-5SP2o_O964xbBhZKzONIfISGY5Nnsv58NUNOM5oYccu53mjr8go8NgWOylTAdKC9F0pHgjDRDWpIfKz5MePWS5orWivlT_TjcA4fbf-jfljRr4dMxHNSdiMxn4-x8kYNwYmv4eC_qBo9JdW0nqQTMtUycSvxbXN6hmVm00 "Docker structure")
+![Docker structure](https://www.plantuml.com/plantuml/svg/VP71Ri8m38RlUOgezwvZq8vnc3XmsLDKJkgLGEj4JbfjU_gr0QgWJHoGVjl_xtouUn-0mz1tyc3r6Ldwm8CE0wCGmOGEPNOTVFJGeZoWGsgGj46V2S6e0r0xszgZvYTZ2zqDIeDZA5huGMLtH-3Uaj6P12zlHPfawulfjpiElUemRz2VWtNHFhNhQ_qWCSbSWSSbCXUfdyOB6uscCL0O3w3ZWgzjLLURUS5BVLbMA_rPhak4jNfhLXLiomq0gjNhymfK2TigFdB2u2tLbWs9Ux1n_WEZjXJ0479qJmtihEkHGhrC_iGOl5F8_9qx4sFip0Fx1I6V4HAa922IPsMUlzyTCz5njdoNcuZT_y55jg3A2NLsBbUNOb6nxSnTy8G-M98HEXhIGoOwdINvFL8pz9tu1G00 "Docker structure")
 
 # Documentation
 
