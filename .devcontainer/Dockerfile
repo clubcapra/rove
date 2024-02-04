@@ -26,7 +26,7 @@ RUN apt install -y git
 USER $USERNAME
 
 # Copy to preload the ros packages
-COPY -chown=$USERNAME:$USERNAME ./ /workspace/$USERNAME/
+COPY --chown=$USERNAME:$USERNAME ./ /workspace/$USERNAME/
 
 # Rosdep update
 RUN rosdep update
