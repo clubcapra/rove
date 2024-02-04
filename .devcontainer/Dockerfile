@@ -22,11 +22,11 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git
 
-# Copy to preload the ros packages
-COPY ./ /workspace/$USERNAME/
-
 # Change user
 USER $USERNAME
+
+# Copy to preload the ros packages
+COPY -chown=$USERNAME:$USERNAME ./ /workspace/$USERNAME/
 
 # Rosdep update
 RUN rosdep update
