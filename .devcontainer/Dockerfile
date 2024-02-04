@@ -22,9 +22,15 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git
 
+# Ensure the workspace and all potential subdirectories are owned by the non-root user
+RUN mkdir -p /workspace/$USERNAME/log /workspace/$USERNAME/build /workspace/$USERNAME/install \
+    && chown -R $USERNAME:$USERNAME /workspace/$USERNAME
+
 # Copy to preload the ros packages
 COPY ./ /workspace/$USERNAME/
-RUN chown -R $USERNAME:$USERNAME /workspace/$USERNAME
+
+# Copy to preload the ros packages
+COPY ./ /workspace/$USERNAME/
 
 # Change user
 USER $USERNAME
