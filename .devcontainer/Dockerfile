@@ -29,9 +29,6 @@ RUN mkdir -p /workspace/$USERNAME/log /workspace/$USERNAME/build /workspace/$USE
 # Copy to preload the ros packages
 COPY ./ /workspace/$USERNAME/
 
-# Copy to preload the ros packages
-COPY ./ /workspace/$USERNAME/
-
 # Change user
 USER $USERNAME
 
