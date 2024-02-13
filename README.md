@@ -4,7 +4,7 @@ Rove is a robot developed by the Capra team at ÉTS. Utilizing ROS2 Humble, Rove
 
 ## Work in a docker container (Preferred)
 
-Working in a dev container will allow you to have the same environnement as the CI and make sure that your code will work on another computer. It will also allow you to easily switch package version and test thing without breaking your computer.
+Working in a dev container will allow you to have the same environment as the CI and make sure that your code will work on another computer. It will also allow you to easily switch package version and test things without breaking your computer.
 
 ### Windows installation
 
@@ -19,15 +19,15 @@ Working in a dev container will allow you to have the same environnement as the 
 
 ### Linux installation
 
-Same as the windows installation, step 4 and 8 can be skiped.
+Same as the windows installation, step 3 and 8 can be skipped.
 
-Replace the DISPLAY environemnt variable in the .env file
+Replace the DISPLAY environment variable in the .env file
 ```bash
 echo DISPLAY=$DISPLAY
 ```
 
 To be able to use the controller node, the user need read/write permissions on the inputs.
-Exemple:
+Example:
 ```bash
 cat /dev/input/event0
 ```
@@ -58,11 +58,11 @@ source install/setup.bash
 ros2 launch rove_bringup rove_controller_usb.launch.py
 ```
 
-## Running the controller with a usb cable
+## Running the controller with bluetooth
 
 ```bash
 source install/setup.bash
-ros2 launch rove_bringup rove_controller_bluethoot.launch.py
+ros2 launch rove_bringup rove_controller_bluetooth.launch.py
 ```
 
 ## Adding New Packages
@@ -98,10 +98,10 @@ This package serves as a comprehensive wrapper for SLAM operations, incorporatin
 
 ## Docker architecture
 
-It's possible to run the entire project into multiple docker containers. Each container can be run independantly and are built using the following structure :
+It's possible to run the entire project into multiple docker containers. Each container can be run independently and are built using the following structure :
 
 ![Docker structure](https://www.plantuml.com/plantuml/svg/VP71Ri8m38RlUOgezwvZq8vnc3XmsLDKJkgLGEj4JbfjU_gr0QgWJHoGVjl_xtouUn-0mz1tyc3r6Ldwm8CE0wCGmOGEPNOTVFJGeZoWGsgGj46V2S6e0r0xszgZvYTZ2zqDIeDZA5huGMLtH-3Uaj6P12zlHPfawulfjpiElUemRz2VWtNHFhNhQ_qWCSbSWSSbCXUfdyOB6uscCL0O3w3ZWgzjLLURUS5BVLbMA_rPhak4jNfhLXLiomq0gjNhymfK2TigFdB2u2tLbWs9Ux1n_WEZjXJ0479qJmtihEkHGhrC_iGOl5F8_9qx4sFip0Fx1I6V4HAa922IPsMUlzyTCz5njdoNcuZT_y55jg3A2NLsBbUNOb6nxSnTy8G-M98HEXhIGoOwdINvFL8pz9tu1G00 "Docker structure")
 
 # Documentation
 
-To update the UML diagram, create a new encoded link on the PlantUML website. Copy the existing UML, make your changes, and then update the markdown file with the new link.
+To update the UML diagram, create a new encoded link on the PlantUML website. Copy the existing UML, make your changes, and then update the Markdown file with the new link.
