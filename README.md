@@ -35,7 +35,7 @@ cat /dev/input/event0
 **Suggestion:** Configure docker to be able to run as non-root user https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 
 ## Native installation (Ubuntu 22.04 LTS, other distros not supported)
-
+Pour installer vcs tool et ROS: https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html#id4
 ```bash
 git clone https://github.com/clubcapra/rove.git
 vcs import src < rove.repos
