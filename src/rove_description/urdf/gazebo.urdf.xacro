@@ -1,27 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <gazebo reference="imu_link">
-        <sensor name="imu_sensor" type="imu">
-            <gz_frame_id>rove/imu_link</gz_frame_id>
-            <update_rate>50</update_rate>
-            <visualize>false</visualize>
-            <topic>imu</topic>
-            <always_on>false</always_on>
-        </sensor>
-    </gazebo>
-
-    <link name="imu_link" />
-
-    <joint name="imu_link_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="imu_link"/>
-    </joint>
-
     <gazebo>
         <plugin
             filename="ignition-gazebo-joint-state-publisher-system"
             name="ignition::gazebo::systems::JointStatePublisher">
+            <topic>joint_states</topic>
         </plugin>
 
         <plugin
@@ -30,7 +14,7 @@
         </plugin>
 
 
-        <plugin name="gz::sim::systems::TrackedVehicle" filename="ignition-gazebo-tracked-vehicle-system">
+        <plugin name="gz::sim::systems::TrackedVehicle" filename="gz-sim-tracked-vehicle-system">
             <left_track><link>track_l</link></left_track>
             <left_track><link>flipper_fl</link></left_track>
             <left_track><link>flipper_rl</link></left_track>
@@ -41,9 +25,16 @@
              <!-- TODO PUT ACTUAL VALUES -->
             <tracks_separation>0.4</tracks_separation>
             <tracks_height>0.18094</tracks_height>
-            <steering_efficiency>0.5</steering_efficiency>
+            <steering_efficiency>1</steering_efficiency>
 
-            <child_frame_id>rove/base_link</child_frame_id>
+             <topic>cmd_vel</topic>
+
+            <odom_topic>odom</odom_topic>
+            <frame_id>odom</frame_id>
+            <child_frame_id>base_link</child_frame_id>
+            <odom_publisher_frequency>30</odom_publisher_frequency>
+
+            <tf_topic>/tf</tf_topic>
         </plugin>
 
         <plugin 

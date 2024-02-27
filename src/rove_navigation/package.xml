@@ -3,9 +3,12 @@
 <package format="3">
   <name>rove_navigation</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="simonroy99@hotmail.ca">rove</maintainer>
+  <description>Navigation package for rove</description>
+  <maintainer email="capra@ens.etsmtl.ca">rove</maintainer>
   <license>TODO: License declaration</license>
+
+  <exec_depend>navigation2</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

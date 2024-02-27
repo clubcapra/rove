@@ -55,7 +55,6 @@ def generate_launch_description():
         output='both',
         parameters=[
             {'robot_description': robot_desc},
-            {'frame_prefix': "rove/"},
             {"use_sim_time": True, }
         ]
     )
