@@ -15,6 +15,8 @@
 
     <xacro:include filename="$(find rove_description)/urdf/flipper.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/track.urdf.xacro" />
+    
+    <link name="base_footprint"/>
 
     <link name="base_link">
         <visual>
@@ -36,4 +38,12 @@
             <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
         </inertial>
     </link>
+
+
+    <joint name="base_joint" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+    </joint>
+
 </robot>

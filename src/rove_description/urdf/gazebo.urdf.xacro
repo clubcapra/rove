@@ -23,7 +23,7 @@
             <right_track><link>flipper_rr</link></right_track>
 
              <!-- TODO PUT ACTUAL VALUES -->
-            <tracks_separation>0.4</tracks_separation>
+            <tracks_separation>0.63</tracks_separation>
             <tracks_height>0.18094</tracks_height>
             <steering_efficiency>1</steering_efficiency>
 
@@ -31,7 +31,7 @@
 
             <odom_topic>odom</odom_topic>
             <frame_id>odom</frame_id>
-            <child_frame_id>base_link</child_frame_id>
+            <child_frame_id>base_footprint</child_frame_id>
             <odom_publisher_frequency>30</odom_publisher_frequency>
 
             <tf_topic>/tf</tf_topic>
