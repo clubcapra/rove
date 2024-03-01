@@ -114,7 +114,7 @@ def generate_launch_description():
                                   description='Open RViz.'),
             bridge,
             robot_state_publisher,
-            #robot_localization_node,
+            robot_localization_node,
             rviz,
             slam,
             create,
