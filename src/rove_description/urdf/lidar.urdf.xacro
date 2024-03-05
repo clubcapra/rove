@@ -5,11 +5,11 @@
 
     <joint name="laser_joint" type="fixed">
         <parent link="base_link"/>
-        <child link="laser_frame"/>
-        <origin xyz="0.0 0 0.4" rpy="0 0 0"/>
+        <child link="base_scan"/>
+      <origin xyz="0.0 0 0.4" rpy="0 0 0"/>
     </joint>
 
-    <link name="laser_frame">
+    <link name="base_scan">
         <visual>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
@@ -29,15 +29,16 @@
         </inertial>
     </link>
 
-    <gazebo reference="laser_frame">
+    <gazebo reference="base_scan">
         <material>Gazebo/Black</material>
 
         <sensor name='laser_sensor_frame' type='gpu_lidar'>
-            <gz_frame_id>rove/laser_frame</gz_frame_id>
             <pose> 0 0 0 0 0 0 </pose>
-            <visualize>false</visualize>
-            <always_on>false</always_on>
-            <update_rate>10</update_rate>
+            <visualize>true</visualize>
+            <always_on>true</always_on>
+            <update_rate>5</update_rate>
+            <topic>scan</topic>
+            <gz_frame_id>base_scan</gz_frame_id>
             <ray>
                 <scan>
                     <horizontal>

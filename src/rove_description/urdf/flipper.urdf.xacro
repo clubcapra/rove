@@ -77,8 +77,8 @@
         <gazebo>
             <plugin name='ignition::gazebo::systems::TrackController' filename='libignition-gazebo-track-controller-system.so'>
                     <link>flipper_${suffix}</link>
-                    <min_velocity>-1.0</min_velocity>
-                    <max_velocity>1.0</max_velocity>
+                    <min_velocity>-3.0</min_velocity>
+                    <max_velocity>3.0</max_velocity>
                     <!--debug>1</debug-->
             </plugin>
         </gazebo>

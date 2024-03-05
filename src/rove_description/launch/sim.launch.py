@@ -17,6 +17,7 @@ def generate_launch_description():
     # Get the launch directory
     pkg_rove_description = get_package_share_directory('rove_description')
     pkg_rove_slam = get_package_share_directory('rove_slam')
+    pkg_rove_nav = get_package_share_directory('rove_navigation')
     slam_pkg_path = get_package_share_directory("slam_toolbox")
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
@@ -55,7 +56,6 @@ def generate_launch_description():
         output='both',
         parameters=[
             {'robot_description': robot_desc},
-            {'frame_prefix': "rove/"},
             {"use_sim_time": True, }
         ]
     )
@@ -93,6 +93,12 @@ def generate_launch_description():
         }.items(),
     )
 
+    nav = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_nav, "navigation.launch.py"),
+        )
+    )
+
     robot_localization_node = Node(
        package='robot_localization',
        executable='ekf_node',
@@ -112,4 +118,5 @@ def generate_launch_description():
             rviz,
             slam,
             create,
+            nav,
             ])
