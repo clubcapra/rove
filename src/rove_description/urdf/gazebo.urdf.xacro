@@ -46,5 +46,4 @@
             <render_engine>ogre2</render_engine>
         </plugin>
     </gazebo>
-    
 </robot>

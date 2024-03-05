@@ -40,7 +40,6 @@
         </inertial>
     </link>
 
-
     <joint name="base_joint" type="fixed">
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="base_footprint"/>
