@@ -3,3 +3,7 @@ repositories:
     type: git
     url: https://github.com/clubcapra/capra_gazebo.git
     version: main
+  angora:
+    type: git
+    url : https://github.com/clubcapra/angora.git
+    version : main

@@ -19,6 +19,12 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Update all packages
 RUN apt update && apt upgrade -y
 
+
+# Gradio for angora interface
+RUN apt -y install pip
+
+RUN pip install gradio
+
 # Install Git
 RUN apt install -y git
 
