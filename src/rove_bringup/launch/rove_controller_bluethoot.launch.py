@@ -24,7 +24,7 @@ def generate_launch_description():
             name='teleop_twist_joy_node',
             parameters=[teleope_joy_params_file],
             remappings=[
-                ('/joy', '/rove/joy'),
+                ('/joy', '/joy'),
                 # ('/cmd_vel', '/model/rove/cmd_vel')
             ],
         ),
