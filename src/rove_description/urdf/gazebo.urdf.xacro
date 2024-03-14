@@ -3,14 +3,14 @@
 
     <gazebo>
         <plugin
-            filename="ignition-gazebo-joint-state-publisher-system"
-            name="ignition::gazebo::systems::JointStatePublisher">
+            filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
             <topic>joint_states</topic>
         </plugin>
 
         <plugin
-            filename="ignition-gazebo-imu-system"
-            name="ignition::gazebo::systems::Imu">
+            filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu">
         </plugin>
 
 
@@ -22,12 +22,12 @@
             <right_track><link>flipper_fr</link></right_track>
             <right_track><link>flipper_rr</link></right_track>
 
-             <!-- TODO PUT ACTUAL VALUES -->
+            <!-- TODO PUT ACTUAL VALUES -->
             <tracks_separation>0.63</tracks_separation>
             <tracks_height>0.18094</tracks_height>
             <steering_efficiency>1</steering_efficiency>
 
-             <topic>cmd_vel</topic>
+            <topic>cmd_vel</topic>
 
             <odom_topic>odom</odom_topic>
             <frame_id>odom</frame_id>
@@ -35,14 +35,14 @@
             <odom_publisher_frequency>30</odom_publisher_frequency>
             
             <publish_odom_tf>false</publish_odom_tf>
-            <publish_wheel_tf>true</publish_wheel_tf>
+            <publish_wheel_tf>false</publish_wheel_tf>
 
             <tf_topic>/tf</tf_topic>
         </plugin>
 
         <plugin 
-            filename="ignition-gazebo-sensors-system"
-            name="ignition::gazebo::systems::Sensors">
+            filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
             <render_engine>ogre2</render_engine>
         </plugin>
     </gazebo>

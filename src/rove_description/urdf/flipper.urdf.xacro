@@ -36,7 +36,7 @@
             <dynamics damping="50.0" friction="50"/>
         </joint>
 
-       
+
 
 
         <link name="flipper_${suffix}">
@@ -54,7 +54,7 @@
                     <mesh filename="file://$(find rove_description)/meshes/flipper.stl"/>
                 </geometry>
                 <surface>
-                    <friction>
+<friction>
                         <ode>
                             <mu>0.65</mu>
                             <mu2>0.85</mu2>
@@ -75,7 +75,7 @@
             </inertial>
         </link>
         <gazebo>
-            <plugin name='ignition::gazebo::systems::TrackController' filename='libignition-gazebo-track-controller-system.so'>
+            <plugin name='gz::sim::systems::TrackController' filename='gz-sim-track-controller-system'>
                     <link>flipper_${suffix}</link>
                     <min_velocity>-3.0</min_velocity>
                     <max_velocity>3.0</max_velocity>
