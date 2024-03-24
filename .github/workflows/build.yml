@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is working on ROS2 rove build
 on: [push]
 jobs:
   Build_rove:
-    runs-on: [caprabuilder]
+    runs-on: [self-hosted, ros]
     permissions:
       packages: write
       contents: read
