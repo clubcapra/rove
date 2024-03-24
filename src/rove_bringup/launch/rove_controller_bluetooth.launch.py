@@ -8,7 +8,7 @@ def generate_launch_description():
     # Get params files
     joy_params_file = dir + '/config/joy_params.yaml'
     teleope_joy_params_file = dir + '/config/teleop_joy_params.yaml'
-    bluethoot_mapping_file = dir + '/config/bluethoot_mapping.yaml'
+    bluetooth_mapping_file = dir + '/config/bluetooth_mapping.yaml'
 
     return LaunchDescription([
         Node(
@@ -32,7 +32,7 @@ def generate_launch_description():
             package=package_name,
             executable='rove_controller_node',
             name='rove_controller_node',
-            parameters=[bluethoot_mapping_file],
+            parameters=[bluetooth_mapping_file],
             output='screen',
         ),
     ])
