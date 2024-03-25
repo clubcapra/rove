@@ -22,16 +22,20 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git
 
-# Copy to preload the ros packages
-COPY ./ /workspace/$USERNAME/
-
 # Change user
 USER $USERNAME
 
-# Rosdep update
+# Source the ROS setup file
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
+    echo "source /gazebo/gazebo_ws/install/setup.bash" >> ~/.bashrc
+
+# Install ROS dependencies
 RUN rosdep update
+# Copy to preload the ros packages
+COPY ./ /workspace/$USERNAME/
+COPY ./.github /workspace/$USERNAME/build
+COPY ./devel /workspace/$USERNAME/devel
+
+
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
 
-# Source the ROS setup file
-RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
-RUN echo "source /gazebo/gazebo_ws/install/setup.bash" >> ~/.bashrc
