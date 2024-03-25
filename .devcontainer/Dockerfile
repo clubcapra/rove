@@ -8,7 +8,7 @@ ARG USER_GID=$USER_UID
 
 WORKDIR /workspace/$USERNAME
 
-RUN groupadd --gid $USER_GID $USERNAME \
+RUN groupadd --gid $USER_GID $USERNAME || true \
     && groupadd -g 107 input \
     && useradd -s /bin/bash --uid $USER_UID -g $USER_GID -G 107 -m $USERNAME \
     && apt-get update \

@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is working on ROS2 rove build
 on: [push]
 jobs:
   Build_rove:
-    runs-on: [self-hosted, ros]
+    runs-on: [self-hosted, linux, docker]
     permissions:
       packages: write
       contents: read
@@ -14,5 +14,6 @@ jobs:
 
     - name: Build docker compose
       run: |
-        docker compose run --user root devcontainer bash -c "colcon build"
+        docker compose build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
+        docker compose run devcontainer bash -c "colcon build"
 
