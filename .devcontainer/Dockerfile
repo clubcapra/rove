@@ -33,9 +33,6 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
 RUN rosdep update
 # Copy to preload the ros packages
 COPY ./ /workspace/$USERNAME/
-COPY ./.github /workspace/$USERNAME/build
-COPY ./devel /workspace/$USERNAME/devel
-
 
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
 
