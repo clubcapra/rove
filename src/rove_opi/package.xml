@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rove_opi</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="jocobc@todo.todo">jocobc</maintainer>
+  <license>TODO: License declaration</license>
+
+  <exec_depend>numpy</exec_depend>
+  <exec_depend>matplotlib</exec_depend>
+  <exec_depend>opencv-contrib-python</exec_depend>
+  <exec_depend>imutils</exec_depend>
+  <exec_depend>pytesseract</exec_depend>
+  <exec_depend>tqdm</exec_depend>
+  <exec_depend>colorama</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>scikit-learn</exec_depend>
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

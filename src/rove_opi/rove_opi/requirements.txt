@@ -1,0 +1,8 @@
+numpy
+matplotlib
+opencv-contrib-python
+imutils
+pytesseract
+tqdm
+colorama
+scikit-learn
