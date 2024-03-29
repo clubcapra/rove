@@ -1,6 +1,7 @@
 from setuptools import find_packages, setup
 
 package_name = 'rove_opi'
+submodules = 'rove_opi/lib'
 
 setup(
     name=package_name,

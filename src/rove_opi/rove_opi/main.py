@@ -3,97 +3,51 @@ from typing import List
 import cv2
 import numpy as np
 import rclpy
+from sensor_msgs.msg import Image
+from geometry_msgs.msg import Polygon, Point32
+from cv_bridge import CvBridge
+from .lib.common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
+from .image_processors import OPIFinder, contrasters, edge_detectors, edge_filters, normalizers, shape_identifiers, shape_postprocessors, shape_selectors, trapezoid_finders, trapezoid_rectifiers, thresholders
+from .lib.utils import convert, ensureExists
+
+class OPIProcessing(rclpy.Node):
+  
+    def __init__(self, finder:OPIFinder):
+        super().__init__('opi_processing')
+        self.subscriber = self.create_subscription(Image, 'image', self.receive_img, 1)
+        self.publisher = self.create_publisher(Polygon, 'trapezoid', 10)
+        self.bridge = CvBridge()
+        self.finder = finder
+
+    def receive_img(self, imgmsg:Image):
+        try:
+            img = self.bridge.imgmsg_to_cv2(imgmsg)
+            cv2.imshow('OPI', img)
+            best = None          
+            _, (indices, trapezoids, scores) = self.finder.find2(img)
+            if len(trapezoids) > 0:
+                selectedScores = np.array([scores[i] for i in indices])
+                
+                bestIdx = np.where(selectedScores == selectedScores.max())
+                print(trapezoids)
+                best = trapezoids[bestIdx]
+                points = []
+                for p in best:
+                    points.append(Point32(x = p[0], y = p[1]))
+                polygon = Polygon()
+                polygon.points = points
+                self.publisher.publish(polygon)
+        except Exception as e:
+            self.get_logger().error('Error publishing PNG image: %s' % str(e))
 
 
-from cinput import cinput, ynValidator
-from common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
-from image_processors import OPIFinder, contrasters, edge_detectors, edge_filters, normalizers, shape_identifiers, shape_postprocessors, shape_selectors, trapezoid_finders, trapezoid_rectifiers, thresholders
-from metadata import ImageBrowser
-from old_processing import filterThresh, final, noProcess, normalize, ocr, orangeness1, orangeness1Thresh, red, straighten
-
-from utils import convert, ensureExists
-
-class ImageBrowserBehavior:
-    def __init__(self, imgs: List[cv2.Mat], behaviors:OPIFinder):
-        self.imgs = imgs
-        self.index = 0
-        self.stepIndex = 0
-        self.colors = []
-        self.img = imgs[0]
-        self.behaviors = behaviors
-        # v
-        self.subscription = self.create_subscription(
-            Image,
-            'Image',
-            self.listener_callback,
-            10)
-        self.subscription
-
-    def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+def main(args=None):
+    rclpy.init(args=args)
     
-        
-    def mouseEvent(self, event, x, y, flags, param):
-        if event == cv2.EVENT_LBUTTONDBLCLK:
-            self.colors.append(self.img[y,x])
-            arr = np.array(self.colors)
-            print(arr.mean(0))
-
-    def loop(self):
-        k = cv2.waitKey(10)
-        if k == -1:
-            return
-        b = self.behaviors.getStepNumber(self.stepIndex)
-        if k == KEY_LEFT:
-            self.index = len(self.imgs) - 1 if self.index == 0 else self.index - 1
-        if k == KEY_RIGHT:
-            self.index = (self.index + 1) % len(self.imgs)
-        # if k == KEY_DOWN:
-        #     # if not b.debug:
-        #     #     b.destroyWindow()
-        #     while True:
-        #         self.stepIndex = len(self.behaviors.choices) - 1 if self.stepIndex == 0 else self.stepIndex - 1
-        #         b = self.behaviors.getStepNumber(self.stepIndex)
-        #         if b is not None:
-        #             break
-        # if k == KEY_UP:
-        #     # if not b.debug:
-        #     #     b.destroyWindow()
-        #     while True:
-        #         self.stepIndex = (self.stepIndex + 1) % len(self.behaviors.choices)
-        #         b = self.behaviors.getStepNumber(self.stepIndex)
-        #         if b is not None:
-        #             break
-        # if k == ord(' '):
-            # b.notifiedDebug ^= True
-        if k == KEY_ESC:
-            exit(0)
-        
-        # dbg = b.debug
-        # b.debug = True
-        self.behaviors.find2(self.imgs[self.index])
-        # b.debug = dbg
-
-if __name__ == "__main__":
     ensureExists()
     convert()
     
     imgs = [cv2.imread(str(p)) for p in CONVERTED_PATH.iterdir()]
-    
-    # ib = ImageBrowser(imgs)
-    # ib.processingMethods.append(noProcess)
-    # ib.processingMethods.append(normalize)
-    # # ib.processingMethods.append(thresh)
-    # # ib.processingMethods.append(gray)
-    # ib.processingMethods.append(red)
-    # ib.processingMethods.append(orangeness1)
-    # ib.processingMethods.append(orangeness1Thresh)
-    # # ib.processingMethods.append(orangeness2)
-    # # ib.processingMethods.append(canny)
-    # ib.processingMethods.append(filterThresh)
-    # ib.processingMethods.append(straighten)
-    # ib.processingMethods.append(ocr)
-    # ib.processingMethods.append(final)
     
     finder = OPIFinder()
     finder.steps['normalize']['simple'] = normalizers.SimpleNormalizer()
@@ -157,51 +111,14 @@ if __name__ == "__main__":
         except (AttributeError, KeyError):
             finder.steps['selectShapes']['aggressive'] = shape_selectors.AggressiveLowFalsePos(0.2, 1, 0.1)
             # finder.steps['selectShapes']['aggressive'].debug = True
-    # for t, tt in finder.steps.items():
-    #     for p, pp in tt.items():
-    #         pp.debug = True
-    
-    # finder.find(imgs[2])
-    # ovw = cinput("Overwite? (y/n)", str, ynValidator) == 'y'
-    # test = cinput("Re-test the algorythm on the images? (y/n)", str, ynValidator) == 'y'
-    # validity = cinput("Input validity? (y/n)", str, ynValidator) == 'y'
-    # finder.accuracy(imgs, ovw, test, validity, finder.steps['selectShapes']['aggressive'].thresholds)
-    finder.accuracy(imgs, False, True, False, finder.steps['selectShapes']['aggressive'].thresholds)
-    # finder.speedBenchmark(imgs, 50, (720, 1280))
-    # finder.speedBenchmark(imgs, 50, (480, 640))
-    
-    ib2 = ImageBrowserBehavior(imgs, finder)
 
-    
-    while True:
-        # ib.loop()
-        ib2.loop()
-
-def main(args=None):
-    rclpy.init(args=args)
-
-    publisher = ImageBrowserBehavior()
-
-    # Mettre loop ici genre ros spin subscriber
-    # utiliser rcutie pour verifier
-    # Get image from ROS
-    img = ...
-    best = None
-    
-    _, (indices, trapezoids, scores) = finder.find2(img)
-    if len(trapezoids) > 0:
-        selectedScores = np.array([scores[i] for i in indices])
-        
-        bestIdx = np.where(selectedScores == selectedScores.max())
-        best = trapezoids[bestIdx]
-    
-    
-    # Send trapezoid to ROS if found
-
-    rclpy.spin(publisher)
-
+    # rclpy.spin(publisher)
+    opiNode = OPIProcessing(finder)
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    publisher.destroy_node()
+    # publisher.destroy_node()
     rclpy.shutdown()
+    
+if __name__ == "__main__":
+    main()
