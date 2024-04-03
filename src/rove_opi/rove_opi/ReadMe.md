@@ -3,13 +3,16 @@
 ## Setup
 Install requirements
 
-Install tesseract-ocr [see this](\https://pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/)
+Install tesseract-ocr [see this](https://pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/)
 
-
-Then setup a venv:
+On ubuntu it should just be:
 ```bash
-python3 -m venv venv
-. venv/bin/activate
+sudo apt install tesseract-ocr
+```
+
+Then install packages:
+
+```bash
 python -m pip install pip --upgrade
-pip install -r requirements.txt
+pip install -r src/rove_opi/rove_opi/requirements.txt
 ```

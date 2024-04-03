@@ -5,6 +5,7 @@ import numpy as np
 
 # Ros2 imports
 import rclpy
+import rclpy.exceptions
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Polygon, Point32
@@ -36,25 +37,25 @@ class OPIProcessing(Node):
         self.finder = finder
 
     def receive_img(self, imgmsg:Image):
-        try:
-            img = self.bridge.imgmsg_to_cv2(imgmsg)
-            cv2.imshow('OPI', img)
-            best = None          
-            _, (indices, trapezoids, scores) = self.finder.find2(img)
-            if len(trapezoids) > 0:
-                selectedScores = np.array([scores[i] for i in indices])
-                
-                bestIdx = np.where(selectedScores == selectedScores.max())
-                print(trapezoids)
-                best = trapezoids[bestIdx]
-                points = []
-                for p in best:
-                    points.append(Point32(x = p[0], y = p[1]))
-                polygon = Polygon()
-                polygon.points = points
-                self.publisher.publish(polygon)
-        except Exception as e:
-            self.get_logger().error('Error publishing result : %s' % str(e))
+        img = self.bridge.imgmsg_to_cv2(imgmsg)
+        cv2.imshow('OPI', img)
+        cv2.waitKey(1)
+        best = None          
+        _, (indices, trapezoids, scores) = self.finder.find2(img)
+        if len(trapezoids) > 0:
+            selectedScores = np.array([scores[i] for i in indices])
+            
+            self.get_logger().info(f"Scores: {selectedScores}")
+            bestIdx = selectedScores.argmax()
+            self.get_logger().info(f"Idx: {bestIdx}")
+            self.get_logger().info(f"Trapezoids: {trapezoids}")
+            best = trapezoids[bestIdx]
+            points = []
+            for p in best:
+                points.append(Point32(x = float(p[0]), y = float(p[1])))
+            polygon = Polygon()
+            polygon.points = points
+            self.publisher.publish(polygon)
 
 
 def main(args=None):
@@ -128,12 +129,11 @@ def main(args=None):
             finder.steps['selectShapes']['aggressive'] = shape_selectors.AggressiveLowFalsePos(0.2, 1, 0.1)
             # finder.steps['selectShapes']['aggressive'].debug = True
 
-    # rclpy.spin(publisher)
     opiNode = OPIProcessing(finder)
+    rclpy.spin(opiNode)
+    
     # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    # publisher.destroy_node()
+    opiNode.destroy_node()
     rclpy.shutdown()
     
 if __name__ == "__main__":
