@@ -2,7 +2,7 @@ from typing import Callable, List
 import cv2
 import numpy as np
 
-from common import KEY_DOWN, KEY_ESC, KEY_LEFT, KEY_RIGHT, KEY_UP
+from rove_opi.lib.common import KEY_DOWN, KEY_ESC, KEY_LEFT, KEY_RIGHT, KEY_UP
 from metadata import ImageData
 
 

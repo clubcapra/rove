@@ -28,7 +28,15 @@ class ImageProcessor:
         if self.debug:
             cv2.destroyWindow(self.__class__.__name__)
     
-    def speedBenchmark(self, iterations:int, *args, **kwargs) -> np.ndarray[np.float_]:
+    def speedBenchmark(self, iterations:int, *args, **kwargs) -> np.ndarray:
+        """
+
+        Args:
+            iterations (int): 
+
+        Returns:
+            np.ndarray[np.float_]: 
+        """
         res = np.zeros((iterations), np.float_)
         for i in range(iterations):
             start = time.time()

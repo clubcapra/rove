@@ -5,7 +5,7 @@ import numpy as np
 import pytesseract
 import imutils
 
-from common import ORANGE
+from rove_opi.lib.common import ORANGE
 
 
 from metadata import ImageData

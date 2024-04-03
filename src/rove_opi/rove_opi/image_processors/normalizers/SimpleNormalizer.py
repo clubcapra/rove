@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from image_processors.normalizers.Normalizer import Normalizer
+from rove_opi.image_processors.normalizers.Normalizer import Normalizer
 
 
 class SimpleNormalizer(Normalizer):

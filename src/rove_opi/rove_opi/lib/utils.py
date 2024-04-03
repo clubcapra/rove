@@ -6,17 +6,16 @@ from colorama import Fore
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
-from common import CONVERTED_PATH, PATHS, SAMPLES_PATH
+from .common import BASE_PATH, CACHE_PATH, CACHE_START_PATH, CONVERTED_PATH, PATHS, SAMPLES_PATH
 
 
 def ensureExists():
     for p in PATHS:
         p.mkdir(parents=True, exist_ok=True)
     
-    cache = Path('cache.npy')
-    cacheInit = Path('cache_start.npy')
-    if not cache.exists():
-        shutil.copyfile(str(cacheInit), str(cache))
+    
+    if not CACHE_PATH.exists():
+        shutil.copyfile(str(CACHE_START_PATH), str(CACHE_PATH))
 
 def convert():
     for p in SAMPLES_PATH.iterdir():
@@ -33,11 +32,30 @@ def expandRect(rect:Tuple[Tuple[float,float],Tuple[float,float],float]) -> Tuple
     (x, y), (w, h), r = rect
     return x,y,w,h,r
 
-def compactRect(rect:Union[np.ndarray[np.float_], Tuple[float,float,float,float,float]]) -> Tuple[Tuple[float,float],Tuple[float,float],float]:
+def compactRect(rect:Union[np.ndarray, Tuple[float,float,float,float,float]]) -> Tuple[Tuple[float,float],Tuple[float,float],float]:
+    """
+
+    Args:
+        rect (Union[np.ndarray[np.float_], Tuple[float,float,float,float,float]]): 
+
+    Returns:
+        Tuple[Tuple[float,float],Tuple[float,float],float]: 
+    """
     return (rect[0], rect[1]), (rect[2], rect[3]), rect[4]
 
 # Function to find overlapping rotated rectangles
-def findOverlappingRotatedRectangles(img: cv2.Mat, rectangles:np.ndarray[np.float_], valid: np.ndarray[np.bool_], grow:float):
+def findOverlappingRotatedRectangles(img: cv2.Mat, rectangles:np.ndarray, valid: np.ndarray, grow:float):
+    """
+
+    Args:
+        img (cv2.Mat): 
+        rectangles (np.ndarray[np.float_]): 
+        valid (np.ndarray[np.bool_]): 
+        grow (float): 
+
+    Returns:
+        _type_: 
+    """
     overlapping_pairs = []
     grown = rectangles.copy()
     grown[:,2:4] *= grow
@@ -77,7 +95,15 @@ def findOverlappingRotatedRectangles(img: cv2.Mat, rectangles:np.ndarray[np.floa
     return np.array(overlapping_pairs)
 
 # Function to compute the minimum area rectangle for a set of rotated rectangles
-def minAreaRectRotatedRects(rects: np.ndarray[np.float_]):
+def minAreaRectRotatedRects(rects: np.ndarray):
+    """
+
+    Args:
+        rects (np.ndarray[np.float_]): 
+
+    Returns:
+        _type_: 
+    """
     points = []
     for rect in rects:
         box = cv2.boxPoints(compactRect(rect))
@@ -104,7 +130,16 @@ def calculate_metrics(tp, fn, tn, fp):
     f1_score = 2 * (precision * recall) / (precision + recall)
     return precision, recall, f1_score
 
-def debugMetrics(score:np.ndarray[np.bool_], expected:np.ndarray[np.bool_]):
+def debugMetrics(score:np.ndarray, expected:np.ndarray):
+    """
+
+    Args:
+        score (np.ndarray[np.bool_]): 
+        expected (np.ndarray[np.bool_]): 
+
+    Returns:
+        _type_: 
+    """
     dbg = ''
     truePos = (expected == True) & (score == True)
     falsePos = (expected == False) & (score == True)

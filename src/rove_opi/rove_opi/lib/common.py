@@ -3,11 +3,15 @@ from typing import Dict, List, TypedDict
 import numpy as np
 
 
-SAMPLES_PATH = Path("samples")
-CONVERTED_PATH = Path("converted")
-STATS_PATH = Path("stats")
+BASE_PATH = Path("src/rove_opi/rove_opi")
+SAMPLES_PATH = BASE_PATH / Path("samples")
+CONVERTED_PATH = BASE_PATH / Path("converted")
+STATS_PATH = BASE_PATH / Path("stats")
 
 PATHS = [SAMPLES_PATH, CONVERTED_PATH, STATS_PATH]
+
+CACHE_PATH = BASE_PATH / Path("cache.npy")
+CACHE_START_PATH = BASE_PATH / Path("cache_start.npy")
 
 class AccuracyDict(TypedDict):
     true_pos : float

@@ -1,6 +1,6 @@
 import cv2
 
-from image_processors.thresholders.Thresholder import Thresholder
+from rove_opi.image_processors.thresholders.Thresholder import Thresholder
 
 
 class SimpleThreshold(Thresholder):

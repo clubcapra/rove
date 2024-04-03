@@ -6,11 +6,11 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 from tqdm import tqdm
-from cinput import cinput, intChoice, ynValidator
-from common import STATS_PATH, AccuracyStatsDict
+from rove_opi.lib.cinput import cinput, intChoice, ynValidator
+from rove_opi.lib.common import STATS_PATH, AccuracyStatsDict
 
-from image_processors.ImageProcessor import ImageProcessor
-from utils import arrangeBars, calculate_metrics, debugMetrics, debugScore
+from rove_opi.image_processors.ImageProcessor import ImageProcessor
+from rove_opi.lib.utils import arrangeBars, calculate_metrics, debugMetrics, debugScore
 
 
 class OPIFinder:
@@ -113,7 +113,16 @@ class OPIFinder:
         
         return self.getSelectedStep(list(choices.keys())[step])
 
-    def find(self, img:cv2.Mat, choices:Union[Dict[str,str],Callable[[Dict[str,str]], Dict[str,str]]]=None) -> Tuple[bool, Union[np.ndarray[np.int_,np.int_],None]]:
+    def find(self, img:cv2.Mat, choices:Union[Dict[str,str],Callable[[Dict[str,str]], Dict[str,str]]]=None) -> Tuple[bool, Union[np.ndarray,None]]:
+        """
+
+        Args:
+            img (cv2.Mat): 
+            choices (Union[Dict[str,str],Callable[[Dict[str,str]], Dict[str,str]]], optional): . Defaults to None.
+
+        Returns:
+            Tuple[bool, Union[np.ndarray,None]]: 
+        """
         self.updateChoices()
         # Normalize
         normalized = self.getSelectedStep('normalize', choices)(img)
@@ -414,8 +423,8 @@ class OPIFinder:
         
         for k, s, e in zip(reorderedScores.keys(), reorderedScores.values(), reorderedExpected.values()):
             print(f"{k}:\n")
-            s:np.ndarray[np.float_]
-            e:np.ndarray[np.float_]
+            s:np.ndarray
+            e:np.ndarray
             results['scores'][k] = s.tolist()
             results['expected'][k] = e.tolist()
             

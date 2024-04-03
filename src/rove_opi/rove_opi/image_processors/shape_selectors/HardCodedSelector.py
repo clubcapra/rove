@@ -5,7 +5,7 @@ from numbers import Number
 from typing import Dict, List, Tuple, Union
 import cv2
 import numpy as np
-from image_processors.shape_selectors.ShapeSeletor import ShapeSelector
+from rove_opi.image_processors.shape_selectors.ShapeSeletor import ShapeSelector
 
 
 class HardCodedSelector(ShapeSelector):
@@ -37,11 +37,22 @@ class HardCodedSelector(ShapeSelector):
             
         return total / s
         
-    def __call__(self, img: cv2.Mat, scores: List[Dict[str, float]], warps: List[cv2.Mat], trapezoids: np.ndarray[np.float_]) -> Tuple[List[int], List[np.ndarray[np.float_]], List[float]]:
+    def __call__(self, img: cv2.Mat, scores: List[Dict[str, float]], warps: List[cv2.Mat], trapezoids: np.ndarray) -> Tuple[List[int], List[np.ndarray], List[float]]:
+        """
+
+        Args:
+            img (cv2.Mat): 
+            scores (List[Dict[str, float]]): 
+            warps (List[cv2.Mat]): 
+            trapezoids (np.ndarray[np.float_]): 
+
+        Returns:
+            Tuple[List[int], List[np.ndarray[np.float_]], List[float]]: 
+        """
         indices: List[int] = []
         if scores is None or warps is None or trapezoids is None:
             return [], [], []
-        res: List[np.ndarray[np.float_]] = []
+        res: List[np.ndarray] = []
         factors: List[float] = []
         for i, ss in enumerate(scores):
             s = self.calculateFactor(ss)

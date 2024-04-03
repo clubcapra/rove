@@ -2,8 +2,8 @@ import math
 from typing import Dict, List, Tuple
 import cv2
 import numpy as np
-from image_processors.contrasters.Contraster import Contraster
-from image_processors.shape_identifiers.ShapeIdentifier import ShapeIdentifier
+from rove_opi.image_processors.contrasters.Contraster import Contraster
+from rove_opi.image_processors.shape_identifiers.ShapeIdentifier import ShapeIdentifier
 import pytesseract
 
 
@@ -14,7 +14,7 @@ class BasicShapeIdentifier(ShapeIdentifier):
         self.lineBorder = lineBorder
         self.contraster = contraster
         
-    def __call__(self, img: cv2.Mat, warps: List[cv2.Mat], rectAreas:np.ndarray[np.float_]) -> Tuple[List[Dict[str, float]], List[cv2.Mat]]:
+    def __call__(self, img: cv2.Mat, warps: List[cv2.Mat], rectAreas:np.ndarray) -> Tuple[List[Dict[str, float]], List[cv2.Mat]]:
         if warps is None:
             return None, None
         # List for valid results

@@ -1,7 +1,7 @@
 from typing import Sequence
 import cv2
 
-from image_processors.ImageProcessor import ImageProcessor
+from rove_opi.image_processors.ImageProcessor import ImageProcessor
 
 
 class EdgeDetector(ImageProcessor):

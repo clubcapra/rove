@@ -170,10 +170,10 @@ class JSONAccuracyData(AccuracyData):
 
         self.updateNames()
         
-    def getScores(self, _key:str) -> np.ndarray[np.float_]:
+    def getScores(self, _key:str) -> np.ndarray:
         return np.array([[ddd["results"][_key] for ddd in dd] for dd in [d["warps"] for d in self.data["data"]]]).flatten()
     
-    def setScores(self, _key:str, scores:np.ndarray[np.float_]):
+    def setScores(self, _key:str, scores:np.ndarray):
         self.addName(_key)
         i = 0
         for d in self.data["data"]:
@@ -194,20 +194,20 @@ class JSONAccuracyData(AccuracyData):
         warpIndex = _index % 4
         self.data["data"][index(imgIndex)]["warps"][index(warpIndex)]["results"][_key] = score
     
-    def getExpecteds(self, _key:str) -> np.ndarray[np.float_]:
+    def getExpecteds(self, _key:str) -> np.ndarray:
         return np.array([[ddd["expected"][_key] for ddd in dd] for dd in [d["warps"] for d in self.data["data"]]]).flatten()
     
-    def setExpecteds(self, _key:str, expected:np.ndarray[np.float_]):
+    def setExpecteds(self, _key:str, expected:np.ndarray):
         self.addName(_key)
     
     @overload
-    def getExpected(self, _key:str, _index: SupportsIndex) -> np.ndarray[np.float_]:
+    def getExpected(self, _key:str, _index: SupportsIndex) -> np.ndarray:
         imgIndex = _index // 4
         warpIndex = _index % 4
         return self.data["data"][index(imgIndex)]["warps"][index(warpIndex)]["expected"][_key]
     
     @overload
-    def setExpected(self, _key:str, _index: SupportsIndex, expected:np.ndarray[np.float_]):
+    def setExpected(self, _key:str, _index: SupportsIndex, expected:np.ndarray):
         self.addName(_key)
         imgIndex = _index // 4
         warpIndex = _index % 4

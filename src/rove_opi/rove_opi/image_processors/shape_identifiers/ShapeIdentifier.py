@@ -1,8 +1,8 @@
 from typing import Dict, List, Tuple
 
 import cv2
-from image_processors.ImageProcessor import ImageProcessor
-from utils import debugScore
+from rove_opi.image_processors.ImageProcessor import ImageProcessor
+from  rove_opi.lib.utils import debugScore
 
 
 class ShapeIdentifier(ImageProcessor):

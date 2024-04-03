@@ -1,6 +1,6 @@
 import cv2
-from image_processors.contrasters.Contraster import Contraster
-from image_processors.normalizers.Normalizer import Normalizer
+from .Contraster import Contraster
+from rove_opi.image_processors.normalizers.Normalizer import Normalizer
 
 
 class Red(Contraster):

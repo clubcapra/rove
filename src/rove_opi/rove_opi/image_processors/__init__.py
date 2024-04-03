@@ -1,12 +1,12 @@
 from .ImageProcessor import ImageProcessor
-import image_processors.contrasters
-import image_processors.edge_detectors
-import image_processors.edge_filters
-import image_processors.normalizers
-import image_processors.shape_identifiers
-import image_processors.shape_postprocessors
-import image_processors.shape_selectors
-import image_processors.trapezoid_finders
-import image_processors.trapezoid_rectifiers
-import image_processors.thresholders
+from . import contrasters
+from . import edge_detectors
+from . import edge_filters
+from . import normalizers
+from . import shape_identifiers
+from . import shape_postprocessors
+from . import shape_selectors
+from . import trapezoid_finders
+from . import trapezoid_rectifiers
+from . import thresholders
 from .OPIFinder import OPIFinder

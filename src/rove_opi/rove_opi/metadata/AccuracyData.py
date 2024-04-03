@@ -46,10 +46,10 @@ class AccuracyData(ABCMeta):
     def removeName(self, name:str): ...
     
     @abstractmethod
-    def getScores(self, _key:str) -> np.ndarray[np.float_]: ...
+    def getScores(self, _key:str) -> np.ndarray: ...
     
     @abstractmethod
-    def setScores(self, _key:str, scores:np.ndarray[np.float_]): ...
+    def setScores(self, _key:str, scores:np.ndarray): ...
     
     @abstractmethod
     @overload
@@ -68,25 +68,25 @@ class AccuracyData(ABCMeta):
         self.setScore(_key, _imgIndex * 4 + _warpIndex, score)
     
     @abstractmethod
-    def getExpecteds(self, _key:str) -> np.ndarray[np.float_]: ...
+    def getExpecteds(self, _key:str) -> np.ndarray: ...
     
     @abstractmethod
-    def setExpecteds(self, _key:str, expected:np.ndarray[np.float_]): ...
-    
-    @abstractmethod
-    @overload
-    def getExpected(self, _key:str, _index: SupportsIndex) -> np.ndarray[np.float_]: ...
+    def setExpecteds(self, _key:str, expected:np.ndarray): ...
     
     @abstractmethod
     @overload
-    def setExpected(self, _key:str, _index: SupportsIndex, expected:np.ndarray[np.float_]): ...
+    def getExpected(self, _key:str, _index: SupportsIndex) -> np.ndarray: ...
+    
+    @abstractmethod
+    @overload
+    def setExpected(self, _key:str, _index: SupportsIndex, expected:np.ndarray): ...
     
     @overload
-    def getExpected(self, _key:str, _imgIndex: SupportsIndex, _warpIndex: SupportsIndex) -> np.ndarray[np.float_]:
+    def getExpected(self, _key:str, _imgIndex: SupportsIndex, _warpIndex: SupportsIndex) -> np.ndarray:
         return self.getExpected(_key, _imgIndex * 4 + _warpIndex)
     
     @overload
-    def setExpected(self, _key:str, _imgIndex: SupportsIndex, _warpIndex: SupportsIndex, expected:np.ndarray[np.float_]):
+    def setExpected(self, _key:str, _imgIndex: SupportsIndex, _warpIndex: SupportsIndex, expected:np.ndarray):
         self.setExpected(_key, _imgIndex*4 + _warpIndex, expected)
     
     @abstractmethod

@@ -1,10 +1,10 @@
 from typing import Sequence, Tuple
 import cv2
 import numpy as np
-from image_processors.edge_detectors.EdgeDetector import EdgeDetector
-from image_processors.edge_filters.EdgeFilter import EdgeFilter
-from image_processors.shape_postprocessors.ShapePostProcessor import ShapePostProcessor
-from utils import compactRect
+from rove_opi.image_processors.edge_detectors.EdgeDetector import EdgeDetector
+from rove_opi.image_processors.edge_filters.EdgeFilter import EdgeFilter
+from rove_opi.image_processors.shape_postprocessors.ShapePostProcessor import ShapePostProcessor
+from rove_opi.lib.utils import compactRect
 
 
 class FillPostProcess(ShapePostProcessor):
@@ -14,7 +14,18 @@ class FillPostProcess(ShapePostProcessor):
         self.edgeFilter = edgeFilter
         self.grow = grow
     
-    def __call__(self, img:cv2.Mat, rects:np.ndarray[np.float_], valid:np.ndarray[np.bool_], cnts:Sequence[cv2.Mat]) -> Tuple[np.ndarray[np.bool_],np.ndarray[np.float_],np.ndarray[np.float_],np.ndarray[np.float_], Sequence[cv2.Mat]]:
+    def __call__(self, img:cv2.Mat, rects:np.ndarray, valid:np.ndarray, cnts:Sequence[cv2.Mat]) -> Tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray, Sequence[cv2.Mat]]:
+        """
+
+        Args:
+            img (cv2.Mat): 
+            rects (np.ndarray[np.float_]): 
+            valid (np.ndarray[np.bool_]): 
+            cnts (Sequence[cv2.Mat]): 
+
+        Returns:
+            Tuple[np.ndarray[np.bool_],np.ndarray[np.float_],np.ndarray[np.float_],np.ndarray[np.float_], Sequence[cv2.Mat]]: 
+        """
         if valid is None or not np.any(valid):
             return valid, None, None, None, cnts
         h, w, _ = img.shape

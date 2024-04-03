@@ -1,11 +1,12 @@
+import io
 from setuptools import find_packages, setup
 
 package_name = 'rove_opi'
-submodules = 'rove_opi/lib'
 
 setup(
     name=package_name,
     version='0.0.0',
+    # packages=[package_name, *submodules],
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',

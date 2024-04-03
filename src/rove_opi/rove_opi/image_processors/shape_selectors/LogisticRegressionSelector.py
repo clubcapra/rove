@@ -2,11 +2,22 @@ from typing import Dict, List, Tuple
 import cv2
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from image_processors.shape_selectors.ShapeSeletor import ShapeSelector
+from rove_opi.image_processors.shape_selectors.ShapeSeletor import ShapeSelector
 
 
 class LogisticRegressionSelector(ShapeSelector):
-    def __call__(self, img: cv2.Mat, scores: List[Dict[str, float]], warps: List[cv2.Mat], trapezoids: np.ndarray[np.float_]) -> Tuple[List[int], List[np.ndarray[np.float_]]]:
+    def __call__(self, img: cv2.Mat, scores: List[Dict[str, float]], warps: List[cv2.Mat], trapezoids: np.ndarray) -> Tuple[List[int], List[np.ndarray]]:
+        """
+
+        Args:
+            img (cv2.Mat): 
+            scores (List[Dict[str, float]]): 
+            warps (List[cv2.Mat]): 
+            trapezoids (np.ndarray[np.float_]): 
+
+        Returns:
+            Tuple[List[int], List[np.ndarray[np.float_]]]: 
+        """
         if scores is None:
             return None, None
         # Assuming scores are normalized

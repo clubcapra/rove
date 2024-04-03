@@ -2,14 +2,26 @@ from itertools import chain
 from typing import Sequence
 import cv2
 import numpy as np
-from image_processors.trapezoid_finders.TrapezoidFinder import TrapezoidFinder
+from rove_opi.image_processors.trapezoid_finders.TrapezoidFinder import TrapezoidFinder
 
 
 class NearestContour(TrapezoidFinder):
     def __init__(self):
         super().__init__()
         
-    def __call__(self, img:cv2.Mat, cnts: Sequence[cv2.Mat], valid: np.ndarray[np.bool_], rects: np.ndarray[np.float_], boxes:np.ndarray[np.float_]) -> np.ndarray[np.float_]:
+    def __call__(self, img:cv2.Mat, cnts: Sequence[cv2.Mat], valid: np.ndarray, rects: np.ndarray, boxes:np.ndarray) -> np.ndarray:
+        """
+
+        Args:
+            img (cv2.Mat): 
+            cnts (Sequence[cv2.Mat]): 
+            valid (np.ndarray[np.bool_]): 
+            rects (np.ndarray[np.float_]): 
+            boxes (np.ndarray[np.float_]): 
+
+        Returns:
+            np.ndarray[np.float_]: 
+        """
         if valid is None or not np.any(valid):
             return None
         res = None

@@ -1,8 +1,8 @@
 from typing import Sequence, Tuple
 import cv2
 import numpy as np
-from image_processors.edge_filters.EdgeFilter import EdgeFilter
-from utils import compactRect, expandRect
+from rove_opi.image_processors.edge_filters.EdgeFilter import EdgeFilter
+from rove_opi.lib.utils import compactRect, expandRect
 
 
 class SimpleEdgeFilter(EdgeFilter):
@@ -12,7 +12,16 @@ class SimpleEdgeFilter(EdgeFilter):
         self.maxArea = maxArea
         self.margin = margin
         
-    def __call__(self, img:cv2.Mat, cnts:Sequence[cv2.Mat]) -> Tuple[np.ndarray[np.bool_],np.ndarray[np.float_],np.ndarray[np.float_],np.ndarray[np.float_]]:
+    def __call__(self, img:cv2.Mat, cnts:Sequence[cv2.Mat]) -> Tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
+        """
+
+        Args:
+            img (cv2.Mat): 
+            cnts (Sequence[cv2.Mat]): 
+
+        Returns:
+            Tuple[np.ndarray[np.bool_],np.ndarray[np.float_],np.ndarray[np.float_],np.ndarray[np.float_]]: 
+        """
         height, width, _ = img.shape
         minArea = self.minArea * height * width
         maxArea = self.maxArea * height * width

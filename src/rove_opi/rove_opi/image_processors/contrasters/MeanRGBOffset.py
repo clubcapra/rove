@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-from common import ORANGE
-from image_processors.contrasters.Contraster import Contraster
+from rove_opi.lib.common import ORANGE
+from .Contraster import Contraster
 
 
 class MeanRGBOffset(Contraster):

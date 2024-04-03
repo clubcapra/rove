@@ -1,7 +1,7 @@
 from typing import Sequence
 import cv2
 import imutils
-from image_processors.edge_detectors.EdgeDetector import EdgeDetector
+from rove_opi.image_processors.edge_detectors.EdgeDetector import EdgeDetector
 
 
 class SimpleEdgeDetect(EdgeDetector):

@@ -6,12 +6,12 @@ import rclpy
 
 
 from cinput import cinput, ynValidator
-from common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
+from rove_opi.lib.common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
 from image_processors import OPIFinder, contrasters, edge_detectors, edge_filters, normalizers, shape_identifiers, shape_postprocessors, shape_selectors, trapezoid_finders, trapezoid_rectifiers, thresholders
 from metadata import ImageBrowser
 from old_processing import filterThresh, final, noProcess, normalize, ocr, orangeness1, orangeness1Thresh, red, straighten
 
-from utils import convert, ensureExists
+from  rove_opi.lib.utils import convert, ensureExists
 
 class ImageBrowserBehavior:
     def __init__(self, imgs: List[cv2.Mat], behaviors:OPIFinder):

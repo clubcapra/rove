@@ -6,9 +6,9 @@ from typing import Dict, List, Tuple, Union, overload
 from cv2 import Mat
 from matplotlib import pyplot as plt
 import numpy as np
-from common import AccuracyStatsDict
-from image_processors.shape_selectors.ShapeSeletor import ShapeSelector
-from prediction import adjustThresholdForPrecision
+from rove_opi.lib.common import AccuracyStatsDict
+from rove_opi.image_processors.shape_selectors.ShapeSeletor import ShapeSelector
+from rove_opi.prediction import adjustThresholdForPrecision
 
 
 class AggressiveLowFalsePos(ShapeSelector):
@@ -89,11 +89,22 @@ class AggressiveLowFalsePos(ShapeSelector):
             
         return total / s
             
-    def __call__(self, img: Mat, scores: List[Dict[str, float]], warps: List[Mat], trapezoids: np.ndarray[np.float_]) -> Tuple[List[int], List[np.ndarray[np.float_]], List[float]]:
+    def __call__(self, img: Mat, scores: List[Dict[str, float]], warps: List[Mat], trapezoids: np.ndarray) -> Tuple[List[int], List[np.ndarray], List[float]]:
+        """
+
+        Args:
+            img (Mat): 
+            scores (List[Dict[str, float]]): 
+            warps (List[Mat]): 
+            trapezoids (np.ndarray[np.float_]): 
+
+        Returns:
+            Tuple[List[int], List[np.ndarray[np.float_]], List[float]]: 
+        """
         indices: List[int] = []
         if scores is None or warps is None or trapezoids is None:
             return [], [], []
-        res: List[np.ndarray[np.float_]] = []
+        res: List[np.ndarray] = []
         factors: List[float] = []
         for i, s in enumerate(scores):
             f = self.calculateFactor(s)

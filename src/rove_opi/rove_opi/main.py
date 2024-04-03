@@ -1,17 +1,33 @@
+# Librairy imports
 import json
-from typing import List
 import cv2
 import numpy as np
+
+# Ros2 imports
 import rclpy
+from rclpy.node import Node
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Polygon, Point32
 from cv_bridge import CvBridge
+
+# Common imports
 from .lib.common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
-from .image_processors import OPIFinder, contrasters, edge_detectors, edge_filters, normalizers, shape_identifiers, shape_postprocessors, shape_selectors, trapezoid_finders, trapezoid_rectifiers, thresholders
 from .lib.utils import convert, ensureExists
 
-class OPIProcessing(rclpy.Node):
-  
+# Image processor imports
+from .image_processors import contrasters
+from .image_processors import edge_detectors
+from .image_processors import edge_filters
+from .image_processors import normalizers
+from .image_processors import shape_identifiers
+from .image_processors import shape_postprocessors
+from .image_processors import shape_selectors
+from .image_processors import trapezoid_finders
+from .image_processors import trapezoid_rectifiers
+from .image_processors import thresholders
+from .image_processors import OPIFinder
+
+class OPIProcessing(Node):
     def __init__(self, finder:OPIFinder):
         super().__init__('opi_processing')
         self.subscriber = self.create_subscription(Image, 'image', self.receive_img, 1)
@@ -38,7 +54,7 @@ class OPIProcessing(rclpy.Node):
                 polygon.points = points
                 self.publisher.publish(polygon)
         except Exception as e:
-            self.get_logger().error('Error publishing PNG image: %s' % str(e))
+            self.get_logger().error('Error publishing result : %s' % str(e))
 
 
 def main(args=None):
