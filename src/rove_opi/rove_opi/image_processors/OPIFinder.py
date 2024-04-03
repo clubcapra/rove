@@ -11,6 +11,7 @@ from rove_opi.lib.common import STATS_PATH, AccuracyStatsDict
 
 from rove_opi.image_processors.ImageProcessor import ImageProcessor
 from rove_opi.lib.utils import arrangeBars, calculate_metrics, debugMetrics, debugScore
+from rove_opi.lib.common import CACHE_PATH
 
 
 class OPIFinder:
@@ -247,7 +248,7 @@ class OPIFinder:
     def accuracy(self, imgs: Sequence[cv2.Mat], overwrite:bool, test:bool, validity:bool, thresholds:Dict[str, float] = None):
         def save(rScores, rExpected):
             res = np.array([(s, e) for s, e in zip(rScores.values(), rExpected.values())])
-            np.save("cache", res)
+            np.save(str(CACHE_PATH), res)
             
             
         names = [

@@ -1,4 +1,5 @@
-import io
+from glob import glob
+import os
 from setuptools import find_packages, setup
 
 package_name = 'rove_opi'
@@ -11,6 +12,7 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
+        (os.path.join('share', package_name), glob('launch/*.launch.py')),
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],

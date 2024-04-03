@@ -1,5 +1,6 @@
 # Librairy imports
 import json
+import sys
 import cv2
 import numpy as np
 
@@ -31,24 +32,27 @@ from .image_processors import OPIFinder
 class OPIProcessing(Node):
     def __init__(self, finder:OPIFinder):
         super().__init__('opi_processing')
-        self.subscriber = self.create_subscription(Image, 'image', self.receive_img, 1)
+        self.subscriber = self.create_subscription(Image, '/image', self.receive_img, 1)
         self.publisher = self.create_publisher(Polygon, 'trapezoid', 10)
         self.bridge = CvBridge()
         self.finder = finder
 
     def receive_img(self, imgmsg:Image):
         img = self.bridge.imgmsg_to_cv2(imgmsg)
-        cv2.imshow('OPI', img)
+        if img.shape[0] > 800 or img.shape[1] > 800:
+            img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
+        cv2.imshow('Input', img)
         cv2.waitKey(1)
         best = None          
         _, (indices, trapezoids, scores) = self.finder.find2(img)
+        prev = img.copy()
         if len(trapezoids) > 0:
             selectedScores = np.array([scores[i] for i in indices])
             
-            self.get_logger().info(f"Scores: {selectedScores}")
+            self.get_logger().debug(f"Scores: {selectedScores}")
             bestIdx = selectedScores.argmax()
-            self.get_logger().info(f"Idx: {bestIdx}")
-            self.get_logger().info(f"Trapezoids: {trapezoids}")
+            self.get_logger().debug(f"Idx: {bestIdx}")
+            self.get_logger().debug(f"Trapezoids: {trapezoids}")
             best = trapezoids[bestIdx]
             points = []
             for p in best:
@@ -56,15 +60,27 @@ class OPIProcessing(Node):
             polygon = Polygon()
             polygon.points = points
             self.publisher.publish(polygon)
-
+            for i in range(len(trapezoids)):
+                thickness = 2
+                color = np.uint8(np.random.rand(3) * 255)
+                
+                if i == bestIdx:
+                    thickness = 5
+                    color = (0, 255, 0)
+                cv2.drawContours(prev, trapezoids, i, color, thickness)
+        else:
+            prev = cv2.rectangle(prev, (0,0), (prev.shape[1], prev.shape[0]), (0,0,255), 4)
+        cv2.imshow("Output", prev)
+        cv2.waitKey(1)
+        
 
 def main(args=None):
     rclpy.init(args=args)
-    
+
     ensureExists()
     convert()
     
-    imgs = [cv2.imread(str(p)) for p in CONVERTED_PATH.iterdir()]
+    # imgs = [cv2.imread(str(p)) for p in CONVERTED_PATH.iterdir()]
     
     finder = OPIFinder()
     finder.steps['normalize']['simple'] = normalizers.SimpleNormalizer()
