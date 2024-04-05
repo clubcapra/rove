@@ -13,21 +13,21 @@ from geometry_msgs.msg import Polygon, Point32
 from cv_bridge import CvBridge
 
 # Common imports
-from .lib.common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
-from .lib.utils import convert, ensureExists
+from rove_opi.lib.common import CONVERTED_PATH, KEY_ESC, KEY_LEFT, KEY_RIGHT, STATS_PATH, AccuracyStatsDict
+from rove_opi.lib.utils import convert, ensureExists
 
 # Image processor imports
-from .image_processors import contrasters
-from .image_processors import edge_detectors
-from .image_processors import edge_filters
-from .image_processors import normalizers
-from .image_processors import shape_identifiers
-from .image_processors import shape_postprocessors
-from .image_processors import shape_selectors
-from .image_processors import trapezoid_finders
-from .image_processors import trapezoid_rectifiers
-from .image_processors import thresholders
-from .image_processors import OPIFinder
+from rove_opi.image_processors import contrasters
+from rove_opi.image_processors import edge_detectors
+from rove_opi.image_processors import edge_filters
+from rove_opi.image_processors import normalizers
+from rove_opi.image_processors import shape_identifiers
+from rove_opi.image_processors import shape_postprocessors
+from rove_opi.image_processors import shape_selectors
+from rove_opi.image_processors import trapezoid_finders
+from rove_opi.image_processors import trapezoid_rectifiers
+from rove_opi.image_processors import thresholders
+from rove_opi.image_processors import OPIFinder
 
 class OPIProcessing(Node):
     def __init__(self, finder:OPIFinder):

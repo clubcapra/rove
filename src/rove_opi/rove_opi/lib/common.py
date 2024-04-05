@@ -2,8 +2,10 @@ from pathlib import Path
 from typing import Dict, List, TypedDict
 import numpy as np
 
-
-BASE_PATH = Path("src/rove_opi/rove_opi")
+THIS_PATH = Path(__file__)
+while THIS_PATH.name != 'rove_opi':
+    THIS_PATH = THIS_PATH.parent
+BASE_PATH = THIS_PATH
 SAMPLES_PATH = BASE_PATH / Path("samples")
 CONVERTED_PATH = BASE_PATH / Path("converted")
 STATS_PATH = BASE_PATH / Path("stats")
