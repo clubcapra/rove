@@ -5,7 +5,7 @@ title "Docker Image Dependencies"
 rectangle "ghcr.io/clubcapra/gazebo:harmonic" as harmonic
 rectangle "ros/ros:humble-desktop" as ros_desktop
 rectangle "ros/ros:humble-ros-base" as ros_base
-rectangle "nvcr.io/nvidia/isaac/ros:x86_64-ros2_humble_bcf535ea3b9d16a854aaeb1701ab5a86" as jetson_orin
+rectangle "nvcr.io/nvidia/isaac/ros:aarch64-ros2_humble_b7e1ed6c02a6fa3c1c7392479291c035" as jetson_orin
 
 rectangle "rove-devcontainer" as development_container
 rectangle "rove-raspberry-pi" as rpi_container
