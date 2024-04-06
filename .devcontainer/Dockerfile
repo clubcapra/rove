@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y \
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-RUN apt update -y 
+RUN apt update -y
 
 RUN apt install -y ros-humble-ros-gzharmonic
 
@@ -50,7 +50,7 @@ RUN apt-get update && \
     apt-get update
 
 # Change user
-RUN chown $USERNAME:$USERNAME /workspace/$USERNAME
+RUN chown $USER_UID:$USER_GID /workspace/$USERNAME
 
 USER $USERNAME
 
