@@ -28,6 +28,9 @@ COPY ./ /workspace/$USERNAME/
 # Change user
 USER $USERNAME
 
+# Install Tesseract
+RUN apt install tesseract-ocr
+
 # Rosdep update
 RUN rosdep update
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
