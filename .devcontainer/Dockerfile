@@ -57,7 +57,7 @@ USER $USERNAME
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
-COPY --chown=rove ./ /workspace/$USERNAME
+COPY --chown=$USERNAME ./ /workspace/$USERNAME
 
 # Install ROS dependencies
 RUN rosdep update
