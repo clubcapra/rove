@@ -54,13 +54,18 @@ IF YOU ARE RUNNING IN WSL: do this command
 ```bash
 export LIBGL_ALWAYS_INDIRECT=0 export LIBGL_ALWAYS_SOFTWARE=1
 ```
-Do these commands to run the simulation
+Do these commands to run the gazebo simulation with physics enabled
 ```bash
 colcon build --symlink-install
 source install/setup.bash
 ros2 launch rove_description sim.launch.py
 ```
-
+OR Do these commands to only run the rviz simulation (with joints control)
+```bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch rove_description launch.py
+```
 
 ## Running the controller with a usb cable
 
