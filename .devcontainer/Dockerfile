@@ -8,7 +8,7 @@ ARG USER_GID=$USER_UID
 
 WORKDIR /workspace/$USERNAME
 
-RUN groupadd --gid $USER_GID $USERNAME \
+RUN groupadd --gid $USER_GID $USERNAME || true \
     && groupadd -g 107 input \
     && useradd -s /bin/bash --uid $USER_UID -g $USER_GID -G 107 -m $USERNAME \
     && apt-get update \
@@ -22,19 +22,22 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git
 
-# Copy to preload the ros packages
-COPY ./ /workspace/$USERNAME/
-
 # Change user
 USER $USERNAME
 
 # Install Tesseract
 RUN apt install tesseract-ocr
 
+# Source the ROS setup file
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
+    echo "source /gazebo/gazebo_ws/install/setup.bash" >> ~/.bashrc
+
 # Rosdep update
 RUN rosdep update
+
+# Copy to preload the ros packages
+COPY ./ /workspace/$USERNAME/
+
+# Install ROS dependencies
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
 
-# Source the ROS setup file
-RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
-RUN echo "source /gazebo/gazebo_ws/install/setup.bash" >> ~/.bashrc
