@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro" />
   <xacro:macro name="velodyne_lidar" params="name parent_link *origin
                                              ang_res_h:=0.4 min_ang_h:=-3.141592 max_ang_h:=3.141592
                                              ang_res_v:=2.0 min_ang_v:=-0.261799 max_ang_v:=0.261799
@@ -18,12 +17,12 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/VLP16_base_1.dae"/>
+          <mesh filename="file://$(find rove_description)/meshes/vlp16/VLP16_base_1.dae"/>
         </geometry>
       </visual>
       <visual>
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/VLP16_base_2.dae"/>
+          <mesh filename="file://$(find rove_description)/meshes/vlp16/VLP16_base_2.dae"/>
         </geometry>
       </visual>
       <collision>
@@ -49,7 +48,7 @@
       <visual>
         <origin xyz="0 0 -0.0377"/>
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/VLP16_scan.dae"/>
+          <mesh filename="file://$(find rove_description)/meshes/vlp16/VLP16_scan.dae"/>
         </geometry>
       </visual>
     </link>
@@ -68,7 +67,9 @@
         <update_rate>${update_rate}</update_rate>
         <visualize>true</visualize>
         <always_on>true</always_on>
-        <ignition_frame_id>${name}_laser</ignition_frame_id>
+        <update_rate>5</update_rate>
+        <topic>scan</topic>
+        <gz_frame_id>${name}_laser</gz_frame_id>
         <lidar>
           <scan>
             <horizontal>
