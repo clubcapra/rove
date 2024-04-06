@@ -26,6 +26,13 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
+# gz topic published by Sensors plugin (point cloud)
+- ros_topic_name: "velodyne_points"
+  gz_topic_name: "/scan/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
 # gz topic published by JointState plugin
 - ros_topic_name: "joint_states"
   gz_topic_name: "joint_states"

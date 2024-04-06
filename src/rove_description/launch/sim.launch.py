@@ -93,6 +93,16 @@ def generate_launch_description():
         }.items(),
     )
 
+    slam3d = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_slam, "launch", "slam3d.launch.py"),
+        ),
+        launch_arguments={
+            "use_sim_time": "true",
+            "deskewing": "true",
+        }.items(),
+    )
+
     nav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_nav, "navigation.launch.py"),
@@ -117,6 +127,7 @@ def generate_launch_description():
             robot_localization_node,
             rviz,
             slam,
+            #slam3d,
             create,
             nav,
             ])
