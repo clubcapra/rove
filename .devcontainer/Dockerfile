@@ -25,6 +25,9 @@ RUN apt install -y git
 # Change user
 USER $USERNAME
 
+# Copy to preload the ros packages
+COPY ./ /workspace/$USERNAME/
+
 # Install Tesseract
 RUN apt install tesseract-ocr
 
@@ -34,9 +37,6 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
 
 # Rosdep update
 RUN rosdep update
-
-# Copy to preload the ros packages
-COPY ./ /workspace/$USERNAME/
 
 # Install ROS dependencies
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
