@@ -13,10 +13,12 @@
     <xacro:include filename="$(find rove_description)/urdf/gazebo.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/lidar.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/imu.urdf.xacro" />
-
+    
     <xacro:include filename="$(find rove_description)/urdf/flipper.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/track.urdf.xacro" />
     
+    <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" />
+
     <link name="base_footprint"/>
 
     <link name="base_link">
@@ -45,5 +47,11 @@
         <parent link="base_footprint"/>
         <child link="base_link"/>
     </joint>
+
+    <!-- Insert ovis on top of rove -->
+    <xacro:property name="robot_root" value="base_link" />
+    <xacro:property name="ovis_robot_namespace" value="rove" />
+    <xacro:property name="ovis_base_origin" value="-0.2 0 0.2" />
+    <xacro:ovis base_parent="${robot_root}" prefix="${ovis_robot_namespace}" joint_base_origin_xyz="${ovis_base_origin}" />
 
 </robot>

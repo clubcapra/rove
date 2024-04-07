@@ -2,61 +2,13 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:property name="M_PI" value="3.1415926535897931" />
+    
+    <xacro:include filename="$(find rove_description)/urdf/velodyne.urdf.xacro" />
 
-    <joint name="laser_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="base_scan"/>
-      <origin xyz="0.0 0 0.4" rpy="0 0 0"/>
-    </joint>
+    <xacro:velodyne_lidar name="velodyne" parent_link="base_link">
 
-    <link name="base_scan">
-        <visual>
-            <geometry>
-                <cylinder radius="0.05" length="0.04"/>
-            </geometry>
-        </visual>
-        <collision>
-            <geometry>
-                <cylinder radius="0.05" length="0.04"/>
-            </geometry>
-        </collision>
-        <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <mass value="0.1" />
-            <inertia ixx="${(1/12) * 0.1 * (3*0.05*0.05 + 0.04*0.04)}" ixy="0.0" ixz="0.0"
-                     iyy="${(1/12) * 0.1 * (3*0.05*0.05 + 0.04*0.04)}" iyz="0.0"
-                     izz="${(1/2) * 0.1 * (0.05*0.05)}" />
-        </inertial>
-    </link>
+        <origin xyz="0.0 0.0 0.4" rpy="0 0 0" />
 
-    <gazebo reference="base_scan">
-        <material>Gazebo/Black</material>
+    </xacro:velodyne_lidar>
 
-        <sensor name='laser_sensor_frame' type='gpu_lidar'>
-            <pose> 0 0 0 0 0 0 </pose>
-            <visualize>true</visualize>
-            <always_on>true</always_on>
-            <update_rate>5</update_rate>
-            <topic>scan</topic>
-            <gz_frame_id>base_scan</gz_frame_id>
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>360</samples>
-                        <min_angle>-3.14</min_angle>
-                        <max_angle>3.14</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>1</min>
-                    <max>50</max>
-                </range>
-                <noise>
-                    <type>gaussian</type>
-                    <mean>0.0</mean>
-                    <stddev>0.007</stddev>
-                </noise>
-            </ray>
-        </sensor>
-    </gazebo>
 </robot>
