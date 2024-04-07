@@ -16,7 +16,7 @@ RUN groupadd --gid $USER_GID $USERNAME || true \
     && groupadd -g 107 input \
     && useradd -s /bin/bash --uid $USER_UID -g $USER_GID -G 107 -m $USERNAME \
     && apt-get update \
-    && apt-get install -y sudo \
+    && apt-get install -y sudo tesseract-ocr \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
@@ -54,13 +54,18 @@ RUN chown $USER_UID:$USER_GID /workspace/$USERNAME
 
 USER $USERNAME
 
+# Copy to preload the ros packages
+COPY ./ /workspace/$USERNAME/
+
+# Install Tesseract
+
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
 COPY --chown=$USERNAME ./ /workspace/$USERNAME
 
-# Install ROS dependencies
+# Rosdep update
 RUN rosdep update
 
-
+# Install ROS dependencies
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
