@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install Gazebo
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
 RUN apt update -y
 
@@ -61,6 +61,6 @@ COPY --chown=$USERNAME ./ /workspace/$USERNAME
 
 # Install ROS dependencies
 RUN rosdep update
-# Copy to preload the ros packages
+
 
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
