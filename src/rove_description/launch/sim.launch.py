@@ -20,6 +20,7 @@ def generate_launch_description():
     pkg_rove_nav = get_package_share_directory('rove_navigation')
     slam_pkg_path = get_package_share_directory("slam_toolbox")
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    bringup_pkg_path = get_package_share_directory('rove_bringup')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
@@ -118,6 +119,12 @@ def generate_launch_description():
                    {'use_sim_time': True}]
                    )
 
+    teleop = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(bringup_pkg_path, "launch", "rove_controller_usb.launch.py"),
+        ),
+    )
+
     return LaunchDescription([
             gz_sim,
             DeclareLaunchArgument('rviz', default_value='true',
@@ -130,4 +137,5 @@ def generate_launch_description():
             #slam3d,
             create,
             nav,
+            teleop,
             ])

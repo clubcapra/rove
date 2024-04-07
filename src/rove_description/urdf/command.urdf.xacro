@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">87</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: 1.0}, angular: {z: 0.0}
+        </output>
+    </plugin>
+
+    <!-- Moving Backward: X -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">88</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: -1.0}, angular: {z: 0.0}
+        </output>
+    </plugin>
+
+    <!-- Stop: S -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">83</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: 0.0}, angular: {z: 0.0}
+        </output>
+    </plugin>
+
+    <!-- Left: A -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">65</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: 0.0}, angular: {z: 1.0}
+        </output>
+    </plugin>
+
+    <!-- Right: D -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">68</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: 0.0}, angular: {z: -1.0}
+        </output>
+    </plugin>
+
+    <!-- Forward Left: Q -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">81</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: 1.0}, angular: {z: 1.0}
+        </output>
+    </plugin>
+
+    <!-- Forward Right: E -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">69</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: 1.0}, angular: {z: -1.0}
+        </output>
+    </plugin>
+
+    <!-- Back Left: Z -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">90</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: -1.0}, angular: {z: 1.0}
+        </output>
+    </plugin>
+
+    <!-- Back Right: C -->
+    <plugin filename="gz-sim-triggered-publisher-system"
+        name="gz::sim::systems::TriggeredPublisher">
+        <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">67</match>
+        </input>
+        <output type="gz.msgs.Twist" topic="cmd_vel">
+            linear: {x: -1.0}, angular: {z: -1.0}
+        </output>
+    </plugin>
+
+</robot>
