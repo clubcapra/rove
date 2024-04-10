@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>Implements communication with the control board through ROS</description>
   <maintainer email="capra@ens.etsmtl.ca">vscode</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
 
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
