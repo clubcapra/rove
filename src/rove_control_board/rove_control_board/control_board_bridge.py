@@ -34,17 +34,24 @@ class Bridge(Node):
             self.offset -= 1
             return
         # if self.state:
-        #     api.ledOn()
+        #     s = api.Status(api.StatusCode.ERROR)
+        #     print(s.statusCode)
+        #     print(api.patate(s))
+        # #     api.ledOn()
         # else:
+        #     s = api.Status(api.StatusCode.IDLE)
+        #     print(s.statusCode)
+        #     print(api.patate(s))
         #     api.ledOff()
         # api.setLedState(api.State(self.state))
-        api.loopback(api.State(self.value))
+        api.loopback(api.UInt8(self.value))
         self.state = (self.state + 1) %2
         self.value = (self.value + 1) % 10
         
         
 
 def main(args=None):
+    # print(api.manager.buildAPI())
     api.manager.port = DEV
     api.manager.baud = 9600
     api.manager._stream.rts = True

@@ -4,6 +4,8 @@
 */
 #include <capra_comm.h>
 
+// --- ENUMS ---
+// --- STRUCTS ---
 struct Void
 {
     euint8_t pad0;
@@ -19,16 +21,31 @@ static_assert(sizeof(Vector2D) == 8);
 
 struct State
 {
-    euint8_t state;
+    eboolean_t state;
 };
 static_assert(sizeof(State) == 1);
 
 struct Status
 {
-    euint32_t statusCode;
+    euint8_t statusCode;
 };
-static_assert(sizeof(Status) == 4);
+static_assert(sizeof(Status) == 1);
 
+struct UInt8
+{
+    euint8_t value;
+};
+static_assert(sizeof(UInt8) == 1);
+
+struct RGB
+{
+    efloat_t r;
+    efloat_t g;
+    efloat_t b;
+};
+static_assert(sizeof(RGB) == 12);
+
+// --- COMMANDS ---
 Status ledOn(Void);
 static_assert((sizeof(Void)+1) == 2);
 
@@ -38,15 +55,19 @@ static_assert((sizeof(Void)+1) == 2);
 Status setLedState(State);
 static_assert((sizeof(State)+1) == 2);
 
-State loopback(State);
-static_assert((sizeof(State)+1) == 2);
+UInt8 loopback(UInt8);
+static_assert((sizeof(UInt8)+1) == 2);
+
+State patate(Status);
+static_assert((sizeof(Status)+1) == 2);
 
 BaseFunction_ptr commands[] = {
     new Function<Status, Void>(&ledOn),
     new Function<Status, Void>(&ledOff),
     new Function<Status, State>(&setLedState),
-    new Function<State, State>(&loopback),
+    new Function<UInt8, UInt8>(&loopback),
+    new Function<State, Status>(&patate),
 };
-#define COMMANDS_COUNT 4
-#define MAX_DECODED_SIZE 9
-#define MAX_ENCODED_SIZE 13
+#define COMMANDS_COUNT 5
+#define MAX_DECODED_SIZE 13
+#define MAX_ENCODED_SIZE 21

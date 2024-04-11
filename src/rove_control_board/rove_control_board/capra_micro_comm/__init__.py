@@ -1,10 +1,11 @@
 from __future__ import annotations
 import base64
+from enum import Enum
 import functools
 from io import IOBase, RawIOBase
 import struct
 from textwrap import dedent
-from typing import Callable, Generic, List, NoReturn, Type, TypeVar, Union
+from typing import Callable, ForwardRef, Generic, List, NoReturn, Type, TypeVar, Union, ClassVar
 
 from serial import Serial
 
@@ -27,16 +28,81 @@ TYPE_MAP = {
     'f' : 'efloat_t',
 }
 
+SIZE_MAP = {
+    'x' : 1,
+    'c' : 1,
+    'b' : 1,
+    'B' : 1,
+    '?' : 1,
+    'h' : 2,
+    'H' : 2,
+    'i' : 4,
+    'I' : 4,
+    'l' : 4,
+    'L' : 4,
+    'q' : 8,
+    'Q' : 8,
+    'f' : 4,
+}
+
 class BinaryData:
-    def __init__(self, fmt:str, **values):
-        self._fmt = fmt
-        self._keys = list(values.keys())
+    # _fmt = ''
+    # _keys:List[str] = []
+    # _values:List[Union[BinaryData, BinaryData]] = []
+    # _len = 0
+    def __init__(self, **values):
+        # Set instance attributes
+        self._keys = values.keys()
+        self._values = values.values()
         self.__dict__.update(values)
+        
+    def __len__(self):
+        # return struct.calcsize('<'+self._fmt)
+        return self._len
     
     def unpack(self, buff:bytes):
-        for k, v in zip(self._keys, struct.unpack('<'+self._fmt, buff)):
-            self.__dict__[k] = v
-    
+        # Unpack data
+        b = struct.unpack('<'+self._fmt, buff)
+        # Buffer index
+        idx = 0
+        # Format index
+        fidx = 0
+        for k, v in zip(self.__class__._keys, self.__class__._values):
+            if isinstance(v, (int, float, bool)):
+                # Set value
+                self.__dict__[k] = b[fidx]
+                
+                # Find size in bytes and move buffer index accordingly
+                idx+= SIZE_MAP[self.__class__._fmt[fidx]]
+                
+                # Base type taking one format space
+                fidx+=1
+            elif isinstance(v, BinaryData):
+                # Subclass of BinaryData
+                # Instanciate
+                inst = v.__class__()
+                
+                # Unpack
+                inst.unpack(buff[idx:idx+len(inst)])
+                
+                # Assign value
+                self.__dict__[k] = inst
+                
+                # Move buffer index by the byte length
+                idx+=len(inst)
+                
+                # Move the format index by the values count
+                fidx+=len(v.__class__._values)
+            elif isinstance(v, Enum) and hasattr(v.__class__, '_fmt'):
+                # Enum that contains formatting inromation
+                self.__dict__[k] = v.__class__(b[fidx])
+                
+                # Find size in bytes and move buffer index accordingly
+                idx+= SIZE_MAP[self.__class__._fmt[fidx]]
+                
+                # Base type taking one format space
+                fidx+=1
+                
     @property
     def values(self):
         v = []
@@ -48,17 +114,18 @@ class BinaryData:
     def __len__(self):
         return struct.calcsize(self._fmt)
 
-    def parse(self):
+    def parseCls(self):
+        cls = self.__class__
         i = 0
         pad = 0
-        s = f'struct {self.__class__.__name__}' + '\n{\n'
-        for f in self._fmt:
+        s = f'struct {cls.__name__}' + '\n{\n'
+        for f in cls._fmt:
             l = '    ' + TYPE_MAP[f] + ' '
             if f == 'x':
                 n = f'pad{pad}'
                 pad += 1
             else:
-                n = self._keys[i]
+                n = cls._keys[i]
             
             l += n + ';\n'
             
@@ -66,11 +133,11 @@ class BinaryData:
                 i+=1
             s += l
         s += '};\n'
-        s += f'static_assert(sizeof({self.__class__.__name__}) == {len(self)});'
+        s += f'static_assert(sizeof({cls.__name__}) == {self._len});'
         return s
             
-            
-
+B = TypeVar('B', bound=Type[BinaryData])
+E = TypeVar('E', bound=Type[Enum])
 R = TypeVar('R', bound=BinaryData)
 P = TypeVar('P', bound=BinaryData)
 
@@ -99,7 +166,7 @@ class CommandHook(Generic[P, R]):
         
         # Encode data
         param = struct.pack('<B'+p._fmt, self.id, *p.values)
-        print(param)
+        # print(param)
         with self.parent as stream:
             stream:RawIOBase
             # Send data
@@ -111,7 +178,7 @@ class CommandHook(Generic[P, R]):
             # Read data
             if self.returnType != Void:
                 res = stream.read(len(self.returnType()))
-                print(bin(int.from_bytes(res, 'little')))
+                # print(bin(int.from_bytes(res, 'little')))
         
         # Handle Void return
         r = None
@@ -169,29 +236,36 @@ class Base64(RawIOBase):
     
     def read(self, size: int = -1) -> bytes | None:
         l = self.stream.readline().rstrip(b'\n')
-        print(l)
+        # print(l)
         return base64.decodebytes(l)
 
     def write(self, b) -> int | None:
         line = base64.encodebytes(b)
-        print(line)
+        # print(line)
         return self.stream.write(line+b'\n')
     
     def flush(self) -> None:
         return self.stream.flush()
     
+
+    
+
 class CommandManager:
+    _basetypes:List[BinaryData] = []
     def __init__(self):
         self._id = 0
         self._stream = None
         self._commands:List[CommandHook] = []
+        self._structs:List[Type[BinaryData]] = []
+        self._enums:List[Type[Enum]] = []
+        self._structs = list(CommandManager._basetypes)
         
     def _genID(self):
         res = self._id
         self._id += 1
         return res
         
-    def binaryFunction(self, paramType:Type[P], returnType:Type[R]):
+    def command(self, paramType:Type[P], returnType:Type[R]):
         id = self._genID()
         def predicate(func:Callable[[P], R]) -> Union[Callable[[P], R], CommandHook[P,R]]:
             res = CommandHook(self, id, func, paramType, returnType)
@@ -199,7 +273,24 @@ class CommandManager:
             return functools.update_wrapper(res, func)
         
         return predicate
-        
+
+    def struct(self, fmt:str):
+        return _addtype(fmt, self._structs)
+    
+    def enum(self, fmt:str = 'I'):
+        def pred(cls:E):
+            def parse():
+                s = f'enum class {cls.__name__} : {TYPE_MAP[fmt]}\n'
+                s += '{\n'
+                for k, v in cls.__members__.items():
+                    s += f'    {k} = {v.value},\n'
+                s += '};'
+                return s
+            cls.parse = parse
+            cls._fmt = fmt
+            self._enums.append(cls)
+            return cls
+        return pred
         
     def __enter__(self) -> IOBase: ...
     def __exit__(self, exc_type, exc_val, exc_tb): ...
@@ -212,13 +303,19 @@ class CommandManager:
             */
             #include <capra_comm.h>
             
-            """)
+            // --- ENUMS ---\n""")
+        for e in self._enums:
+            res += e.parse() + '\n\n'
+            
+        res += "// --- STRUCTS ---\n"
         maxSize = 0
-        for cls in BinaryData.__subclasses__():
-            inst = cls()
-            res += inst.parse() + '\n\n'
-            maxSize = max(maxSize, len(inst))
+        for cls in self._structs:
+            v = cls()
+            res += v.parseCls() + '\n\n'
+            maxSize = max(maxSize, len(v))
+        
         lst = "BaseFunction_ptr commands[] = {\n"
+        res += "// --- COMMANDS ---\n"
         for cmd in self._commands:
             res += cmd.parse() + '\n'
             res += cmd.assertParse() + '\n\n'
@@ -229,8 +326,45 @@ class CommandManager:
         
         encoded = base64.encodebytes(bytes(range(maxSize+1)))
         res += f"#define MAX_ENCODED_SIZE {len(encoded)}\n"
+        
+        
         return res
 
+def _addtype(fmt:str, lst:List[BinaryData]):
+    def pred(cls:B):
+        # Setup class attributes
+        cls._fmt = ''
+        inst = cls()
+        global fidx
+        fidx = 0
+        def pad():
+            global fidx
+            while fidx < len(fmt) and fmt[fidx] == 'x':
+                cls._fmt += 'x'
+                fidx+=1
+        pad()
+        for v in inst._values:
+            if isinstance(v, (int, float, bool)):
+                cls._fmt += fmt[fidx]
+            elif isinstance(v, BinaryData):
+                # Subclass of BinaryData
+                cls._fmt += v._fmt
+            elif isinstance(v, Enum) and hasattr(v.__class__, '_fmt'):
+                # Enum that contains formatting information
+                cls._fmt += v.__class__._fmt
+            fidx+=1
+            pad()
+        cls._keys = list(inst._keys)
+        cls._values = list(inst.values)
+        cls._len = len(inst)
+        lst.append(cls)
+        
+        return cls
+    return pred
+
+def _basetype(fmt:str):
+    return _addtype(fmt, CommandManager._basetypes)
+    
 
 class SerialCommandManager(CommandManager):
     def __init__(self, port:str = None, baud:int=9600):
@@ -265,9 +399,9 @@ class SerialCommandManager(CommandManager):
         self._stream.flush()
         
     
-        
+@_basetype('x')
 class Void(BinaryData):
     def __init__(self):
-        BinaryData.__init__(self, 'x')
+        super().__init__()
 
     
