@@ -1,5 +1,6 @@
 from __future__ import annotations
 import base64
+from ctypes import ArgumentError
 from enum import Enum
 import functools
 from io import IOBase, RawIOBase
@@ -330,11 +331,20 @@ class CommandManager:
         
         return res
 
+class StructError(Exception):
+    def __init__(self):
+        super().__init__("No empty constructors found. Make sure to have an __init__() with no parameters.")
+    
+
 def _addtype(fmt:str, lst:List[BinaryData]):
     def pred(cls:B):
         # Setup class attributes
         cls._fmt = ''
-        inst = cls()
+        try:
+            inst = cls()
+        except TypeError as e:
+            raise StructError()
+        
         global fidx
         fidx = 0
         def pad():
@@ -398,10 +408,62 @@ class SerialCommandManager(CommandManager):
     def __exit__(self, *args, **kwargs):
         self._stream.flush()
         
-    
 @_basetype('x')
 class Void(BinaryData):
     def __init__(self):
         super().__init__()
-
     
+@_basetype('?')
+class Bool(BinaryData):
+    def __init__(self, b:bool=False):
+        super().__init__(b=b)
+        self.b:bool
+        
+@_basetype('B')
+class Byte(BinaryData):
+    def __init__(self, b:int=0):
+        super().__init__(b=b)
+        self.b:int
+        
+@_basetype('h')
+class Short(BinaryData):
+    def __init__(self, s:int=0):
+        super().__init__(s=s)
+        self.s:int
+        
+@_basetype('H')
+class UShort(BinaryData):
+    def __init__(self, s:int=0):
+        super().__init__(s=s)
+        self.s:int
+        
+@_basetype('i')
+class Int(BinaryData):
+    def __init__(self, i:int=0):
+        super().__init__(i=i)
+        self.i:int
+        
+@_basetype('I')
+class UInt(BinaryData):
+    def __init__(self, i:int=0):
+        super().__init__(i=i)
+        self.i:int
+        
+@_basetype('q')
+class Long(BinaryData):
+    def __init__(self, l:int=0):
+        super().__init__(l=l)
+        self.l:int
+        
+@_basetype('Q')
+class ULong(BinaryData):
+    def __init__(self, l:int=0):
+        super().__init__(l=l)
+        self.l:int
+        
+@_basetype('f')
+class Float(BinaryData):
+    def __init__(self, f:float=0):
+        super().__init__(f=f)
+        self.f:float
+        

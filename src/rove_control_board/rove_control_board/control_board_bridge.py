@@ -44,14 +44,13 @@ class Bridge(Node):
         #     print(api.patate(s))
         #     api.ledOff()
         # api.setLedState(api.State(self.state))
-        api.loopback(api.UInt8(self.value))
         self.state = (self.state + 1) %2
         self.value = (self.value + 1) % 10
         
         
 
 def main(args=None):
-    # print(api.manager.buildAPI())
+    print(api.manager.buildAPI())
     api.manager.port = DEV
     api.manager.baud = 9600
     api.manager._stream.rts = True

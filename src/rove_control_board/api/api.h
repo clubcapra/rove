@@ -12,6 +12,60 @@ struct Void
 };
 static_assert(sizeof(Void) == 1);
 
+struct Bool
+{
+    eboolean_t b;
+};
+static_assert(sizeof(Bool) == 1);
+
+struct Byte
+{
+    euint8_t b;
+};
+static_assert(sizeof(Byte) == 1);
+
+struct Short
+{
+    eint16_t s;
+};
+static_assert(sizeof(Short) == 2);
+
+struct UShort
+{
+    euint16_t s;
+};
+static_assert(sizeof(UShort) == 2);
+
+struct Int
+{
+    eint32_t i;
+};
+static_assert(sizeof(Int) == 4);
+
+struct UInt
+{
+    euint32_t i;
+};
+static_assert(sizeof(UInt) == 4);
+
+struct Long
+{
+    eint64_t l;
+};
+static_assert(sizeof(Long) == 8);
+
+struct ULong
+{
+    euint64_t l;
+};
+static_assert(sizeof(ULong) == 8);
+
+struct Float
+{
+    efloat_t f;
+};
+static_assert(sizeof(Float) == 4);
+
 struct Vector2D
 {
     efloat_t x;
@@ -31,12 +85,6 @@ struct Status
 };
 static_assert(sizeof(Status) == 1);
 
-struct UInt8
-{
-    euint8_t value;
-};
-static_assert(sizeof(UInt8) == 1);
-
 struct RGB
 {
     efloat_t r;
@@ -46,28 +94,16 @@ struct RGB
 static_assert(sizeof(RGB) == 12);
 
 // --- COMMANDS ---
-Status ledOn(Void);
+Void ledOn(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Status ledOff(Void);
+Void ledOff(Void);
 static_assert((sizeof(Void)+1) == 2);
-
-Status setLedState(State);
-static_assert((sizeof(State)+1) == 2);
-
-UInt8 loopback(UInt8);
-static_assert((sizeof(UInt8)+1) == 2);
-
-State patate(Status);
-static_assert((sizeof(Status)+1) == 2);
 
 BaseFunction_ptr commands[] = {
-    new Function<Status, Void>(&ledOn),
-    new Function<Status, Void>(&ledOff),
-    new Function<Status, State>(&setLedState),
-    new Function<UInt8, UInt8>(&loopback),
-    new Function<State, Status>(&patate),
+    new Function<Void, Void>(&ledOn),
+    new Function<Void, Void>(&ledOff),
 };
-#define COMMANDS_COUNT 5
+#define COMMANDS_COUNT 2
 #define MAX_DECODED_SIZE 13
 #define MAX_ENCODED_SIZE 21
