@@ -1,17 +1,27 @@
+from ctypes.wintypes import RGB
+from typing import NamedTuple, NoReturn, Tuple
 import rclpy
 import rclpy.logging
 from rclpy.node import Node
 import rclpy.waitable
-from rove_control_board import api, capra_micro_comm
+from rove_control_board import api
+import capra_micro_comm_py as comm
 from std_msgs.msg import String, Float32, Bool, ColorRGBA
 from sensor_msgs.msg import Temperature
 
 import serial
 import serial.tools.list_ports
-import struct
 
-DEV = '/dev/ttyACM1'
+DEV = '/dev/ttyACM0'
 
+# TPV bounds ((horiz min, horiz max), (verti min, verti max))
+TPV_BOUNDS:Tuple[Tuple[float, float], Tuple[float,float]] = ((-180, 180), (-45, 90))
+
+@api.setTPVPosition.preCall
+def setTPVPositionValidator(pos:api.Vector2D) -> NoReturn:
+    if TPV_BOUNDS[0][0] <= pos[0] <= TPV_BOUNDS[0][1] and TPV_BOUNDS[1][0] <= pos[1] <= TPV_BOUNDS[1][1]:
+        return
+    raise ValueError('Value for TPV out of range')
 
 def findDevice():
     ports = serial.tools.list_ports.comports()
@@ -23,34 +33,12 @@ def findDevice():
 class Bridge(Node):
     def __init__(self):
         super().__init__('control_board_bridge')
-        self.offset = 2
-        self.timer = self.create_timer(1, self.timerCB)
-        self.state = 1
-        self.value = 0
         
-        
-    def timerCB(self):
-        if self.offset > 0 :
-            self.offset -= 1
-            return
-        # if self.state:
-        #     s = api.Status(api.StatusCode.ERROR)
-        #     print(s.statusCode)
-        #     print(api.patate(s))
-        # #     api.ledOn()
-        # else:
-        #     s = api.Status(api.StatusCode.IDLE)
-        #     print(s.statusCode)
-        #     print(api.patate(s))
-        #     api.ledOff()
-        # api.setLedState(api.State(self.state))
-        self.state = (self.state + 1) %2
-        self.value = (self.value + 1) % 10
         
         
 
 def main(args=None):
-    print(api.manager.buildAPI())
+    print(api.manager.generateAPI())
     api.manager.port = DEV
     api.manager.baud = 9600
     api.manager._stream.rts = True
