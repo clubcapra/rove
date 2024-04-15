@@ -34,7 +34,7 @@ vectornav:
     # Binary output register 1
     BO1:
       asyncMode: 1                   # send only on port 1 to save serial bandwidth
-      rateDivisor: 40                 # 800 / 40 = 20 Hz
+      rateDivisor: 5                 # 800 / 5 = 160 Hz
       #
       # TimeStartup
       # bit name         meaning
@@ -67,7 +67,7 @@ vectornav:
       commonField: 0x3ff             # 10 first fields 
       timeField: 0x0000              # TIMEGROUP_NONE
       imuField: 0x0000               # IMUGROUP_NONE
-      gpsField: 0x270                # Gnss fix, Gnss pose LLA, GNSS pose ECEF, GNSS pose uncertainity
+      gpsField: 0x210                # Gnss fix, GNSS pose uncertainity
       attitudeField: 0x0000          # ATTITUDEGROUP_NONE
       insField: 0xc                  # Vel body, pose ECEF
       gps2Field: 0x0000              # GPSGROUP_NONE
