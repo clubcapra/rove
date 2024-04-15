@@ -20,6 +20,9 @@ RUN groupadd --gid $USER_GID $USERNAME || true \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# Give user serial device permission
+RUN usermod -a -G dialout $USERNAME
+
 # Update all packages
 RUN apt update && apt upgrade -y
 
