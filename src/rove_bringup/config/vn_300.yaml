@@ -63,7 +63,7 @@ vectornav:
       #
       # python code: convert to hex via:  hex(int("0001000000001", 2)) -> 0x201
       #
-      # commonField: 0x7FFF          # cannot request all fields at full frequency
+      # For the other fields: RTFM (https://www.manualslib.com/manual/1280322/Vectornav-Vn-100.html?page=41#manual)
       commonField: 0x3ff             # 10 first fields 
       timeField: 0x0000              # TIMEGROUP_NONE
       imuField: 0x0000               # IMUGROUP_NONE
