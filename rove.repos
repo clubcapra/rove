@@ -7,3 +7,7 @@ repositories:
     type: git
     url: https://github.com/clubcapra/ovis_ros2.git
     version: master
+  vectornav:
+    type: git
+    url: https://github.com/dawonn/vectornav.git
+    version: ros2
