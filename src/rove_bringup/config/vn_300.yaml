@@ -1,5 +1,6 @@
 #
 # taken from the example configuration file for VN 100 running at 800Hz via USB link
+# https://github.com/dawonn/vectornav/blob/ros2/vectornav/config/vn_100_800hz.yaml
 #
 
 vectornav:
