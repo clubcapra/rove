@@ -67,9 +67,9 @@ vectornav:
       commonField: 0x3ff             # 10 first fields 
       timeField: 0x0000              # TIMEGROUP_NONE
       imuField: 0x0000               # IMUGROUP_NONE
-      gpsField: 0x210                # Gnss fix, GNSS pose uncertainity
+      gpsField: 0x210                # Default in code: Gnss fix, GNSS pose uncertainity
       attitudeField: 0x0000          # ATTITUDEGROUP_NONE
-      insField: 0xc                  # Vel body, pose ECEF
+      insField: 0xc                  # Default in code: codeVel body, pose ECEF
       gps2Field: 0x0000              # GPSGROUP_NONE
     # Binary output register 2
     BO2:
