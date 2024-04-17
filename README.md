@@ -81,6 +81,11 @@ source install/setup.bash
 ros2 launch rove_bringup rove_controller_bluetooth.launch.py
 ```
 
+## Launch VectorNav node
+```bash
+ros2 launch rove_bringup vectornav.launch.py
+```
+
 ## Adding New Packages
 
 To add a package for Rove, create it using the ROS2 command ([Creating Your First ROS2 Package](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)). Name it starting with `rove_` to ensure Git tracking. For non-Rove specific packages, create a separate repository and add it to `rove.repos`.
