@@ -22,6 +22,9 @@ RUN apt update && apt upgrade -y
 # Install Git
 RUN apt install -y git python3-pip
 
+# Install custom python libraries
+RUN pip install capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master python-can@git+https://github.com/IliTheButterfly/python-can.git@main --no-input
+
 # Copy to preload the ros packages
 COPY ./ /workspace/$USERNAME/
 
