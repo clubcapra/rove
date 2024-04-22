@@ -20,7 +20,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 RUN apt update && apt upgrade -y
 
 # Install Git
-RUN apt install -y git
+RUN apt install -y git python3-pip
 
 # Copy to preload the ros packages
 COPY ./ /workspace/$USERNAME/
