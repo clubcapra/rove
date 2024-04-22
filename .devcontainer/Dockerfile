@@ -28,6 +28,9 @@ COPY ./ /workspace/$USERNAME/
 # Change user
 USER $USERNAME
 
+# Install control board dependencies
+RUN pip install capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master python-can@git+https://github.com/IliTheButterfly/python-can.git@main --no-input
+
 # Rosdep update
 RUN rosdep update
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y

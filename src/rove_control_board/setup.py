@@ -1,6 +1,5 @@
 import io
 import os
-import sys
 import pip
 from setuptools import find_packages, setup
 
@@ -17,9 +16,10 @@ setup(
     ],
     install_requires=[
         'setuptools',
-        'capra_micro_comm_py @ git+https://github.com/clubcapra/capra_micro_comm_py.git@master', # THIS ISN'T WORKING...
+        'capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master', # THIS ISN'T WORKING...
+        'python-can'
         ],
-    # requires=['capra_micro_comm_py @ git+https://github.com/clubcapra/capra_micro_comm_py.git@master'],
+    # requires=['capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master'],
     zip_safe=True,
     maintainer='capra',
     maintainer_email='capra@ens.etsmtl.ca',
@@ -36,10 +36,11 @@ setup(
 # TODO Fix this please, I am losing my mind, I have been trying for hours to make this setup script install the python package from git...
 # This works but I hate it and I want it to burn and die...
 # i dont like it
-try:
-    import capra_micro_comm_py
-except ImportError:
-    pip.main(['install', 'capra_micro_comm_py @ git+https://github.com/clubcapra/capra_micro_comm_py.git@master', '--no-input', '--quiet'])
+# - Iliana
+# try:
+#     import capra_micro_comm_py
+# except ImportError:
+#     pip.main(['install', 'capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master', '--no-input', '--quiet'])
 
 # FYI, to remove this package, run `pip uninstall capra_micro_comm_py`
 
@@ -56,4 +57,5 @@ if os.path.exists(API_FILE):
     mode = 'w'
 
 with io.open(API_FILE, mode) as wr:
-    wr.write(manager.generateAPI())
+    api, _ = manager.generateAPI()
+    wr.write(api)

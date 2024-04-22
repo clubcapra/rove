@@ -1,0 +1,4 @@
+capra_micro_comm_py:
+    ubuntu:
+        pip:
+            packages: ["git+https://github.com/clubcapra/capra_micro_comm_py.git@master"]

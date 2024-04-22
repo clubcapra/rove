@@ -39,6 +39,7 @@ Pour installer vcs tool et ROS: https://docs.ros.org/en/humble/Installation/Alte
 ```bash
 git clone https://github.com/clubcapra/rove.git
 vcs import src < rove.repos
+pip install capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master python-can@git+https://github.com/IliTheButterfly/python-can.git@main
 colcon build --symlink-install
 source install/setup.bash
 ```

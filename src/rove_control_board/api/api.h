@@ -5,6 +5,28 @@
 
 #include <capra_comm.h>
 
+enum StatusCode : euint32_t
+{
+    STNone = 0,
+};
+
+enum ErrorCode : euint32_t
+{
+    ERNone = 0,
+    ERAdapterNotInit = 1,
+    ERServoXNACK = 2,
+    ERServoYNACK = 4,
+};
+
+enum ServoControlMode : euint32_t
+{
+    SCMNone = 0,
+    SCMPosition = 1,
+    SCMSpeed = 2,
+};
+
+
+
 
 // --- STRUCTS ---
 struct Void
@@ -69,16 +91,10 @@ static_assert(sizeof(Float) == 4);
 
 struct Vector2D
 {
-    efloat_t x;
-    efloat_t y;
+    eint32_t x;
+    eint32_t y;
 };
 static_assert(sizeof(Vector2D) == 8);
-
-struct Status
-{
-    euint16_t statusCode;
-};
-static_assert(sizeof(Status) == 2);
 
 struct RGB
 {
@@ -88,22 +104,13 @@ struct RGB
 };
 static_assert(sizeof(RGB) == 3);
 
-struct LED
-{
-    euint16_t i;
-    RGB c;
-    euint8_t pad0;
-};
-static_assert(sizeof(LED) == 6);
-
 struct Report
 {
     Vector2D pos;
-    Status status;
-    euint8_t pad0;
-    euint8_t pad1;
+    euint32_t statusCode;
+    euint32_t errorCode;
 };
-static_assert(sizeof(Report) == 12);
+static_assert(sizeof(Report) == 16);
 
 struct Bounds
 {
@@ -112,57 +119,89 @@ struct Bounds
 };
 static_assert(sizeof(Bounds) == 8);
 
-struct PIDConfig
-{
-    efloat_t p;
-    efloat_t i;
-    efloat_t d;
-    Bounds bounds;
-};
-static_assert(sizeof(PIDConfig) == 20);
-
-struct Config
-{
-    PIDConfig horizPID;
-    PIDConfig vertiPID;
-};
-static_assert(sizeof(Config) == 40);
-
 // --- COMMANDS ---
-Bool_ setLedColor(LED);
-static_assert((sizeof(LED)+1) == 7);
-
-Bool_ setFrontLedState(Bool_);
-static_assert((sizeof(Bool_)+1) == 2);
-
-Bool_ setBackLedState(Bool_);
-static_assert((sizeof(Bool_)+1) == 2);
-
-Bool_ setTPVPosition(Vector2D);
+Bool_ setServoPosition(Vector2D);
 static_assert((sizeof(Vector2D)+1) == 9);
 
-Vector2D getTPVPosition(Void);
+Vector2D getServoPosition(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Bool_ setTPVSpeed(Vector2D);
+Bool_ setServoPositionZero(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setServoSpeed(Vector2D);
 static_assert((sizeof(Vector2D)+1) == 9);
+
+Vector2D getServoSpeed(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Int getServoPositionX(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Int getServoPositionY(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Int getServoSpeedX(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Int getServoSpeedY(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setServoXAcc(Byte);
+static_assert((sizeof(Byte)+1) == 2);
+
+Bool_ setServoYAcc(Byte);
+static_assert((sizeof(Byte)+1) == 2);
+
+Byte getServoXAcc(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Byte getServoYAcc(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setLEDFront(Bool_);
+static_assert((sizeof(Bool_)+1) == 2);
+
+Bool_ setLEDBack(Bool_);
+static_assert((sizeof(Bool_)+1) == 2);
+
+Bool_ setLEDStrobe(Bool_);
+static_assert((sizeof(Bool_)+1) == 2);
+
+Bool_ getLEDFront(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ getLEDBack(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ getLEDStrobe(Void);
+static_assert((sizeof(Void)+1) == 2);
 
 Report getReport(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Bool_ setConfig(Config);
-static_assert((sizeof(Config)+1) == 41);
-
-BaseFunction_ptr commands[] = {
-    new Function<Bool_, LED>(&setLedColor),
-    new Function<Bool_, Bool_>(&setFrontLedState),
-    new Function<Bool_, Bool_>(&setBackLedState),
-    new Function<Bool_, Vector2D>(&setTPVPosition),
-    new Function<Vector2D, Void>(&getTPVPosition),
-    new Function<Bool_, Vector2D>(&setTPVSpeed),
+static BaseFunction_ptr commands[] = {
+    new Function<Bool_, Vector2D>(&setServoPosition),
+    new Function<Vector2D, Void>(&getServoPosition),
+    new Function<Bool_, Void>(&setServoPositionZero),
+    new Function<Bool_, Vector2D>(&setServoSpeed),
+    new Function<Vector2D, Void>(&getServoSpeed),
+    new Function<Int, Void>(&getServoPositionX),
+    new Function<Int, Void>(&getServoPositionY),
+    new Function<Int, Void>(&getServoSpeedX),
+    new Function<Int, Void>(&getServoSpeedY),
+    new Function<Bool_, Byte>(&setServoXAcc),
+    new Function<Bool_, Byte>(&setServoYAcc),
+    new Function<Byte, Void>(&getServoXAcc),
+    new Function<Byte, Void>(&getServoYAcc),
+    new Function<Bool_, Bool_>(&setLEDFront),
+    new Function<Bool_, Bool_>(&setLEDBack),
+    new Function<Bool_, Bool_>(&setLEDStrobe),
+    new Function<Bool_, Void>(&getLEDFront),
+    new Function<Bool_, Void>(&getLEDBack),
+    new Function<Bool_, Void>(&getLEDStrobe),
     new Function<Report, Void>(&getReport),
-    new Function<Bool_, Config>(&setConfig),
 };
-#define COMMANDS_COUNT 8
-#define MAX_DECODED_SIZE 41
-#define MAX_ENCODED_SIZE 57
+#define COMMANDS_COUNT 20
+#define MAX_DECODED_SIZE 17
+#define MAX_ENCODED_SIZE 25
