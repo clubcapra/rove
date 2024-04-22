@@ -120,6 +120,12 @@ struct Bounds
 static_assert(sizeof(Bounds) == 8);
 
 // --- COMMANDS ---
+Int ping(Int);
+static_assert((sizeof(Int)+1) == 5);
+
+ULong hashCheck(Void);
+static_assert((sizeof(Void)+1) == 2);
+
 Bool_ setServoPosition(Vector2D);
 static_assert((sizeof(Vector2D)+1) == 9);
 
@@ -181,6 +187,8 @@ Report getReport(Void);
 static_assert((sizeof(Void)+1) == 2);
 
 static BaseFunction_ptr commands[] = {
+    new Function<Int, Int>(&ping),
+    new Function<ULong, Void>(&hashCheck),
     new Function<Bool_, Vector2D>(&setServoPosition),
     new Function<Vector2D, Void>(&getServoPosition),
     new Function<Bool_, Void>(&setServoPositionZero),
@@ -202,6 +210,7 @@ static BaseFunction_ptr commands[] = {
     new Function<Bool_, Void>(&getLEDStrobe),
     new Function<Report, Void>(&getReport),
 };
-#define COMMANDS_COUNT 20
+#define COMMANDS_COUNT 22
 #define MAX_DECODED_SIZE 17
 #define MAX_ENCODED_SIZE 25
+#define API_HASH 9203740187175752639UL

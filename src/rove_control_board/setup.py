@@ -14,10 +14,10 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=[
+    install_requires=[ # ROS2 does not follow the python setup procedure. Dependencies added here won't be installed
         'setuptools',
-        'capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master', # THIS ISN'T WORKING...
-        'python-can'
+        'capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master', 
+        'python-can@git+https://github.com/IliTheButterfly/python-can.git@main',
         ],
     # requires=['capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master'],
     zip_safe=True,
@@ -37,12 +37,22 @@ setup(
 # This works but I hate it and I want it to burn and die...
 # i dont like it
 # - Iliana
-# try:
-#     import capra_micro_comm_py
-# except ImportError:
-#     pip.main(['install', 'capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master', '--no-input', '--quiet'])
+try:
+    import capra_micro_comm_py
+except ImportError:
+    try:
+        import can
+        pip.main(['uninstall', 'python-can', '--no-input', '-y', '--quiet'])
+    except ImportError:
+        pass
+    pip.main(['install', 'capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master', 'python-can@git+https://github.com/IliTheButterfly/python-can.git@main', '--no-input', '--quiet'])
 
-# FYI, to remove this package, run `pip uninstall capra_micro_comm_py`
+try:
+    import can
+except ImportError:
+    pip.main(['install', 'python-can@git+https://github.com/IliTheButterfly/python-can.git@main', '--no-input', '--quiet'])
+
+# FYI, to remove this package, run `pip uninstall capra_micro_comm_py python-can`
 
 
 # Generate the micro comm api for the control board
