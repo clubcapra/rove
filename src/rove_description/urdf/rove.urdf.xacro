@@ -13,6 +13,7 @@
     <xacro:include filename="$(find rove_description)/urdf/gazebo.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/lidar.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/imu.urdf.xacro" />
+    <xacro:include filename="$(find rove_description)/urdf/gps.urdf.xacro" />
     
     <xacro:include filename="$(find rove_description)/urdf/flipper.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/track.urdf.xacro" />

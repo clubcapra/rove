@@ -209,6 +209,8 @@ Visualization Manager:
                   {}
                 imu_link:
                   {}
+                gps_link:
+                  {}
                 track_l:
                   {}
                 track_r:
