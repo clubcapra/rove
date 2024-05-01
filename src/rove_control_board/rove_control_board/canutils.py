@@ -46,6 +46,8 @@ class CanBusStream(RawIOBase, can.Listener):
         self._notifier.add_listener(self)
         
     def on_message_received(self, msg: can.Message) -> None:
+        if msg.is_error_frame:
+            print(f"Error: {msg}")
         if msg.arbitration_id == self._remoteID:
             for b in msg.data:
                 self._readqueue.append(b)
@@ -70,11 +72,26 @@ class CanBusStream(RawIOBase, can.Listener):
             return -1
         return self._readqueue[0]
     
+    def read(self) -> int:
+        tmt = time.time() + self._timeout
+        while time.time() < tmt and len(self._readqueue) < 1:
+            time.sleep(0.01)
+        if len(self._readqueue) < 1:
+            return -1
+        return self._readqueue.popleft()
+    
     def read(self, size: int = -1) -> bytes | None:
         
         if size == -1:
             size = len(self._readqueue)
-        size = min(size, len(self._readqueue))
+        
+        # size = min(size, len(self._readqueue))
+        tmt = time.time() + self._timeout
+        while time.time() < tmt and len(self._readqueue) < size:
+            time.sleep(0.01)
+            
+        if len(self._readqueue) < size:
+            return None
         
         return bytes([self._readqueue.popleft() for _ in range(size)])
             
@@ -91,8 +108,8 @@ class CanBusStream(RawIOBase, can.Listener):
     def flush(self) -> None:
         
         while len(self._writequeue) > 0:
-            block = bytes([self._writequeue.popleft() for l in range(min(len(self._writequeue, 8)))])
-            msg = can.Message(time.time(), self._remoteID, dlc=len(block))
+            block = bytes([self._writequeue.popleft() for l in range(min(len(self._writequeue), 8))])
+            msg = can.Message(time.time()/1000, self._remoteID, dlc=len(block), data=block, is_extended_id=False, check=True)
             self._bus.send(msg, self._timeout)
             
     def stop(self) -> None:
@@ -110,6 +127,15 @@ class CanBusCommandManager(comm.CommandManager):
         self._bus:can.BusABC = None
         self._notifier:can.Notifier = None
         self._inUse = False
+        self._bitrate = None
+        
+    @property
+    def bitrate(self) -> int:
+        return self._bitrate
+    
+    @bitrate.setter
+    def bitrate(self, rate:int):
+        self._bitrate = rate
         
     @property
     def channel(self) -> Union[None, str]:
@@ -136,10 +162,13 @@ class CanBusCommandManager(comm.CommandManager):
         self._notifier = noti
         
     def _default(self):
+        if self._bitrate is None:
+            self._bitrate = 250000
         if self._bus is None:
-            self._bus = can.Bus(self._channel, self._interface)
+            self._bus = can.Bus(self._channel, self._interface, bitrate=self._bitrate)
         if self._notifier is None:
             self._notifier = can.Notifier(self._bus, [])
+        
         
     def _maxSize(self):
         return max([c._len for c in self._structs]) + 1
