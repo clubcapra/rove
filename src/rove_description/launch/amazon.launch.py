@@ -92,14 +92,42 @@ def generate_launch_description():
         }.items(),
     )
 
-    robot_localization_node = Node(
+    robot_localization_node_local = Node(
        package='robot_localization',
        executable='ekf_node',
-       name='ekf_filter_node',
+       name='ekf_filter_node_local',
        output='screen',
        parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
                    {'use_sim_time': True}]
                    )
+
+    robot_localization_node_global = Node(
+       package='robot_localization',
+       executable='ekf_node',
+       name='ekf_filter_node_global',
+       output='screen',
+       parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
+                   {'use_sim_time': True}]
+       remappings=[("odometry/filtered", "odometry/global")],
+    )
+
+    navsat_transform = Node(
+        package="robot_localization",
+        executable="navsat_transform_node",
+        name="navsat_transform",
+        output="screen",
+        parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
+                   {'use_sim_time': True}],
+        remappings=[
+            # Subscribed Topics
+                    ("imu/data", "imu"),
+                    ("gps/fix", "gps/fix"),
+                    ("odometry/filtered", "odometry/filtered/global"),
+            # Published Topics
+                    ("gps/filtered", "gps/filtered"),
+                    ("odometry/gps", "odometry/gps"),
+                ],
+    )
 
     return LaunchDescription([
         gz_sim,
@@ -107,7 +135,9 @@ def generate_launch_description():
                               description='Open RViz.'),
         bridge,
         robot_state_publisher,
-        robot_localization_node,
+        robot_localization_node_local,
+        robot_localization_node_global,
+        navsat_transform,
         rviz,
         slam,
         create,
