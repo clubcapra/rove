@@ -22,7 +22,7 @@ def generate_launch_description():
             output='screen',
             parameters=[vn_param_file],
             remappings=[
-                ('/vectornav/gnss', '/gnss'),
+                ('/vectornav/gnss', '/gps/fix'),
             ]
         ),
     ])

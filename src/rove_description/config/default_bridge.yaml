@@ -48,7 +48,7 @@
   direction: GZ_TO_ROS
 
 # gz topic published by NAVSAT plugin
-- ros_topic_name: "gnss"
+- ros_topic_name: "gps/fix"
   gz_topic_name: "navsat"
   ros_type_name: "sensor_msgs/msg/NavSatFix"
   gz_type_name: "ignition.msgs.NavSat"
