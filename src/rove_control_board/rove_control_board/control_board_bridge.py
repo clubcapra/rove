@@ -30,6 +30,8 @@ TPV_BOUNDS:Tuple[Tuple[float, float], Tuple[float,float]] = ((-180, 180), (-45, 
 MAX_SPEED_X = 10000
 MAX_SPEED_Y = 10000
 
+CANBUS_BITRATE = 500000
+
 @api.setServoPosition.preCall
 def setServoPositionValidator(pos:api.Vector2D) -> NoReturn:
     if all([lb <= p <= hb for p, (lb, hb) in zip([pos.x, pos.y], TPV_BOUNDS)]):
@@ -332,7 +334,7 @@ def openSocket():
             try:
                 manager.interface = 'socketcan'
                 manager.channel = chan
-                manager.bitrate = 250000
+                manager.bitrate = CANBUS_BITRATE
                 p = manager.ping()
                 print(f"Ping: {round(p*1000, 2)} us on {chan}")
                 if not isnan(p):

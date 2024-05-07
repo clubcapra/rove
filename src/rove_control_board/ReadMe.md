@@ -29,7 +29,7 @@ After plugging in the UCAN board, you should be able to see the can interface by
 
 Then you can setup the interface by running this:
 ```sh
-sudo ip link set can0 type can bitrate 250000
+sudo ip link set can0 type can bitrate 500000
 sudo ip link set up can0
 ```
 
