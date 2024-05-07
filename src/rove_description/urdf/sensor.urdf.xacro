@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <joint name="gps_joint" type="fixed">
+    <joint name="sensor_joint" type="fixed">
         <parent link="base_link"/>
-        <child link="gps_link"/>
+        <child link="sensor_link"/>
         <origin xyz="0.1 0 0.212" rpy="0 0 0"/>
     </joint>
 
-    <link name="gps_link">
+    <link name="sensor_link">
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="0.1"/>
@@ -27,10 +27,31 @@
         </collision>
     </link>
 
-    <gazebo reference="gps_link">
+    <gazebo reference="sensor_link">
         <material>Gazebo/Black</material>
-        <sensor name="navsat" type="navsat">
-            <gz_frame_id>gps_link</gz_frame_id>
+
+        <sensor name="imu_sensor" type="imu">
+            <gz_frame_id>imu_link</gz_frame_id>
+            <always_on>true</always_on>
+            <update_rate>200</update_rate>
+            <topic>imu</topic>
+            <imu>
+                <noise>
+                    <type>gaussian</type>
+                    <rate>
+                        <mean>0.0</mean>
+                        <stddev>0.01</stddev>
+                    </rate>
+                    <accel>
+                        <mean>0.0</mean>
+                        <stddev>0.01</stddev>
+                    </accel>
+                </noise>
+            </imu>
+        </sensor>
+
+        <sensor name="gps_sensor" type="navsat">
+            <gz_frame_id>sensor_link</gz_frame_id>
             <always_on>true</always_on>
             <update_rate>1</update_rate>
             <topic>navsat</topic>
