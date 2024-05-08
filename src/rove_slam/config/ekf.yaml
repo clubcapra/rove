@@ -51,6 +51,14 @@ ekf_filter_node_global:
                       false, false, false,
                       false, false, false]
 
+        # description from https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/ekf.yaml
+        # Each sensor reading updates some or all of the filter's state. These options give you greater control over which
+        # values from each measurement are fed to the filter. For example, if you have an odometry message as input, but only
+        # want to use its Z position value, then set the entire vector to false, except for the third entry. The order of the
+        # values is x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Note that not some message types
+        # do not provide some of the state variables estimated by the filter. For example, a TwistWithCovarianceStamped message
+        # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
+        # if unspecified, effectively making this parameter required for each sensor.
         odom1: /odometry/gps
         odom1_config: [true,  true,  false,
                        false, false, false,

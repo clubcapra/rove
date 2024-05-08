@@ -110,6 +110,8 @@ def generate_launch_description():
         )
     )
 
+    # used tutorial: https://navigation.ros.org/tutorials/docs/navigation2_with_gps.html
+
     robot_localization_node_local = Node(
        package='robot_localization',
        executable='ekf_node',
