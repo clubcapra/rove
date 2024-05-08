@@ -123,7 +123,7 @@ def generate_launch_description():
         remappings=[
             # Subscribed Topics
                     ("imu/data", "imu"),
-                    ("gps/fix", "gps/fix"),
+                    ("gps/fix", "gps"),
                     ("odometry/filtered", "odometry/filtered/global"),
             # Published Topics
                     ("gps/filtered", "gps/filtered"),
