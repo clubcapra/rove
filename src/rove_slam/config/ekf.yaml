@@ -60,7 +60,7 @@ ekf_filter_node_global:
         # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
         # if unspecified, effectively making this parameter required for each sensor.
         odom1: /odometry/gps
-        odom1_config: [true,  true,  false,
+        odom1_config: [true,  true,  true,
                        false, false, false,
                        false, false, false,
                        false, false, false,
