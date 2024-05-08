@@ -118,7 +118,7 @@ def generate_launch_description():
         executable="navsat_transform_node",
         name="navsat_transform",
         output="screen",
-        parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
+        parameters=[os.path.join(pkg_rove_description, 'config/navsat_transform.yaml'),
                    {'use_sim_time': True}],
         remappings=[
             # Subscribed Topics

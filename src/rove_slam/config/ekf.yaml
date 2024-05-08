@@ -65,15 +65,3 @@ ekf_filter_node_global:
                        false, false, false,
                        false, false, false,
                        false, false, false]
-
-navsat_transform:
-  ros__parameters:
-    frequency: 30.0
-    delay: 3.0
-    magnetic_declination_radians: 0.0
-    yaw_offset: 0.0
-    zero_altitude: true
-    broadcast_utm_transform: true
-    publish_filtered_gps: true
-    use_odometry_yaw: true
-    wait_for_datum: false 
