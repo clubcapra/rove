@@ -83,7 +83,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        imu_link:
+        sensor_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -177,7 +177,7 @@ Visualization Manager:
           Value: true
         flipper_rr:
           Value: true
-        imu_link:
+        sensor_link:
           Value: true
         map:
           Value: true
@@ -207,7 +207,7 @@ Visualization Manager:
                   {}
                 flipper_rr:
                   {}
-                imu_link:
+                sensor_link:
                   {}
                 track_l:
                   {}

@@ -45,5 +45,7 @@
             name="gz::sim::systems::Sensors">
             <render_engine>ogre2</render_engine>
         </plugin>
+
+        <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
     </gazebo>
 </robot>
