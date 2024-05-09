@@ -33,7 +33,7 @@ Interface:TypeAlias = Literal[
 ]
 
 class CanBusStream(RawIOBase, can.Listener):
-    def __init__(self, bus:can.BusABC, maxLenth:int, notifier:can.Notifier, timeout:float=1, remoteID:int=0x446):
+    def __init__(self, bus:can.BusABC, maxLenth:int, notifier:can.Notifier, timeout:float=1, remoteID:int=0x103, localID:int=0x446):
         RawIOBase.__init__(self)
         can.Listener.__init__(self)
         
@@ -41,6 +41,7 @@ class CanBusStream(RawIOBase, can.Listener):
         self._notifier = notifier
         self._timeout = timeout
         self._remoteID = remoteID
+        self._localID = localID
         self._readqueue = collections.deque(maxlen=maxLenth)
         self._writequeue = collections.deque(maxlen=maxLenth)
         self._notifier.add_listener(self)
@@ -48,7 +49,7 @@ class CanBusStream(RawIOBase, can.Listener):
     def on_message_received(self, msg: can.Message) -> None:
         if msg.is_error_frame:
             print(f"Error: {msg}")
-        if msg.arbitration_id == self._remoteID:
+        if msg.arbitration_id == self._localID:
             for b in msg.data:
                 self._readqueue.append(b)
         
@@ -128,6 +129,9 @@ class CanBusCommandManager(comm.CommandManager):
         self._notifier:can.Notifier = None
         self._inUse = False
         self._bitrate = None
+        self._remoteID = 0x103
+        self._localID = 0x446
+        self._timeout = 1
         
     @property
     def bitrate(self) -> int:
@@ -160,6 +164,36 @@ class CanBusCommandManager(comm.CommandManager):
     @notifier.setter
     def notifier(self, noti:can.Notifier):
         self._notifier = noti
+    
+    @property
+    def remoteID(self) -> int:
+        return self._remoteID
+    
+    @remoteID.setter
+    def remoteID(self, id:int):
+        if self._stream is not None:
+            self._stream._remoteID = id
+        self._remoteID = id
+        
+    @property
+    def timeout(self) -> float:
+        return self._timeout
+    
+    @timeout.setter
+    def timeout(self, timeout:float):
+        if self._stream is not None:
+            self._stream._timeout = timeout
+        self._timeout = timeout
+        
+    @property
+    def localID(self) -> int:
+        return self._localID
+    
+    @localID.setter
+    def localID(self, id:int):
+        if self._stream is not None:
+            self._stream._localID = id
+        self._localID = id
         
     def _default(self):
         if self._bitrate is None:
@@ -176,7 +210,7 @@ class CanBusCommandManager(comm.CommandManager):
     def __enter__(self) -> IOBase:
         if self._stream is None:
             self._default()
-            self._stream = CanBusStream(self._bus, self._maxSize() * 2, self._notifier)
+            self._stream = CanBusStream(self._bus, self._maxSize() * 2, self._notifier, self._timeout, self._remoteID, self._localID)
         return self._stream.__enter__()
         
     def __exit__(self, *args, **kwargs):

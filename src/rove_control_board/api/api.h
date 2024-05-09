@@ -5,12 +5,12 @@
 
 #include <capra_comm.h>
 
-enum StatusCode : euint32_t
+enum StatusCode : euint16_t
 {
     STNone = 0,
 };
 
-enum ErrorCode : euint32_t
+enum ErrorCode : euint16_t
 {
     ERNone = 0,
     ERAdapterNotInit = 1,
@@ -91,10 +91,10 @@ static_assert(sizeof(Float) == 4);
 
 struct Vector2D
 {
-    eint32_t x;
-    eint32_t y;
+    eint16_t x;
+    eint16_t y;
 };
-static_assert(sizeof(Vector2D) == 8);
+static_assert(sizeof(Vector2D) == 4);
 
 struct RGB
 {
@@ -107,10 +107,10 @@ static_assert(sizeof(RGB) == 3);
 struct Report
 {
     Vector2D pos;
-    euint32_t statusCode;
-    euint32_t errorCode;
+    euint16_t statusCode;
+    euint16_t errorCode;
 };
-static_assert(sizeof(Report) == 16);
+static_assert(sizeof(Report) == 8);
 
 struct Bounds
 {
@@ -127,7 +127,7 @@ ULong hashCheck(Void);
 static_assert((sizeof(Void)+1) == 2);
 
 Bool_ setServoPosition(Vector2D);
-static_assert((sizeof(Vector2D)+1) == 9);
+static_assert((sizeof(Vector2D)+1) == 5);
 
 Vector2D getServoPosition(Void);
 static_assert((sizeof(Void)+1) == 2);
@@ -136,21 +136,21 @@ Bool_ setServoPositionZero(Void);
 static_assert((sizeof(Void)+1) == 2);
 
 Bool_ setServoSpeed(Vector2D);
-static_assert((sizeof(Vector2D)+1) == 9);
+static_assert((sizeof(Vector2D)+1) == 5);
 
 Vector2D getServoSpeed(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Int getServoPositionX(Void);
+Short getServoPositionX(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Int getServoPositionY(Void);
+Short getServoPositionY(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Int getServoSpeedX(Void);
+Short getServoSpeedX(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Int getServoSpeedY(Void);
+Short getServoSpeedY(Void);
 static_assert((sizeof(Void)+1) == 2);
 
 Bool_ setServoXAcc(Byte);
@@ -194,10 +194,10 @@ static BaseFunction_ptr commands[] = {
     new Function<Bool_, Void>(&setServoPositionZero),
     new Function<Bool_, Vector2D>(&setServoSpeed),
     new Function<Vector2D, Void>(&getServoSpeed),
-    new Function<Int, Void>(&getServoPositionX),
-    new Function<Int, Void>(&getServoPositionY),
-    new Function<Int, Void>(&getServoSpeedX),
-    new Function<Int, Void>(&getServoSpeedY),
+    new Function<Short, Void>(&getServoPositionX),
+    new Function<Short, Void>(&getServoPositionY),
+    new Function<Short, Void>(&getServoSpeedX),
+    new Function<Short, Void>(&getServoSpeedY),
     new Function<Bool_, Byte>(&setServoXAcc),
     new Function<Bool_, Byte>(&setServoYAcc),
     new Function<Byte, Void>(&getServoXAcc),
@@ -211,6 +211,6 @@ static BaseFunction_ptr commands[] = {
     new Function<Report, Void>(&getReport),
 };
 #define COMMANDS_COUNT 22
-#define MAX_DECODED_SIZE 17
-#define MAX_ENCODED_SIZE 25
-#define API_HASH 9203740187175752639UL
+#define MAX_DECODED_SIZE 9
+#define MAX_ENCODED_SIZE 13
+#define API_HASH 6660753000537812969UL

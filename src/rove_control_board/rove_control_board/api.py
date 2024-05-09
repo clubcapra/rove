@@ -6,11 +6,11 @@ from rove_control_board.canutils import CanBusCommandManager
 # manager = comm.SerialCommandManager()
 manager = CanBusCommandManager()
 
-@manager.enum('I')
+@manager.enum('H')
 class StatusCode(Enum):
     STNone = 0
     
-@manager.enum('I')
+@manager.enum('H')
 class ErrorCode(Enum):
     ERNone =            0b00000000
     ERAdapterNotInit =  0b00000001
@@ -23,7 +23,7 @@ class ServoControlMode(Enum):
     SCMPosition = 1
     SCMSpeed = 2
 
-@manager.struct('ii')
+@manager.struct('hh')
 class Vector2D(comm.BinaryData):
     def __init__(self, x:int=0, y:int=0):
         super().__init__(x=x, y=y)
@@ -38,7 +38,7 @@ class RGB(comm.BinaryData):
         self.g:int
         self.b:int
         
-@manager.struct('_II')
+@manager.struct('_HH')
 class Report(comm.BinaryData):
     def __init__(self, pos:Vector2D=Vector2D(), statusCode:int=0, errorCode:int=0):
         super().__init__(pos=pos, statusCode=statusCode, errorCode=errorCode)
@@ -73,20 +73,20 @@ def setServoSpeed(speed:Vector2D) -> comm.Bool_:
 def getServoSpeed() -> Vector2D:
     pass
 
-@manager.command(comm.Void, comm.Int)
-def getServoPositionX() -> comm.Int:
+@manager.command(comm.Void, comm.Short)
+def getServoPositionX() -> comm.Short:
     pass
 
-@manager.command(comm.Void, comm.Int)
-def getServoPositionY() -> comm.Int:
+@manager.command(comm.Void, comm.Short)
+def getServoPositionY() -> comm.Short:
     pass
 
-@manager.command(comm.Void, comm.Int)
-def getServoSpeedX() -> comm.Int:
+@manager.command(comm.Void, comm.Short)
+def getServoSpeedX() -> comm.Short:
     pass
 
-@manager.command(comm.Void, comm.Int)
-def getServoSpeedY() -> comm.Int:
+@manager.command(comm.Void, comm.Short)
+def getServoSpeedY() -> comm.Short:
     pass
 
 @manager.command(comm.Byte, comm.Bool_)

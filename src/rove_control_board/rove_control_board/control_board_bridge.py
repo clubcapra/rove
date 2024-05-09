@@ -2,6 +2,7 @@ from __future__ import annotations
 from math import isinf, isnan, nan
 import math
 import os
+from random import randint
 from time import sleep
 from types import TracebackType
 from typing import Any, Callable, NamedTuple, NoReturn, Tuple
@@ -84,6 +85,9 @@ class Bridge(Node):
         self.led_strobe = self.create_publisher(Bool, 'led_strobe', 0)
         self.led_strobe_set = self.create_subscription(Bool, 'led_strobe_set', self.setLEDStrobe, 3)
         self.create_timer(1/30, self.statusReport)
+        self.create_timer(1/30, self.ping)
+        
+        # self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
         
         self._led_front = False
         self._led_back = False
@@ -188,6 +192,12 @@ class Bridge(Node):
         self.led_front.publish(self.getLEDFront())
         self.led_back.publish(self.getLEDBack())
         self.led_strobe.publish(self.getLEDStrobe())
+        
+    @debugFunc
+    def ping(self):
+        from rove_control_board.api import manager
+        p = manager.ping()
+        self.get_logger().info(f"Ping: {round(p*1000, 2)} us")
         
 def finddir(directory:str, prefix:str):
     directory = directory.removesuffix('/')
@@ -335,7 +345,16 @@ def openSocket():
                 manager.interface = 'socketcan'
                 manager.channel = chan
                 manager.bitrate = CANBUS_BITRATE
+                manager.remoteID = 0x103
+                manager.localID = 0x446
+                manager.timeout = 2
                 p = manager.ping()
+                # pp = randint(-1000, 1000)
+                # print(f"Sending {pp}")
+                # manager._pingcmd(comm.Int(pp))
+                
+                
+                
                 print(f"Ping: {round(p*1000, 2)} us on {chan}")
                 if not isnan(p):
                     break
