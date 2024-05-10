@@ -105,6 +105,9 @@ def toStep(valueDeg:float, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:
 class Bridge(Node):
     def __init__(self):
         super().__init__('control_board_bridge', namespace='control_board_bridge')
+        from rove_control_board.api import manager
+        self.manager = manager
+        
         self.declare_parameters(
             namespace='',
             parameters=[
@@ -119,9 +122,9 @@ class Bridge(Node):
             ]
         )
         self._xStepCount = self.get_parameter_or('tpv_x_step_count', STEP_COUNT)
-        self._xMin = self.get_parameter_or('tpv_x_min', 0)
-        self._xMax = self.get_parameter_or('tpv_x_max', 360)
-        self._xOffset = self.get_parameter_or('tpv_x_offset', 0)
+        self._xMin = self.get_parameter_or('tpv_x_min', -180)
+        self._xMax = self.get_parameter_or('tpv_x_max', 180)
+        self._xOffset = self.get_parameter_or('tpv_x_offset', 180)
         
         
         self._yStepCount = self.get_parameter_or('tpv_y_step_count', STEP_COUNT)
@@ -141,7 +144,7 @@ class Bridge(Node):
         self.led_strobe = self.create_publisher(Bool, 'led_strobe', 0)
         self.led_strobe_set = self.create_subscription(Bool, 'led_strobe_set', self.setLEDStrobe, 3)
         self.heartbeat = self.create_timer(1/30, self.statusReport)
-        # self.create_timer(1/30, self.ping)
+        # self.create_timer(1/100, self.ping)
         
         # self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
         
@@ -158,6 +161,8 @@ class Bridge(Node):
         from rove_control_board.api import manager
         if (not manager.apiCheck()):
             self.get_logger().fatal("API hash mismatch between rove_control_board and control board microcontroller")
+            return False
+        return True
     
     def _xToDeg(self, step:int) -> float:
         return toDeg(step, self._xStepCount, self._xOffset, self._xMin, self._xMax)
@@ -254,6 +259,7 @@ class Bridge(Node):
     @debugFunc
     def statusReport(self):
         r = api.getReport(comm.Void())
+        
         if r.errorCode != api.ErrorCode.ERNone.value:
             try:
                 self.get_logger().error(f"Got {api.ErrorCode(r.errorCode).name} from report.")
@@ -462,14 +468,18 @@ def main(args=None):
         # openSLCan(dev=None, prefix=DEV_ID_PREFIX)
         openSocket()
     
+    
     rclpy.init(args=args)
     
-    bridge = Bridge()
-    bridge.checkAPI()
-    rclpy.spin(bridge)
-
-    bridge.destroy_node()
-    rclpy.shutdown()
+    try:
+        while True:
+            bridge = Bridge()
+            if not bridge.checkAPI():
+                sleep(5)
+            rclpy.spin(bridge)
+            bridge.destroy_node()
+    finally:
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     
