@@ -1,14 +1,14 @@
 from __future__ import annotations
 from math import isinf, isnan, nan
 import math
+from numbers import Number
 import os
 from random import randint
 from time import sleep
 from types import TracebackType
-from typing import Any, Callable, NamedTuple, NoReturn, Tuple
+from typing import Any, Callable, NoReturn, Tuple, TypeVar
 
 import can
-from cv2 import FAST_FEATURE_DETECTOR_FAST_N
 
 import rclpy
 import rclpy.logging
@@ -77,6 +77,31 @@ def debugFunc(func:Callable[[Bridge], Any]):
         return res
     return pred
 
+NumberT = TypeVar('NumberT', float, int)
+def clamp(value:NumberT, minValue:NumberT, maxValue:NumberT) -> NumberT:
+    return min(maxValue, max(minValue, value))
+
+def toDeg(valueStep:int, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:float) -> float:
+    if not isinstance(valueStep, int):
+        valueStep = int(valueStep)
+    stepDeg = 360.0/stepCount
+    absoluteDeg = valueStep*stepDeg
+    relativeDeg = absoluteDeg - offsetDeg
+    res = clamp(relativeDeg, minDeg, maxDeg)
+    if not isinstance(res, float):
+        res = float(res)
+    return res
+
+def toStep(valueDeg:float, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:float) -> int:
+    if not isinstance(valueDeg, float):
+        valueDeg = float(valueDeg)
+    stepDeg = 360.0/stepCount
+    valueDeg = clamp(valueDeg, minDeg, maxDeg) + offsetDeg
+    absoluteStep = valueDeg/stepDeg
+    if not isinstance(absoluteStep, int):
+        absoluteStep = int(round(absoluteStep))
+    return absoluteStep
+
 class Bridge(Node):
     def __init__(self):
         super().__init__('control_board_bridge', namespace='control_board_bridge')
@@ -86,12 +111,23 @@ class Bridge(Node):
                 ('tpv_x_step_count', rclpy.Parameter.Type.INTEGER),
                 ('tpv_x_min', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_x_max', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_x_offset', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_y_step_count', rclpy.Parameter.Type.INTEGER),
                 ('tpv_y_min', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_y_max', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_y_offset', rclpy.Parameter.Type.DOUBLE),
             ]
         )
+        self._xStepCount = self.get_parameter_or('tpv_x_step_count', STEP_COUNT)
+        self._xMin = self.get_parameter_or('tpv_x_min', 0)
+        self._xMax = self.get_parameter_or('tpv_x_max', 360)
+        self._xOffset = self.get_parameter_or('tpv_x_offset', 0)
         
+        
+        self._yStepCount = self.get_parameter_or('tpv_y_step_count', STEP_COUNT)
+        self._yMin = self.get_parameter_or('tpv_y_min', -45)
+        self._yMax = self.get_parameter_or('tpv_y_max', 90)
+        self._yOffset = self.get_parameter_or('tpv_y_offset', 45)
         
         self.servo_pos = self.create_publisher(Vector3Stamped, 'servo_pos', 0)
         self.servo_set_pos = self.create_subscription(Vector3Stamped, 'servo_set_pos', self.setPos, 3)
@@ -114,8 +150,8 @@ class Bridge(Node):
         self._led_strobe = False
         self._pos = [0,0]
         self._set_pos = [0,0]
-        self._set_vel = [0,0]
-        self._set_acc = [0,0]
+        self._set_vel = [1000,1000]
+        self._set_acc = [150,150]
         self._connected = False
     
     def checkAPI(self):
@@ -123,10 +159,23 @@ class Bridge(Node):
         if (not manager.apiCheck()):
             self.get_logger().fatal("API hash mismatch between rove_control_board and control board microcontroller")
     
+    def _xToDeg(self, step:int) -> float:
+        return toDeg(step, self._xStepCount, self._xOffset, self._xMin, self._xMax)
+    
+    def _xToStep(self, deg:float) -> int:
+        return toStep(deg, self._xStepCount, self._xOffset, self._xMin, self._xMax)
+    
+    def _yToDeg(self, step:int) -> float:
+        return toDeg(step, self._yStepCount, self._yOffset, self._yMin, self._yMax)
+    
+    def _yToStep(self, deg:float) -> int:
+        return toStep(deg, self._yStepCount, self._yOffset, self._yMin, self._yMax)
+    
     @debugFunc
     def setPos(self, pos:Vector3Stamped):
         try:
-            r = api.setServoPosition(api.Vector2D(int(pos.vector.x), int(pos.vector.y)))
+            
+            r = api.setServoPosition(api.Vector2D(self._xToStep(pos.vector.x), self._yToStep(pos.vector.y)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setPos)")
         except ValueError as e:
@@ -180,8 +229,8 @@ class Bridge(Node):
         r = Vector3Stamped()
         r.header.stamp = self.get_clock().now().to_msg()
         r.header.frame_id = 'getPos'
-        r.vector.x = float(self._pos[0])
-        r.vector.y = float(self._pos[1])
+        r.vector.x = self._xToDeg(self._pos[0])
+        r.vector.y = self._yToDeg(self._pos[1])
         return r
             
     @debugFunc
