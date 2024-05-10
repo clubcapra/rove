@@ -74,18 +74,10 @@ def generate_launch_description():
         ),
     )
 
-
-    autonomy = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_bringup, "launch", "autonomy.launch.py"),
-        ),
-    )
-
     return LaunchDescription([
             gz_sim,
             bridge,
             robot_state_publisher,
             create,
             common,
-            autonomy,
             ])

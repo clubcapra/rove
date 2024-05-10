@@ -5,10 +5,8 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command
-from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterValue
-from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch.conditions import IfCondition
 
 
 def generate_launch_description():
@@ -16,6 +14,8 @@ def generate_launch_description():
     pkg_rove_slam = get_package_share_directory('rove_slam')
     pkg_rove_nav = get_package_share_directory('rove_navigation')
     slam_pkg_path = get_package_share_directory("slam_toolbox")  
+
+    use_slam3d = LaunchConfiguration('use_slam3d')
 
     slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -37,6 +37,7 @@ def generate_launch_description():
             "use_sim_time": "true",
             "deskewing": "true",
         }.items(),
+        condition=IfCondition(use_slam3d)
     )
 
     nav = IncludeLaunchDescription(
@@ -48,6 +49,6 @@ def generate_launch_description():
 
     return LaunchDescription([
             slam,
-            #slam3d,
+            slam3d,
             nav,
             ])

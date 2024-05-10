@@ -12,6 +12,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     # Get the launch directory
+    pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
     pkg_rove_slam = get_package_share_directory('rove_slam')
     bringup_pkg_path = get_package_share_directory('rove_bringup')
@@ -86,6 +87,17 @@ def generate_launch_description():
         ),
     )
 
+    autonomy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_bringup, "launch", "autonomy.launch.py"),
+        ),
+        launch_arguments={
+            "use_sim_time": "true",
+            "deskewing": "true",
+            "use_slam3d": "false",
+        }.items(),
+    )
+
     return LaunchDescription([
             robot_state_publisher,
             robot_localization_node_local,
@@ -93,4 +105,5 @@ def generate_launch_description():
             navsat_transform,
             rviz,
             teleop,
+            autonomy,
             ])
