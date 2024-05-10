@@ -12,6 +12,7 @@ from cv2 import FAST_FEATURE_DETECTOR_FAST_N
 
 import rclpy
 import rclpy.logging
+import rclpy.parameter
 from rclpy.node import Node
 import rclpy.waitable
 from rove_control_board import api, canutils
@@ -27,11 +28,16 @@ DEV_ID_PREFIX = 'usb-Protofusion_Labs_CANable'
 DEV = '/dev/ttyACM0/'
 
 # TPV bounds ((horiz min, horiz max), (verti min, verti max))
-TPV_BOUNDS:Tuple[Tuple[float, float], Tuple[float,float]] = ((-180, 180), (-45, 90))
+TPV_BOUNDS:Tuple[Tuple[float, float], Tuple[float,float]] = ((-10000, 10000), (-10000, 10000))
 MAX_SPEED_X = 10000
 MAX_SPEED_Y = 10000
 
 CANBUS_BITRATE = 500000
+
+STEP_COUNT = 4096
+
+def degToStep(deg:float) -> int: 
+    pass
 
 @api.setServoPosition.preCall
 def setServoPositionValidator(pos:api.Vector2D) -> NoReturn:
@@ -66,13 +72,27 @@ def findDevice():
 
 def debugFunc(func:Callable[[Bridge], Any]):
     def pred(self:Bridge, *args, **kwargs):
-        self.get_logger().debug(f"{func.__name__}({args}, {kwargs})")
-        return func(self, *args, **kwargs)
+        res = func(self, *args, **kwargs)
+        self.get_logger().debug(f"{func.__name__}({args}, {kwargs}) = {res}")
+        return res
     return pred
 
 class Bridge(Node):
     def __init__(self):
         super().__init__('control_board_bridge', namespace='control_board_bridge')
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('tpv_x_step_count', rclpy.Parameter.Type.INTEGER),
+                ('tpv_x_min', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_x_max', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_y_step_count', rclpy.Parameter.Type.INTEGER),
+                ('tpv_y_min', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_y_max', rclpy.Parameter.Type.DOUBLE),
+            ]
+        )
+        
+        
         self.servo_pos = self.create_publisher(Vector3Stamped, 'servo_pos', 0)
         self.servo_set_pos = self.create_subscription(Vector3Stamped, 'servo_set_pos', self.setPos, 3)
         self.servo_set_vel = self.create_subscription(Vector3Stamped, 'servo_set_vel', self.setVel, 3)
@@ -84,8 +104,8 @@ class Bridge(Node):
         self.led_back_set = self.create_subscription(Bool, 'led_back_set', self.setLEDBack, 3)
         self.led_strobe = self.create_publisher(Bool, 'led_strobe', 0)
         self.led_strobe_set = self.create_subscription(Bool, 'led_strobe_set', self.setLEDStrobe, 3)
-        self.create_timer(1/30, self.statusReport)
-        self.create_timer(1/30, self.ping)
+        self.heartbeat = self.create_timer(1/30, self.statusReport)
+        # self.create_timer(1/30, self.ping)
         
         # self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
         
@@ -106,7 +126,7 @@ class Bridge(Node):
     @debugFunc
     def setPos(self, pos:Vector3Stamped):
         try:
-            r = api.setServoPosition(api.Vector2D(pos.vector.x, pos.vector.y))
+            r = api.setServoPosition(api.Vector2D(int(pos.vector.x), int(pos.vector.y)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setPos)")
         except ValueError as e:
@@ -115,7 +135,7 @@ class Bridge(Node):
     @debugFunc
     def setVel(self, vel:Vector3Stamped):
         try:
-            r = api.setServoSpeed(api.Vector2D(vel.vector.x, vel.vector.y))
+            r = api.setServoSpeed(api.Vector2D(int(vel.vector.x), int(vel.vector.y)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setVel)")
         except ValueError as e:
@@ -124,10 +144,10 @@ class Bridge(Node):
     @debugFunc
     def setAcc(self, acc:Vector3Stamped):
         try:
-            r = api.setServoXAcc(comm.Byte(acc.vector.x))
+            r = api.setServoXAcc(comm.Byte(int(acc.vector.x)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setAcc X)")
-            r = api.setServoYAcc(comm.Byte(acc.vector.y))
+            r = api.setServoYAcc(comm.Byte(int(acc.vector.y)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setAcc Y)")
         except ValueError as e:
@@ -186,7 +206,13 @@ class Bridge(Node):
     def statusReport(self):
         r = api.getReport(comm.Void())
         if r.errorCode != api.ErrorCode.ERNone.value:
-            self.get_logger().error(f"Got {api.ErrorCode(r.errorCode).name} from report.")
+            try:
+                self.get_logger().error(f"Got {api.ErrorCode(r.errorCode).name} from report.")
+            except ValueError as e:
+                self.get_logger().error(str(e))
+        
+        self._pos[0] = r.pos.x
+        self._pos[1] = r.pos.y
         
         self.servo_pos.publish(self.getPos())
         self.led_front.publish(self.getLEDFront())
@@ -197,7 +223,7 @@ class Bridge(Node):
     def ping(self):
         from rove_control_board.api import manager
         p = manager.ping()
-        self.get_logger().info(f"Ping: {round(p*1000, 2)} us")
+        self.get_logger().info(f"Ping: {round(p*1000, 2)} ms")
         
 def finddir(directory:str, prefix:str):
     directory = directory.removesuffix('/')
@@ -292,7 +318,7 @@ def openSLCan(dev:str=DEV, prefix:str=None, tryOtherPorts:bool=False):
                 manager._default()
                 manager._stream = canutils.CanBusStream(manager._bus, manager._maxSize()*2, manager._notifier)
                 p = manager.ping()
-                print(f"Ping: {round(p, 2)} ms on {chan}")
+                print(f"Ping: {round(p*1000, 2)} ms on {chan}")
                 if not isnan(p):
                     break
                 
@@ -355,7 +381,7 @@ def openSocket():
                 
                 
                 
-                print(f"Ping: {round(p*1000, 2)} us on {chan}")
+                print(f"Ping: {round(p*1000, 2)} ms on {chan}")
                 if not isnan(p):
                     break
                 

@@ -7,7 +7,8 @@
 
 enum StatusCode : euint16_t
 {
-    STNone = 0,
+    STNotInitialized = 0,
+    STInitialized = 1,
 };
 
 enum ErrorCode : euint16_t
@@ -15,14 +16,23 @@ enum ErrorCode : euint16_t
     ERNone = 0,
     ERAdapterNotInit = 1,
     ERServoXNACK = 2,
-    ERServoYNACK = 4,
+    ERServoYNACK = 3,
+    ERWinchLocked = 4,
 };
 
-enum ServoControlMode : euint32_t
+enum ServoControlMode : euint16_t
 {
     SCMNone = 0,
     SCMPosition = 1,
     SCMSpeed = 2,
+};
+
+enum WinchMode : euint16_t
+{
+    WMFreeWheel = 0,
+    WMBrake = 1,
+    WMReverse = 2,
+    WMForward = 3,
 };
 
 
@@ -103,6 +113,13 @@ struct RGB
     euint8_t b;
 };
 static_assert(sizeof(RGB) == 3);
+
+struct RGBLed
+{
+    euint8_t index;
+    RGB rgb;
+};
+static_assert(sizeof(RGBLed) == 4);
 
 struct Report
 {
@@ -186,6 +203,48 @@ static_assert((sizeof(Void)+1) == 2);
 Report getReport(Void);
 static_assert((sizeof(Void)+1) == 2);
 
+UShort getWinchMode(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Void setWinchMode(UShort);
+static_assert((sizeof(UShort)+1) == 3);
+
+Bool_ getWinchLock(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setWinchLock(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+UShort getServoControlMode(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+UShort getServoControlMode(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ getGPIO1(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setGPIO1(Bool_);
+static_assert((sizeof(Bool_)+1) == 2);
+
+Bool_ getGPIO2(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setGPIO2(Bool_);
+static_assert((sizeof(Bool_)+1) == 2);
+
+Bool_ getGPIO3(Void);
+static_assert((sizeof(Void)+1) == 2);
+
+Bool_ setGPIO3(Bool_);
+static_assert((sizeof(Bool_)+1) == 2);
+
+RGB getRGBLed(Int);
+static_assert((sizeof(Int)+1) == 5);
+
+Bool_ setRGBLed(RGBLed);
+static_assert((sizeof(RGBLed)+1) == 5);
+
 static BaseFunction_ptr commands[] = {
     new Function<Int, Int>(&ping),
     new Function<ULong, Void>(&hashCheck),
@@ -209,8 +268,22 @@ static BaseFunction_ptr commands[] = {
     new Function<Bool_, Void>(&getLEDBack),
     new Function<Bool_, Void>(&getLEDStrobe),
     new Function<Report, Void>(&getReport),
+    new Function<UShort, Void>(&getWinchMode),
+    new Function<Void, UShort>(&setWinchMode),
+    new Function<Bool_, Void>(&getWinchLock),
+    new Function<Bool_, Void>(&setWinchLock),
+    new Function<UShort, Void>(&getServoControlMode),
+    new Function<UShort, Void>(&getServoControlMode),
+    new Function<Bool_, Void>(&getGPIO1),
+    new Function<Bool_, Bool_>(&setGPIO1),
+    new Function<Bool_, Void>(&getGPIO2),
+    new Function<Bool_, Bool_>(&setGPIO2),
+    new Function<Bool_, Void>(&getGPIO3),
+    new Function<Bool_, Bool_>(&setGPIO3),
+    new Function<RGB, Int>(&getRGBLed),
+    new Function<Bool_, RGBLed>(&setRGBLed),
 };
-#define COMMANDS_COUNT 22
+#define COMMANDS_COUNT 36
 #define MAX_DECODED_SIZE 9
 #define MAX_ENCODED_SIZE 13
-#define API_HASH 6660753000537812969UL
+#define API_HASH 3739127867455560190UL

@@ -8,20 +8,29 @@ manager = CanBusCommandManager()
 
 @manager.enum('H')
 class StatusCode(Enum):
-    STNone = 0
+    STNotInitialized = 0
+    STInitialized = 1
     
 @manager.enum('H')
 class ErrorCode(Enum):
-    ERNone =            0b00000000
-    ERAdapterNotInit =  0b00000001
-    ERServoXNACK =      0b00000010
-    ERServoYNACK =      0b00000100
+    ERNone =            0
+    ERAdapterNotInit =  1
+    ERServoXNACK =      2
+    ERServoYNACK =      3
+    ERWinchLocked =     4
 
-@manager.enum("I")
+@manager.enum("H")
 class ServoControlMode(Enum):
     SCMNone = 0
     SCMPosition = 1
     SCMSpeed = 2
+    
+@manager.enum("H")
+class WinchMode(Enum):
+    WMFreeWheel = 0
+    WMBrake = 1
+    WMReverse = 2
+    WMForward = 3
 
 @manager.struct('hh')
 class Vector2D(comm.BinaryData):
@@ -30,13 +39,20 @@ class Vector2D(comm.BinaryData):
         self.x:int
         self.y:int
 
-@manager.struct('BBB')
+@manager.struct('BBBx')
 class RGB(comm.BinaryData):
     def __init__(self, r:int=0,g:int=0,b:int=0):
         super().__init__(r=r,g=g,b=b)
         self.r:int
         self.g:int
         self.b:int
+        
+@manager.struct('_B')
+class RGBLed(comm.BinaryData):
+    def __init__(self, rgb:RGB=RGB(), index:int=0,):
+        super().__init__(rgb=rgb, index=index)
+        self.index:int
+        self.rgb:RGB
         
 @manager.struct('_HH')
 class Report(comm.BinaryData):
@@ -133,5 +149,58 @@ def getLEDStrobe() -> comm.Bool_:
 def getReport() -> Report:
     pass
 
+@manager.command(comm.Void, comm.UShort)
+def getWinchMode() -> comm.UShort:
+    pass
 
+@manager.command(comm.UShort, comm.Bool_)
+def setWinchMode(winchMode:comm.UShort):
+    pass
 
+@manager.command(comm.Void, comm.Bool_)
+def getWinchLock() -> comm.Bool_:
+    pass
+    
+@manager.command(comm.Void, comm.Bool_)
+def setWinchLock(lock:comm.Bool_):
+    pass
+
+@manager.command(comm.Void, comm.UShort)
+def getServoControlMode() -> comm.UShort:
+    pass
+
+@manager.command(comm.UShort, comm.UShort)
+def setServoControlMode(servoControlMode:comm.UShort) -> comm.Bool_:
+    pass
+
+@manager.command(comm.Void, comm.Bool_)
+def getGPIO1() -> comm.Bool_:
+    pass
+
+@manager.command(comm.Bool_, comm.Bool_)
+def setGPIO1(state:comm.Bool_) -> comm.Bool_:
+    pass
+
+@manager.command(comm.Void, comm.Bool_)
+def getGPIO2() -> comm.Bool_:
+    pass
+
+@manager.command(comm.Bool_, comm.Bool_)
+def setGPIO2(state:comm.Bool_) -> comm.Bool_:
+    pass
+
+@manager.command(comm.Void, comm.Bool_)
+def getGPIO3() -> comm.Bool_:
+    pass
+
+@manager.command(comm.Bool_, comm.Bool_)
+def setGPIO3(state:comm.Bool_) -> comm.Bool_:
+    pass
+
+@manager.command(comm.Int, RGB)
+def getRGBLed(index:comm.Int) -> RGB:
+    pass
+
+@manager.command(RGBLed, comm.Bool_)
+def setRGBLed(led:RGBLed) -> comm.Bool_:
+    pass
