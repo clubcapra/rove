@@ -1,12 +1,15 @@
 from __future__ import annotations
+from ctypes.wintypes import RGB
+from enum import Enum
+import enum
+import functools
 from math import isinf, isnan, nan
 import math
-from numbers import Number
 import os
-from random import randint
+from sqlite3 import connect
 from time import sleep
-from types import TracebackType
-from typing import Any, Callable, NoReturn, Tuple, TypeVar
+import time
+from typing import Any, Callable, NoReturn, ParamSpecArgs, ParamSpecKwargs, Tuple, TypeVar
 
 import can
 
@@ -14,11 +17,13 @@ import rclpy
 import rclpy.logging
 import rclpy.parameter
 from rclpy.node import Node
+import rclpy.time
 import rclpy.waitable
 from rove_control_board import api, canutils
 import capra_micro_comm_py as comm
-from std_msgs.msg import String, Float32, Bool, ColorRGBA, Byte, Int16, UInt16, Int32, UInt32
+from std_msgs.msg import String, Float32, Bool, ColorRGBA, Byte, Int16, UInt16, Int32, UInt32, Float64MultiArray
 from geometry_msgs.msg import PoseStamped, AccelStamped, TwistStamped, Vector3Stamped, Vector3, Twist, Accel, Pose, Quaternion, Point
+from sensor_msgs.msg import Joy
 
 import serial
 import serial.tools.list_ports
@@ -70,33 +75,39 @@ def findDevice():
         print(p.usb_info())
         print(p.usb_description())
 
-def debugFunc(func:Callable[[Bridge], Any]):
+def debugFunc(func):
+    
     def pred(self:Bridge, *args, **kwargs):
         res = func(self, *args, **kwargs)
         self.get_logger().debug(f"{func.__name__}({args}, {kwargs}) = {res}")
         return res
-    return pred
+    return functools.update_wrapper(func, pred)
 
 NumberT = TypeVar('NumberT', float, int)
 def clamp(value:NumberT, minValue:NumberT, maxValue:NumberT) -> NumberT:
     return min(maxValue, max(minValue, value))
 
-def toDeg(valueStep:int, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:float) -> float:
+# def toDeg(valueStep:int, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:float) -> float:
+def toDeg(valueStep:int, stepCount:int) -> float:
     if not isinstance(valueStep, int):
         valueStep = int(valueStep)
     stepDeg = 360.0/stepCount
     absoluteDeg = valueStep*stepDeg
-    relativeDeg = absoluteDeg - offsetDeg
-    res = clamp(relativeDeg, minDeg, maxDeg)
+    # relativeDeg = absoluteDeg - offsetDeg
+    relativeDeg = absoluteDeg
+    # res = clamp(relativeDeg, minDeg, maxDeg)
+    res = relativeDeg
     if not isinstance(res, float):
         res = float(res)
     return res
 
-def toStep(valueDeg:float, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:float) -> int:
+# def toStep(valueDeg:float, stepCount:int, offsetDeg:float, minDeg:float, maxDeg:float) -> int:
+def toStep(valueDeg:float, stepCount:int) -> int:
     if not isinstance(valueDeg, float):
         valueDeg = float(valueDeg)
     stepDeg = 360.0/stepCount
-    valueDeg = clamp(valueDeg, minDeg, maxDeg) + offsetDeg
+    # valueDeg = clamp(valueDeg, minDeg, maxDeg) + offsetDeg
+    valueDeg = valueDeg
     absoluteStep = valueDeg/stepDeg
     if not isinstance(absoluteStep, int):
         absoluteStep = int(round(absoluteStep))
@@ -108,6 +119,7 @@ class Bridge(Node):
         from rove_control_board.api import manager
         self.manager = manager
         
+        # Setup parameters
         self.declare_parameters(
             namespace='',
             parameters=[
@@ -115,47 +127,80 @@ class Bridge(Node):
                 ('tpv_x_min', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_x_max', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_x_offset', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_x_speed', rclpy.Parameter.Type.INTEGER),
                 ('tpv_y_step_count', rclpy.Parameter.Type.INTEGER),
                 ('tpv_y_min', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_y_max', rclpy.Parameter.Type.DOUBLE),
                 ('tpv_y_offset', rclpy.Parameter.Type.DOUBLE),
+                ('tpv_y_speed', rclpy.Parameter.Type.INTEGER),
             ]
         )
+        
+        # Get parameters
         self._xStepCount = self.get_parameter_or('tpv_x_step_count', STEP_COUNT)
         self._xMin = self.get_parameter_or('tpv_x_min', -180)
         self._xMax = self.get_parameter_or('tpv_x_max', 180)
         self._xOffset = self.get_parameter_or('tpv_x_offset', 180)
-        
+        self._xSpeed = self.get_parameter_or('tpv_x_speed', 5000)
         
         self._yStepCount = self.get_parameter_or('tpv_y_step_count', STEP_COUNT)
         self._yMin = self.get_parameter_or('tpv_y_min', -45)
         self._yMax = self.get_parameter_or('tpv_y_max', 90)
         self._yOffset = self.get_parameter_or('tpv_y_offset', 45)
+        self._ySpeed = self.get_parameter_or('tpv_y_speed', 5000)
         
+        # Setup pubs and subs
         self.servo_pos = self.create_publisher(Vector3Stamped, 'servo_pos', 0)
         self.servo_set_pos = self.create_subscription(Vector3Stamped, 'servo_set_pos', self.setPos, 3)
         self.servo_set_vel = self.create_subscription(Vector3Stamped, 'servo_set_vel', self.setVel, 3)
         self.servo_set_acc = self.create_subscription(Vector3Stamped, 'servo_set_acc', self.setAcc, 3)
-        self.servo_set_mode = self.create_subscription(UInt32, 'servo_set_mode', self.setMode, 3)
+        # self.servo_set_mode = self.create_subscription(UInt32, 'servo_set_mode', self.setMode, 3)
+        # self.servo_joy = self.create_subscription(Joy, '/joy', self.joy, 0)
         self.led_front = self.create_publisher(Bool, 'led_front', 0)
         self.led_front_set = self.create_subscription(Bool, 'led_front_set', self.setLEDFront, 3)
         self.led_back = self.create_publisher(Bool, 'led_back', 0)
         self.led_back_set = self.create_subscription(Bool, 'led_back_set', self.setLEDBack, 3)
         self.led_strobe = self.create_publisher(Bool, 'led_strobe', 0)
         self.led_strobe_set = self.create_subscription(Bool, 'led_strobe_set', self.setLEDStrobe, 3)
-        self.heartbeat = self.create_timer(1/30, self.statusReport)
-        # self.create_timer(1/100, self.ping)
         
-        # self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
+        self._control_mode = api.ServoControlMode.SCMPosition
+        self._control_mode_timeout = 5
+        self._control_mode_return = 0
         
+        # Setup status report
+        # self.heartbeat = self.create_timer(1/30, self.statusReport)
+        self.create_timer(1/100, self.ping)
+        
+        self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
+        
+        # Setup api memory
+        self.reset()
+    
+    def reset(self):
         self._led_front = False
         self._led_back = False
         self._led_strobe = False
         self._pos = [0,0]
         self._set_pos = [0,0]
         self._set_vel = [1000,1000]
+        self._move_vel = [0,0]
         self._set_acc = [150,150]
         self._connected = False
+    
+    def connect(self):
+        if self._connected:
+            return
+        while rclpy.ok():
+            if self.ping() == math.nan:
+                self.get_logger().error("Connection")
+                sleep(5)
+                continue
+            if not self.checkAPI():
+                sleep(5)
+                continue
+            self.get_logger().info("API hash matches")
+            self._connected = True
+            break
     
     def checkAPI(self):
         from rove_control_board.api import manager
@@ -165,21 +210,56 @@ class Bridge(Node):
         return True
     
     def _xToDeg(self, step:int) -> float:
-        return toDeg(step, self._xStepCount, self._xOffset, self._xMin, self._xMax)
+        # return toDeg(step, self._xStepCount, self._xOffset, self._xMin, self._xMax)
+        return toDeg(step, self._xStepCount)
     
     def _xToStep(self, deg:float) -> int:
-        return toStep(deg, self._xStepCount, self._xOffset, self._xMin, self._xMax)
+        # return toStep(deg, self._xStepCount, self._xOffset, self._xMin, self._xMax)
+        return toStep(deg, self._xStepCount)
     
     def _yToDeg(self, step:int) -> float:
-        return toDeg(step, self._yStepCount, self._yOffset, self._yMin, self._yMax)
+        # return toDeg(step, self._yStepCount, self._yOffset, self._yMin, self._yMax)
+        return toDeg(step, self._yStepCount)
     
     def _yToStep(self, deg:float) -> int:
-        return toStep(deg, self._yStepCount, self._yOffset, self._yMin, self._yMax)
+        # return toStep(deg, self._yStepCount, self._yOffset, self._yMin, self._yMax)
+        return toStep(deg, self._yStepCount)
+    
+    @property
+    def nowSeconds(self):
+        return time.time()
+        # return self.get_clock().now().nanoseconds / 1000000000.0
+    
+    def _pushbackControlTimeout(self):
+        self._control_mode_return = self.nowSeconds + self._control_mode_timeout
+        if self._control_mode == api.ServoControlMode.SCMPosition:
+            self.setMode(api.ServoControlMode.SCMSpeed)
+    
+    def _checkControlTimeout(self):
+        if self._control_mode == api.ServoControlMode.SCMSpeed and self._control_mode_return < self.nowSeconds:
+            # self.setMode(api.ServoControlMode.SCMPosition)
+            return True
+        return False
+    
+    @debugFunc
+    def joy(self, value:Joy):
+        x = value.axes[3]
+        y = value.axes[4]
+        if x == self._move_vel[0] and y == self._move_vel[1]:
+            return
+        self._move_vel = [x, y]
+        vel = Vector3Stamped()
+        vel.header.stamp = self.get_clock().now().to_msg()
+        vel.header.frame_id = 'servo_move_vel'
+        vel.vector.x = x
+        vel.vector.y = y
+        self.setMoveVel(vel)
     
     @debugFunc
     def setPos(self, pos:Vector3Stamped):
+        if not self._checkControlTimeout():
+            return
         try:
-            
             r = api.setServoPosition(api.Vector2D(self._xToStep(pos.vector.x), self._yToStep(pos.vector.y)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setPos)")
@@ -188,10 +268,22 @@ class Bridge(Node):
     
     @debugFunc
     def setVel(self, vel:Vector3Stamped):
+        if not self._checkControlTimeout():
+            return
         try:
             r = api.setServoSpeed(api.Vector2D(int(vel.vector.x), int(vel.vector.y)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setVel)")
+        except ValueError as e:
+            self.get_logger().error(e)
+        
+    @debugFunc
+    def setMoveVel(self, vel:Vector3Stamped):
+        try:
+            r = api.setServoSpeed(api.Vector2D(int(vel.vector.x * self._xSpeed), int(vel.vector.y * self._ySpeed)))
+            self._pushbackControlTimeout()
+            if not r.b:
+                self.get_logger().warning(f"Last command didn't ack (from setMoveVel)")
         except ValueError as e:
             self.get_logger().error(e)
             
@@ -208,8 +300,20 @@ class Bridge(Node):
             self.get_logger().error(e)
     
     @debugFunc
-    def setMode(self, mode:UInt32):
-        raise NotImplementedError()
+    def setMode(self, mode:api.ServoControlMode):
+        r = api.setServoControlMode(comm.UShort(mode.value))
+        if not r.b:
+            self.get_logger().warning(f"Last command didn't ack (from setMode)")
+        else:
+            self._control_mode = mode
+          
+    @debugFunc
+    def getMode(self):
+        r = api.getServoControlMode()
+        try:
+            return api.ServoControlMode(r.s)
+        except ValueError as e:
+            self.get_logger().error(e)
         
     @debugFunc
     def setLEDFront(self, state:Bool):
@@ -228,6 +332,12 @@ class Bridge(Node):
         r = api.setLEDStrobe(comm.Bool_(state.data))
         if not r.b:
             self.get_logger().warning(f"Last command didn't ack (from setLEDStrobe)")
+
+    @debugFunc
+    def setLEDColor(self, id:int, color:Tuple[int, int, int]):
+        r = api.setRGBLed(api.RGBLed(api.RGB(*color), id))
+        if not r.b:
+            self.get_logger().warning(f"Last command didn't ack (from setLEDColor)")
     
     @debugFunc
     def getPos(self) -> Vector3Stamped:
@@ -237,7 +347,7 @@ class Bridge(Node):
         r.vector.x = self._xToDeg(self._pos[0])
         r.vector.y = self._yToDeg(self._pos[1])
         return r
-            
+    
     @debugFunc
     def getLEDFront(self) -> Bool:
         r = Bool()
@@ -449,12 +559,30 @@ def openSocket():
         else:
             sleep(1)
 
+def simpleSocketOpen():
+    from rove_control_board.api import manager
+    
+    print(can.interface.detect_available_configs('socketcan'))
+    chan = 'can0'
+    while True:
+        try:
+            manager.interface = 'socketcan'
+            manager.channel = chan
+            manager.bitrate = CANBUS_BITRATE
+            manager.remoteID = 0x103
+            manager.localID = 0x446
+            manager.timeout = 2
+        except can.CanInitializationError as e:
+            print(e)
+        except can.CanOperationError as e:
+            print(e)
+
 def main(args=None):
     # testCan()
     from rove_control_board.api import manager
     
     # print(manager.generateAPI())
-    
+    socketOpenner:Callable[[],None] = None
     if isinstance(manager, comm.SerialCommandManager):
         # Serial comm 
         manager.port = DEV
@@ -468,18 +596,14 @@ def main(args=None):
         # openSLCan(dev=None, prefix=DEV_ID_PREFIX)
         openSocket()
     
-    
     rclpy.init(args=args)
-    
     try:
-        while True:
-            bridge = Bridge()
-            if not bridge.checkAPI():
-                sleep(5)
-            rclpy.spin(bridge)
-            bridge.destroy_node()
-    finally:
+        bridge = Bridge()
+        bridge.connect()
+        rclpy.spin(bridge)
         rclpy.shutdown()
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == '__main__':
     

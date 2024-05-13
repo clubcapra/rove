@@ -111,15 +111,16 @@ struct RGB
     euint8_t r;
     euint8_t g;
     euint8_t b;
+    euint8_t pad0;
 };
-static_assert(sizeof(RGB) == 3);
+static_assert(sizeof(RGB) == 4);
 
 struct RGBLed
 {
-    euint8_t index;
     RGB rgb;
+    euint8_t index;
 };
-static_assert(sizeof(RGBLed) == 4);
+static_assert(sizeof(RGBLed) == 5);
 
 struct Report
 {
@@ -206,7 +207,7 @@ static_assert((sizeof(Void)+1) == 2);
 UShort getWinchMode(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-Void setWinchMode(UShort);
+Bool_ setWinchMode(UShort);
 static_assert((sizeof(UShort)+1) == 3);
 
 Bool_ getWinchLock(Void);
@@ -218,8 +219,8 @@ static_assert((sizeof(Void)+1) == 2);
 UShort getServoControlMode(Void);
 static_assert((sizeof(Void)+1) == 2);
 
-UShort getServoControlMode(Void);
-static_assert((sizeof(Void)+1) == 2);
+Bool_ setServoControlMode(UShort);
+static_assert((sizeof(UShort)+1) == 3);
 
 Bool_ getGPIO1(Void);
 static_assert((sizeof(Void)+1) == 2);
@@ -243,7 +244,7 @@ RGB getRGBLed(Int);
 static_assert((sizeof(Int)+1) == 5);
 
 Bool_ setRGBLed(RGBLed);
-static_assert((sizeof(RGBLed)+1) == 5);
+static_assert((sizeof(RGBLed)+1) == 6);
 
 static BaseFunction_ptr commands[] = {
     new Function<Int, Int>(&ping),
@@ -269,11 +270,11 @@ static BaseFunction_ptr commands[] = {
     new Function<Bool_, Void>(&getLEDStrobe),
     new Function<Report, Void>(&getReport),
     new Function<UShort, Void>(&getWinchMode),
-    new Function<Void, UShort>(&setWinchMode),
+    new Function<Bool_, UShort>(&setWinchMode),
     new Function<Bool_, Void>(&getWinchLock),
     new Function<Bool_, Void>(&setWinchLock),
     new Function<UShort, Void>(&getServoControlMode),
-    new Function<UShort, Void>(&getServoControlMode),
+    new Function<Bool_, UShort>(&setServoControlMode),
     new Function<Bool_, Void>(&getGPIO1),
     new Function<Bool_, Bool_>(&setGPIO1),
     new Function<Bool_, Void>(&getGPIO2),
@@ -286,4 +287,4 @@ static BaseFunction_ptr commands[] = {
 #define COMMANDS_COUNT 36
 #define MAX_DECODED_SIZE 9
 #define MAX_ENCODED_SIZE 13
-#define API_HASH 3739127867455560190UL
+#define API_HASH 13188008272000330555UL
