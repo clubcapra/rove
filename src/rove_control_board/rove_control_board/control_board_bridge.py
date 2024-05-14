@@ -113,6 +113,8 @@ def toStep(valueDeg:float, stepCount:int) -> int:
         absoluteStep = int(round(absoluteStep))
     return absoluteStep
 
+Tp = TypeVar('Tp', bound=comm.BinaryData)
+
 class Bridge(Node):
     def __init__(self):
         super().__init__('control_board_bridge', namespace='control_board_bridge')
@@ -169,7 +171,7 @@ class Bridge(Node):
         self._last_send = 0
         
         # Setup status report
-        self.heartbeat = self.create_timer(1/30, self.statusReport)
+        self.heartbeat = self.create_timer(1/15, self.statusReport)
         # self.create_timer(1/100, self.ping)
         
         self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
@@ -189,32 +191,39 @@ class Bridge(Node):
         self._set_acc = [150,150]
         self._connected = False
         self._lastError = api.ErrorCode.ERNone
+        self._confIterator = None
+        self._configured = False
     
     def connect(self):
         if self._connected:
             return
         while rclpy.ok():
-            if self.ping() == math.nan:
-                self.get_logger().error("Connection")
-                sleep(5)
+            try:
+                if self.ping() == math.nan:
+                    self.get_logger().error("Connection")
+                    sleep(5)
+                    continue
+                if not self.checkAPI():
+                    sleep(5)
+                    continue
+                self.get_logger().info("API hash matches")
+                self._connected = True
+                break
+            except TimeoutError as e:
+                self.get_logger().error(f"Timed out: {str(e)}")
                 continue
-            if not self.checkAPI():
-                sleep(5)
-                continue
-            self.get_logger().info("API hash matches")
-            self._connected = True
-            break
     
     def disconnected(self):
         self.get_logger().error("Connection lost")
         self._connected = False
+        # self._configured = False
     
     def deadzone(self, v:float):
         return 0 if abs(v) < 0.075 else v
     
     def checkAPI(self):
         from rove_control_board.api import manager
-        if (not manager.apiCheck()):
+        if not manager.apiCheck():
             self.get_logger().fatal("API hash mismatch between rove_control_board and control board microcontroller")
             return False
         return True
@@ -417,14 +426,16 @@ class Bridge(Node):
                 self.get_logger().error(str(e))
         if r.statusCode == api.StatusCode.STNotInitialized.value:
             self.get_logger().warning("Not initialized")
-            sleep(2)
+            # sleep(2)
             return
-        if r.statusCode == api.StatusCode.STInitialized.value:
-            self.get_logger().info("Configuring")
-            sleep(2)
-            self.sendConfig()
-            self.get_logger().info("Done")
-            
+        if r.statusCode == api.StatusCode.STInitialized.value and not self._configured:
+            if self._confIterator is None:
+                self.get_logger().info("Configuring")
+                self._confIterator = iter(self.sendConfig())
+                # sleep(2)
+            next(self._confIterator)
+            if self._configured:
+                self.get_logger().info("Done")
             return
             
         self._pos[0] = r.pos.x
@@ -447,26 +458,41 @@ class Bridge(Node):
         
     @debugFunc
     def sendConfig(self):
-        r = api.configure(api.Configuration(
-                      api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._xMax - self._xMin))),
-                      api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._yMax - self._yMin)))))
-        if not r:
-            self.get_logger().warning(f"Last command didn't ack config (from sendConfig)")
-        r = api.setServoControlMode(comm.UShort(api.ServoControlMode.SCMPosition.value))
-        if not r:
-            self.get_logger().warning(f"Last command didn't ack control mode (from sendConfig)")
-        r = api.setServoXAcc(comm.Byte(int(self._set_acc[0])))
-        if not r:
-            self.get_logger().warning(f"Last command didn't ack x acc (from sendConfig)")
-        r = api.setServoYAcc(comm.Byte(int(self._set_acc[1])))
-        if not r:
-            self.get_logger().warning(f"Last command didn't ack y acc (from sendConfig)")
-        r = api.setServoSpeed(api.Vector2D(int(self._set_vel[0]), int(self._set_vel[1])))
-        if not r:
-            self.get_logger().warning(f"Last command didn't ack speed (from sendConfig)")
-        r = api.setServoPosition(api.Vector2D(int(self._set_pos[0]), int(self._set_pos[1])))
-        if not r:
-            self.get_logger().warning(f"Last command didn't ack pos (from sendConfig)")
+        delay = 0.5
+        def ensure(call:Callable[[Tp], comm.Bool_], arg:Tp):
+            self.get_logger().info(f"Configuring: {call.__name__}")
+            while True:
+                try:
+                    r = call(arg)
+                    if not r:
+                        self.get_logger().warning(f"Last command didn't ack {call.__name__} (from sendConfig)")
+                        yield
+                        continue
+                    break
+                except TimeoutError as e:
+                    self.get_logger().error(f"Timed out: {str(e)} (from {call.__name__})")
+                    yield
+                # sleep(delay)
+            self.get_logger().info(f"Configured: {call.__name__}")
+            # sleep(delay)
+        
+        res = [
+            ensure(
+                api.configure, 
+                api.Configuration(
+                    api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._xMax - self._xMin))),
+                    api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._yMax - self._yMin))))),
+            ensure(api.setServoControlMode, comm.UShort(api.ServoControlMode.SCMPosition.value)),
+            ensure(api.setServoXAcc, comm.Byte(int(self._set_acc[0]))),
+            ensure(api.setServoYAcc, comm.Byte(int(self._set_acc[1]))),
+            ensure(api.setServoSpeed, api.Vector2D(int(self._set_vel[0]), int(self._set_vel[1]))),
+            ensure(api.setServoPosition, api.Vector2D(int(self._set_pos[0]), int(self._set_pos[1]))),
+        ]
+        
+        for r in res:
+            yield from r
+        self._configured = True
+        yield
         
     @debugFunc
     def ping(self):
@@ -689,9 +715,9 @@ def main(args=None):
             try:
                 bridge.connect()
                 rclpy.spin(bridge)
-            except TimeoutError:
+            except TimeoutError as e:
                 bridge.disconnected()
-                bridge.get_logger().error("Timed out")
+                bridge.get_logger().error(f"Timed out: {str(e)}")
     except KeyboardInterrupt:
         rclpy.shutdown()
         pass

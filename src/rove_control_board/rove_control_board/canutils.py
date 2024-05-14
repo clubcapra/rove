@@ -62,15 +62,30 @@ class CanBusStream(RawIOBase, can.Listener):
         self._writequeue = collections.deque(maxlen=maxLenth)
         self._notifier.add_listener(self)
         self._trig = threading.Event()
-        self._readSize = 0
+        self._lock = threading.Lock()
+        self._requestedLength = 0
+        
+    @property
+    def requestedLength(self) -> int:
+        with self._lock:
+            return self._requestedLength
+        
+    @requestedLength.setter
+    def requestedLength(self, length:int):
+        with self._lock:
+            self._requestedLength = length
         
     def on_message_received(self, msg: can.Message) -> None:
         if msg.is_error_frame:
-            print(f"Error: {msg}")
+            # print(f"Error: {msg}")
+            return
         if msg.arbitration_id == self._localID:
+            length = self.requestedLength
             for b in msg.data:
                 self._readqueue.append(b)
-            self._trig.set()
+                if length != 0 and len(self._readqueue) >= length and not self._trig.is_set():
+                    self._trig.set()
+                    # print("set")
         
     def __enter__(self):
         return self
@@ -92,28 +107,21 @@ class CanBusStream(RawIOBase, can.Listener):
             return -1
         return self._readqueue[0]
     
-    # def read(self) -> int:
-    #     tmt = time.time() + self._timeout
-    #     while time.time() < tmt and len(self._readqueue) < 1:
-    #         time.sleep(0.01)
-    #     if len(self._readqueue) < 1:
-    #         return -1
-    #     return self._readqueue.popleft()
-    
     def read(self, size: int = -1) -> bytes | None:
         # with benchmark("read"):
         if size == -1:
             size = len(self._readqueue)
         
-        # size = min(size, len(self._readqueue))
-        tmt = time.time() + self._timeout
+        # print('clear')
+        self.requestedLength = size
         
-        while time.time() < tmt and len(self._readqueue) < size:
-            time.sleep(0.0001)
-            
-        if len(self._readqueue) < size:
+        if not self._trig.wait(self._timeout):
+            self.requestedLength = 0
+            self._trig.clear()
             raise TimeoutError("Read timed out")
             # with benchmark("pop"):
+        self.requestedLength = 0
+        self._trig.clear()
         return bytes([self._readqueue.popleft() for _ in range(size)])
             
     def write(self, b: bytes) -> int | None:
@@ -129,14 +137,22 @@ class CanBusStream(RawIOBase, can.Listener):
     def flush(self) -> None:
         
         # with benchmark("flush"):
+        end = time.time() + self._timeout
         while len(self._writequeue) > 0:
+            if end <= time.time():
+                raise TimeoutError("Busy")
+            if self._trig.is_set():
+                print('too fast')
+                time.sleep(0.01)
+                continue
             block = bytes([self._writequeue.popleft() for l in range(min(len(self._writequeue), 8))])
             msg = can.Message(time.time()/1000, self._remoteID, dlc=len(block), data=block, is_extended_id=False, check=True)
-            start = time.time()
-            self._bus.send(msg, self._timeout)
             
-            if isclose(time.time()-start, self._timeout):
+            try:
+                self._bus.send(msg, end - time.time())
+            except can.CanError:
                 raise TimeoutError("Write timed out")
+
             
     def stop(self) -> None:
         self.flush()
