@@ -1,4 +1,5 @@
-from enum import Enum, Flag
+from enum import Enum, IntFlag, auto
+import enum
 from typing import NoReturn
 import capra_micro_comm_py as comm
 from rove_control_board.canutils import CanBusCommandManager
@@ -12,29 +13,32 @@ class StatusCode(Enum):
     STInitialized =     1
     STConfigured =      2
     
+    
 @manager.enum('H')
-class ErrorCode(Enum):
-    ERNone =            0
-    ERAdapterNotInit =  1
-    ERServoNACK =       2
-    ERServoXNACK =      3
-    ERServoYNACK =      4
-    ERWinchLocked =     5
-    ERRXBuffOverflow =  6
-    ERRTXBufferOvervlow=7
+class ErrorCode(IntFlag):
+    ERNone =            auto()
+    ERAdapterNotInit =  auto()
+    ERServoXNACK =      auto()
+    ERServoYNACK =      auto()
+    ERServoNACK =       ERServoXNACK | ERServoYNACK
+    ERWinchLocked =     auto()
+    ERRXBuffOverflow =  auto()
+    ERTXBufferOvervlow =auto()
+    ERRGBInvalidIndex = auto()
+    ERRGBParam =        auto()
 
 @manager.enum("H")
 class ServoControlMode(Enum):
-    SCMNone = 0
-    SCMPosition = 1
-    SCMSpeed = 2
+    SCMNone =       0
+    SCMPosition =   1
+    SCMSpeed =      2
     
 @manager.enum("H")
 class WinchMode(Enum):
-    WMFreeWheel = 0
-    WMBrake = 1
-    WMReverse = 2
-    WMForward = 3
+    WMFreeWheel =   0
+    WMBrake =       1
+    WMReverse =     2
+    WMForward =     3
 
 @manager.struct('hh')
 class Vector2D(comm.BinaryData):

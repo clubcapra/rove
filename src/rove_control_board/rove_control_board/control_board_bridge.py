@@ -9,7 +9,7 @@ import os
 from sqlite3 import connect
 from time import sleep
 import time
-from typing import Any, Callable, NoReturn, ParamSpecArgs, ParamSpecKwargs, Tuple, TypeVar
+from typing import Any, Callable, NoReturn, ParamSpecArgs, ParamSpecKwargs, Tuple, TypeVar, overload
 
 import can
 
@@ -188,6 +188,7 @@ class Bridge(Node):
         self._move_act_vel = [0,0]
         self._set_acc = [150,150]
         self._connected = False
+        self._lastError = api.ErrorCode.ERNone
     
     def connect(self):
         if self._connected:
@@ -203,6 +204,10 @@ class Bridge(Node):
             self.get_logger().info("API hash matches")
             self._connected = True
             break
+    
+    def disconnected(self):
+        self.get_logger().error("Connection lost")
+        self._connected = False
     
     def deadzone(self, v:float):
         return 0 if abs(v) < 0.075 else v
@@ -229,6 +234,25 @@ class Bridge(Node):
     def _yToStep(self, deg:float) -> int:
         # return toStep(deg, self._yStepCount, self._yOffset, self._yMin, self._yMax)
         return toStep(deg, self._yStepCount)
+    
+    @overload
+    def printErrors(self, error:int): ... @overload
+    def printErrors(self, error:api.ErrorCode):
+        if not isinstance(error, api.ErrorCode):
+            error = api.ErrorCode(error)
+            
+        
+        if error != api.ErrorCode.ERNone and error != self._lastError:
+            new = ~self._lastError & error
+            if new != api.ErrorCode.ERNone:
+                self.get_logger().error(f"Errors: {str(error)} | New: {str(new)}")
+                
+            solved = ~error & self._lastError
+            if solved != api.ErrorCode.ERNone:
+                self.get_logger().info(f"Resolved: {str(solved)}")
+            
+            self._lastError = error
+            
     
     @property
     def nowSeconds(self):
@@ -388,7 +412,7 @@ class Bridge(Node):
         
         if r.errorCode != api.ErrorCode.ERNone.value:
             try:
-                self.get_logger().error(f"Got {api.ErrorCode(r.errorCode%256).name} from report.")
+                self.printErrors(r.errorCode)
             except ValueError as e:
                 self.get_logger().error(str(e))
         if r.statusCode == api.StatusCode.STNotInitialized.value:
@@ -427,8 +451,22 @@ class Bridge(Node):
                       api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._xMax - self._xMin))),
                       api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._yMax - self._yMin)))))
         if not r:
-            self.get_logger().warning(f"Last command didn't ack (from sendConfig)")
-            
+            self.get_logger().warning(f"Last command didn't ack config (from sendConfig)")
+        r = api.setServoControlMode(comm.UShort(api.ServoControlMode.SCMPosition.value))
+        if not r:
+            self.get_logger().warning(f"Last command didn't ack control mode (from sendConfig)")
+        r = api.setServoXAcc(comm.Byte(int(self._set_acc[0])))
+        if not r:
+            self.get_logger().warning(f"Last command didn't ack x acc (from sendConfig)")
+        r = api.setServoYAcc(comm.Byte(int(self._set_acc[1])))
+        if not r:
+            self.get_logger().warning(f"Last command didn't ack y acc (from sendConfig)")
+        r = api.setServoSpeed(api.Vector2D(int(self._set_vel[0]), int(self._set_vel[1])))
+        if not r:
+            self.get_logger().warning(f"Last command didn't ack speed (from sendConfig)")
+        r = api.setServoPosition(api.Vector2D(int(self._set_pos[0]), int(self._set_pos[1])))
+        if not r:
+            self.get_logger().warning(f"Last command didn't ack pos (from sendConfig)")
         
     @debugFunc
     def ping(self):
@@ -652,6 +690,7 @@ def main(args=None):
                 bridge.connect()
                 rclpy.spin(bridge)
             except TimeoutError:
+                bridge.disconnected()
                 bridge.get_logger().error("Timed out")
     except KeyboardInterrupt:
         rclpy.shutdown()

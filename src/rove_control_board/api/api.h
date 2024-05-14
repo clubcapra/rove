@@ -14,14 +14,16 @@ enum StatusCode : euint16_t
 
 enum ErrorCode : euint16_t
 {
-    ERNone = 0,
-    ERAdapterNotInit = 1,
-    ERServoNACK = 2,
-    ERServoXNACK = 3,
-    ERServoYNACK = 4,
-    ERWinchLocked = 5,
-    ERRXBuffOverflow = 6,
-    ERRTXBufferOvervlow = 7,
+    ERNone = 1,
+    ERAdapterNotInit = 2,
+    ERServoXNACK = 4,
+    ERServoYNACK = 8,
+    ERServoNACK = 12,
+    ERWinchLocked = 16,
+    ERRXBuffOverflow = 32,
+    ERTXBufferOvervlow = 64,
+    ERRGBInvalidIndex = 128,
+    ERRGBParam = 256,
 };
 
 enum ServoControlMode : euint16_t
@@ -302,4 +304,4 @@ static BaseFunction_ptr commands[] = {
 #define COMMANDS_COUNT 37
 #define MAX_DECODED_SIZE 9
 #define MAX_ENCODED_SIZE 13
-#define API_HASH 1662470386655982205UL
+#define API_HASH 4408839352808003390UL
