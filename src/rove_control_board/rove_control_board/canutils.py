@@ -1,4 +1,6 @@
 from io import IOBase, RawIOBase
+from math import isclose
+import threading
 import time
 from types import TracebackType
 from typing import Iterable, Literal, TypeAlias, Union
@@ -32,6 +34,20 @@ Interface:TypeAlias = Literal[
     "socketcand",
 ]
 
+class benchmark:
+    def __init__(self, msg:str):
+        self.msg = msg
+        self.start = 0
+        self.end = 0
+    
+    def __enter__(self):
+        self.start = time.time()
+        return self
+    
+    def __exit__(self, _, __, ___):
+        self.end = time.time()
+        print(f"{self.msg} took {self.end - self.start} s")
+
 class CanBusStream(RawIOBase, can.Listener):
     def __init__(self, bus:can.BusABC, maxLenth:int, notifier:can.Notifier, timeout:float=1, remoteID:int=0x103, localID:int=0x446):
         RawIOBase.__init__(self)
@@ -45,6 +61,8 @@ class CanBusStream(RawIOBase, can.Listener):
         self._readqueue = collections.deque(maxlen=maxLenth)
         self._writequeue = collections.deque(maxlen=maxLenth)
         self._notifier.add_listener(self)
+        self._trig = threading.Event()
+        self._readSize = 0
         
     def on_message_received(self, msg: can.Message) -> None:
         if msg.is_error_frame:
@@ -52,6 +70,7 @@ class CanBusStream(RawIOBase, can.Listener):
         if msg.arbitration_id == self._localID:
             for b in msg.data:
                 self._readqueue.append(b)
+            self._trig.set()
         
     def __enter__(self):
         return self
@@ -73,27 +92,28 @@ class CanBusStream(RawIOBase, can.Listener):
             return -1
         return self._readqueue[0]
     
-    def read(self) -> int:
-        tmt = time.time() + self._timeout
-        while time.time() < tmt and len(self._readqueue) < 1:
-            time.sleep(0.01)
-        if len(self._readqueue) < 1:
-            return -1
-        return self._readqueue.popleft()
+    # def read(self) -> int:
+    #     tmt = time.time() + self._timeout
+    #     while time.time() < tmt and len(self._readqueue) < 1:
+    #         time.sleep(0.01)
+    #     if len(self._readqueue) < 1:
+    #         return -1
+    #     return self._readqueue.popleft()
     
     def read(self, size: int = -1) -> bytes | None:
-        
+        # with benchmark("read"):
         if size == -1:
             size = len(self._readqueue)
         
         # size = min(size, len(self._readqueue))
         tmt = time.time() + self._timeout
+        
         while time.time() < tmt and len(self._readqueue) < size:
-            time.sleep(0.01)
+            time.sleep(0.0001)
             
         if len(self._readqueue) < size:
-            return None
-        
+            raise TimeoutError("Read timed out")
+            # with benchmark("pop"):
         return bytes([self._readqueue.popleft() for _ in range(size)])
             
     def write(self, b: bytes) -> int | None:
@@ -108,10 +128,15 @@ class CanBusStream(RawIOBase, can.Listener):
             
     def flush(self) -> None:
         
+        # with benchmark("flush"):
         while len(self._writequeue) > 0:
             block = bytes([self._writequeue.popleft() for l in range(min(len(self._writequeue), 8))])
             msg = can.Message(time.time()/1000, self._remoteID, dlc=len(block), data=block, is_extended_id=False, check=True)
+            start = time.time()
             self._bus.send(msg, self._timeout)
+            
+            if isclose(time.time()-start, self._timeout):
+                raise TimeoutError("Write timed out")
             
     def stop(self) -> None:
         self.flush()

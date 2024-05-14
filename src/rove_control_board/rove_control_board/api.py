@@ -8,16 +8,20 @@ manager = CanBusCommandManager()
 
 @manager.enum('H')
 class StatusCode(Enum):
-    STNotInitialized = 0
-    STInitialized = 1
+    STNotInitialized =  0
+    STInitialized =     1
+    STConfigured =      2
     
 @manager.enum('H')
 class ErrorCode(Enum):
     ERNone =            0
     ERAdapterNotInit =  1
-    ERServoXNACK =      2
-    ERServoYNACK =      3
-    ERWinchLocked =     4
+    ERServoNACK =       2
+    ERServoXNACK =      3
+    ERServoYNACK =      4
+    ERWinchLocked =     5
+    ERRXBuffOverflow =  6
+    ERRTXBufferOvervlow=7
 
 @manager.enum("H")
 class ServoControlMode(Enum):
@@ -49,7 +53,7 @@ class RGB(comm.BinaryData):
         
 @manager.struct('_B')
 class RGBLed(comm.BinaryData):
-    def __init__(self, rgb:RGB=RGB(), index:int=0,):
+    def __init__(self, rgb:RGB=RGB(), index:int=0):
         super().__init__(rgb=rgb, index=index)
         self.index:int
         self.rgb:RGB
@@ -62,13 +66,20 @@ class Report(comm.BinaryData):
         self.statusCode:int
         self.errorCode:int
 
-@manager.struct('ff')
+@manager.struct('HH')
 class Bounds(comm.BinaryData):
-    def __init__(self, lower:float=0, upper:float=0):
+    def __init__(self, lower:int=0, upper:int=0):
         super().__init__(lower=lower, upper=upper)
-        self.lower:float
-        self.upper:float
-    
+        self.lower:int
+        self.upper:int
+        
+@manager.struct('__')
+class Configuration(comm.BinaryData):
+    def __init__(self, xBounds:Bounds=Bounds(), yBounds:Bounds=Bounds()):
+        super().__init__(xBounds=xBounds, yBounds=yBounds)
+        self.xBounds:Bounds
+        self.yBounds:Bounds
+
 @manager.command(Vector2D, comm.Bool_)
 def setServoPosition(pos:Vector2D) -> comm.Bool_:
     pass
@@ -204,6 +215,11 @@ def getRGBLed(index:comm.Int) -> RGB:
 @manager.command(RGBLed, comm.Bool_)
 def setRGBLed(led:RGBLed) -> comm.Bool_:
     pass
+
+@manager.command(Configuration, comm.Bool_)
+def configure(config:Configuration) -> comm.Bool_:
+    pass
+
 
 # from enum import Enum, Flag
 # from typing import NoReturn

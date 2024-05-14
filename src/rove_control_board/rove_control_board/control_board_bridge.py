@@ -79,7 +79,7 @@ def debugFunc(func):
     
     def pred(self:Bridge, *args, **kwargs):
         res = func(self, *args, **kwargs)
-        self.get_logger().debug(f"{func.__name__}({args}, {kwargs}) = {res}")
+        self.get_logger().info(f"{func.__name__}({args}, {kwargs}) = {res}")
         return res
     return functools.update_wrapper(func, pred)
 
@@ -147,7 +147,7 @@ class Bridge(Node):
         self._yMin = self.get_parameter_or('tpv_y_min', -45)
         self._yMax = self.get_parameter_or('tpv_y_max', 90)
         self._yOffset = self.get_parameter_or('tpv_y_offset', 45)
-        self._ySpeed = self.get_parameter_or('tpv_y_speed', 5000)
+        self._ySpeed = self.get_parameter_or('tpv_y_speed', 3500)
         
         # Setup pubs and subs
         self.servo_pos = self.create_publisher(Vector3Stamped, 'servo_pos', 0)
@@ -155,7 +155,7 @@ class Bridge(Node):
         self.servo_set_vel = self.create_subscription(Vector3Stamped, 'servo_set_vel', self.setVel, 3)
         self.servo_set_acc = self.create_subscription(Vector3Stamped, 'servo_set_acc', self.setAcc, 3)
         # self.servo_set_mode = self.create_subscription(UInt32, 'servo_set_mode', self.setMode, 3)
-        # self.servo_joy = self.create_subscription(Joy, '/joy', self.joy, 0)
+        self.servo_joy = self.create_subscription(Joy, '/joy', self.joy, 0)
         self.led_front = self.create_publisher(Bool, 'led_front', 0)
         self.led_front_set = self.create_subscription(Bool, 'led_front_set', self.setLEDFront, 3)
         self.led_back = self.create_publisher(Bool, 'led_back', 0)
@@ -166,10 +166,11 @@ class Bridge(Node):
         self._control_mode = api.ServoControlMode.SCMPosition
         self._control_mode_timeout = 5
         self._control_mode_return = 0
+        self._last_send = 0
         
         # Setup status report
-        # self.heartbeat = self.create_timer(1/30, self.statusReport)
-        self.create_timer(1/100, self.ping)
+        self.heartbeat = self.create_timer(1/30, self.statusReport)
+        # self.create_timer(1/100, self.ping)
         
         self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
         
@@ -182,8 +183,9 @@ class Bridge(Node):
         self._led_strobe = False
         self._pos = [0,0]
         self._set_pos = [0,0]
-        self._set_vel = [1000,1000]
+        self._set_vel = [5000,5000]
         self._move_vel = [0,0]
+        self._move_act_vel = [0,0]
         self._set_acc = [150,150]
         self._connected = False
     
@@ -201,6 +203,9 @@ class Bridge(Node):
             self.get_logger().info("API hash matches")
             self._connected = True
             break
+    
+    def deadzone(self, v:float):
+        return 0 if abs(v) < 0.075 else v
     
     def checkAPI(self):
         from rove_control_board.api import manager
@@ -234,10 +239,16 @@ class Bridge(Node):
         self._control_mode_return = self.nowSeconds + self._control_mode_timeout
         if self._control_mode == api.ServoControlMode.SCMPosition:
             self.setMode(api.ServoControlMode.SCMSpeed)
+            r = api.setServoSpeed(api.Vector2D(int(self._move_vel[0] * self._xSpeed), int(self._move_vel[1] * self._ySpeed)))
+            if not r.b:
+                self.get_logger().warning(f"Last command didn't ack (from _pushbackControlTimeout)")
     
     def _checkControlTimeout(self):
         if self._control_mode == api.ServoControlMode.SCMSpeed and self._control_mode_return < self.nowSeconds:
-            # self.setMode(api.ServoControlMode.SCMPosition)
+            self.setMode(api.ServoControlMode.SCMPosition)
+            r = api.setServoSpeed(api.Vector2D(self._set_vel[0], self._set_vel[1]))
+            if not r.b:
+                self.get_logger().warning(f"Last command didn't ack (from _checkControlTimeout)")
             return True
         return False
     
@@ -245,26 +256,32 @@ class Bridge(Node):
     def joy(self, value:Joy):
         x = value.axes[3]
         y = value.axes[4]
-        if x == self._move_vel[0] and y == self._move_vel[1]:
-            return
-        self._move_vel = [x, y]
-        vel = Vector3Stamped()
-        vel.header.stamp = self.get_clock().now().to_msg()
-        vel.header.frame_id = 'servo_move_vel'
-        vel.vector.x = x
-        vel.vector.y = y
-        self.setMoveVel(vel)
+        self._move_vel = [self.deadzone(x), self.deadzone(y)]
+        if value.buttons[0] == 1:
+            self.setLEDColor(0, (255, 0, 0))
+        if value.buttons[1] == 1:
+            self.setLEDColor(0, (0, 255, 0))
+        if value.buttons[2] == 1:
+            self.setLEDColor(0, (0, 0, 255))
+        if value.buttons[3] == 1:
+            self.setLEDColor(0, (0, 0, 0))
+        # vel = Vector3Stamped()
+        # vel.header.stamp = self.get_clock().now().to_msg()
+        # vel.header.frame_id = 'servo_move_vel'
+        # vel.vector.x = x
+        # vel.vector.y = y
+        # self.setMoveVel(vel)
     
     @debugFunc
     def setPos(self, pos:Vector3Stamped):
         if not self._checkControlTimeout():
             return
         try:
-            r = api.setServoPosition(api.Vector2D(self._xToStep(pos.vector.x), self._yToStep(pos.vector.y)))
+            r = api.setServoPosition(api.Vector2D(self._xToStep(pos.vector.x - self._xMin), self._yToStep(pos.vector.y - self._yMin)))
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setPos)")
         except ValueError as e:
-            self.get_logger().error(e)
+            self.get_logger().error(str(e))
     
     @debugFunc
     def setVel(self, vel:Vector3Stamped):
@@ -275,17 +292,16 @@ class Bridge(Node):
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setVel)")
         except ValueError as e:
-            self.get_logger().error(e)
+            self.get_logger().error(str(e))
         
     @debugFunc
     def setMoveVel(self, vel:Vector3Stamped):
         try:
-            r = api.setServoSpeed(api.Vector2D(int(vel.vector.x * self._xSpeed), int(vel.vector.y * self._ySpeed)))
-            self._pushbackControlTimeout()
-            if not r.b:
-                self.get_logger().warning(f"Last command didn't ack (from setMoveVel)")
+            x = vel.vector.x
+            y = vel.vector.y
+            self._move_vel = [self.deadzone(x), self.deadzone(y)]
         except ValueError as e:
-            self.get_logger().error(e)
+            self.get_logger().error(str(e))
             
     @debugFunc
     def setAcc(self, acc:Vector3Stamped):
@@ -297,7 +313,7 @@ class Bridge(Node):
             if not r.b:
                 self.get_logger().warning(f"Last command didn't ack (from setAcc Y)")
         except ValueError as e:
-            self.get_logger().error(e)
+            self.get_logger().error(str(e))
     
     @debugFunc
     def setMode(self, mode:api.ServoControlMode):
@@ -313,7 +329,7 @@ class Bridge(Node):
         try:
             return api.ServoControlMode(r.s)
         except ValueError as e:
-            self.get_logger().error(e)
+            self.get_logger().error(str(e))
         
     @debugFunc
     def setLEDFront(self, state:Bool):
@@ -344,8 +360,8 @@ class Bridge(Node):
         r = Vector3Stamped()
         r.header.stamp = self.get_clock().now().to_msg()
         r.header.frame_id = 'getPos'
-        r.vector.x = self._xToDeg(self._pos[0])
-        r.vector.y = self._yToDeg(self._pos[1])
+        r.vector.x = self._xToDeg(self._pos[0] + self._xMin)
+        r.vector.y = self._yToDeg(self._pos[1] + self._yMin)
         return r
     
     @debugFunc
@@ -372,17 +388,47 @@ class Bridge(Node):
         
         if r.errorCode != api.ErrorCode.ERNone.value:
             try:
-                self.get_logger().error(f"Got {api.ErrorCode(r.errorCode).name} from report.")
+                self.get_logger().error(f"Got {api.ErrorCode(r.errorCode%256).name} from report.")
             except ValueError as e:
                 self.get_logger().error(str(e))
-        
+        if r.statusCode == api.StatusCode.STNotInitialized.value:
+            self.get_logger().warning("Not initialized")
+            sleep(2)
+            return
+        if r.statusCode == api.StatusCode.STInitialized.value:
+            self.get_logger().info("Configuring")
+            sleep(2)
+            self.sendConfig()
+            self.get_logger().info("Done")
+            
+            return
+            
         self._pos[0] = r.pos.x
         self._pos[1] = r.pos.y
+            
+        if self._move_act_vel[0] != self._move_vel[0] or self._move_act_vel[1] != self._move_vel[1]:
+            self._last_send = self.nowSeconds
+            self._move_act_vel[0] = self.deadzone(self._move_vel[0])
+            self._move_act_vel[1] = self.deadzone(self._move_vel[1])
+            r = api.setServoSpeed(api.Vector2D(int(self._move_act_vel[0] * self._xSpeed), int(self._move_act_vel[1] * self._ySpeed)))
+            self._pushbackControlTimeout()
+            if not r.b:
+                self.get_logger().warning(f"Last command didn't ack (from setMoveVel)")
+        
         
         self.servo_pos.publish(self.getPos())
         self.led_front.publish(self.getLEDFront())
         self.led_back.publish(self.getLEDBack())
         self.led_strobe.publish(self.getLEDStrobe())
+        
+    @debugFunc
+    def sendConfig(self):
+        r = api.configure(api.Configuration(
+                      api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._xMax - self._xMin))),
+                      api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._yMax - self._yMin)))))
+        if not r:
+            self.get_logger().warning(f"Last command didn't ack (from sendConfig)")
+            
         
     @debugFunc
     def ping(self):
@@ -554,6 +600,8 @@ def openSocket():
                 print(e)
             except can.CanOperationError as e:
                 print(e)
+            except TimeoutError:
+                print("Timed out")
         if not isnan(p) and not isinf(p):
             break
         else:
@@ -599,10 +647,14 @@ def main(args=None):
     rclpy.init(args=args)
     try:
         bridge = Bridge()
-        bridge.connect()
-        rclpy.spin(bridge)
-        rclpy.shutdown()
+        while True:
+            try:
+                bridge.connect()
+                rclpy.spin(bridge)
+            except TimeoutError:
+                bridge.get_logger().error("Timed out")
     except KeyboardInterrupt:
+        rclpy.shutdown()
         pass
 
 if __name__ == '__main__':

@@ -9,15 +9,19 @@ enum StatusCode : euint16_t
 {
     STNotInitialized = 0,
     STInitialized = 1,
+    STConfigured = 2,
 };
 
 enum ErrorCode : euint16_t
 {
     ERNone = 0,
     ERAdapterNotInit = 1,
-    ERServoXNACK = 2,
-    ERServoYNACK = 3,
-    ERWinchLocked = 4,
+    ERServoNACK = 2,
+    ERServoXNACK = 3,
+    ERServoYNACK = 4,
+    ERWinchLocked = 5,
+    ERRXBuffOverflow = 6,
+    ERRTXBufferOvervlow = 7,
 };
 
 enum ServoControlMode : euint16_t
@@ -132,10 +136,17 @@ static_assert(sizeof(Report) == 8);
 
 struct Bounds
 {
-    efloat_t lower;
-    efloat_t upper;
+    euint16_t lower;
+    euint16_t upper;
 };
-static_assert(sizeof(Bounds) == 8);
+static_assert(sizeof(Bounds) == 4);
+
+struct Configuration
+{
+    Bounds xBounds;
+    Bounds yBounds;
+};
+static_assert(sizeof(Configuration) == 8);
 
 // --- COMMANDS ---
 Int ping(Int);
@@ -246,6 +257,9 @@ static_assert((sizeof(Int)+1) == 5);
 Bool_ setRGBLed(RGBLed);
 static_assert((sizeof(RGBLed)+1) == 6);
 
+Bool_ configure(Configuration);
+static_assert((sizeof(Configuration)+1) == 9);
+
 static BaseFunction_ptr commands[] = {
     new Function<Int, Int>(&ping),
     new Function<ULong, Void>(&hashCheck),
@@ -283,8 +297,9 @@ static BaseFunction_ptr commands[] = {
     new Function<Bool_, Bool_>(&setGPIO3),
     new Function<RGB, Int>(&getRGBLed),
     new Function<Bool_, RGBLed>(&setRGBLed),
+    new Function<Bool_, Configuration>(&configure),
 };
-#define COMMANDS_COUNT 36
+#define COMMANDS_COUNT 37
 #define MAX_DECODED_SIZE 9
 #define MAX_ENCODED_SIZE 13
-#define API_HASH 13188008272000330555UL
+#define API_HASH 1662470386655982205UL
