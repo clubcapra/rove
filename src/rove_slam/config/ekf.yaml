@@ -37,18 +37,18 @@ ekf_filter_node_global:
         world_frame: map           
 
         odom0: /odom
-        odom0_config: [true,  true,  true,
+        odom0_config: [true,  true,  false,
                        false, false, false,
-                       false, false, false,
+                       true, true, false,
                        false, false, false,
                        false, false, false]
                        
         imu0: /imu
-        imu0_config: [false,  false,  false,
-                      true,  true,  true,
-                      false,  false,  false,
-                      false,  false,  true,
-                      true, true, true]
+        imu0_config: [false,  false,  false, # x y z
+                      false,  false,  true, # roll pitch yaw
+                      false,  false,  false, # vx vy vz
+                      false,  false,  true, # vroll vpitch vyaw
+                      true, true, false] # ax ay az
 
         # description from https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/ekf.yaml
         # Each sensor reading updates some or all of the filter's state. These options give you greater control over which

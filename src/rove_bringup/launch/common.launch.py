@@ -101,8 +101,8 @@ def generate_launch_description():
     return LaunchDescription([
             robot_state_publisher,
             robot_localization_node_local,
-            robot_localization_node_global,
-            navsat_transform,
+            #robot_localization_node_global,
+            #navsat_transform,
             rviz,
             teleop,
             autonomy,
