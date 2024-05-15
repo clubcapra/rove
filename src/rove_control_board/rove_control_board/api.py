@@ -232,7 +232,7 @@ def configure(config:Configuration) -> comm.Bool_:
 
 # # manager = comm.SerialCommandManager()
 # manager = CanBusCommandManager()
-
+ 
 # @manager.enum('H')
 # class StatusCode(Enum):
 #     STNone = 0

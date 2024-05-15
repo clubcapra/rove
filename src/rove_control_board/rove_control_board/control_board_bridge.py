@@ -5,11 +5,13 @@ import enum
 import functools
 from math import isinf, isnan, nan
 import math
+from multiprocessing import queues
 import os
 from sqlite3 import connect
+import threading
 from time import sleep
 import time
-from typing import Any, Callable, NoReturn, ParamSpecArgs, ParamSpecKwargs, Tuple, TypeVar, overload
+from typing import Any, Callable, Dict, NoReturn, ParamSpecArgs, ParamSpecKwargs, Tuple, TypeVar, overload
 
 import can
 
@@ -115,6 +117,46 @@ def toStep(valueDeg:float, stepCount:int) -> int:
 
 Tp = TypeVar('Tp', bound=comm.BinaryData)
 
+
+class ThreadLock:
+    def __init__(self):
+        self._innerLock = threading.Lock()
+        self._lockDict:Dict[int, threading.Lock] = {}
+        
+    def acquire(self):
+        id = threading.current_thread().native_id
+        print(f'>>>{id}')
+        with self._innerLock:
+            if id not in self._lockDict:
+                self._lockDict[id] = threading.Lock()
+        self._lockDict[id].acquire()
+    
+    def release(self):
+        id = threading.current_thread().native_id
+        with self._innerLock:
+            if id not in self._lockDict:
+                self._lockDict[id] = threading.Lock()
+        self._lockDict[id].release()
+        print(f'<<<{id}')
+        
+    def __enter__(self):
+        self.acquire()
+        
+    def __exit__(self, _, __, ___):
+        self.release()
+        
+_canLock = threading.Lock()
+
+def safe_call(lock:threading.Lock, func:Callable, *args, **kwargs):
+    with lock:
+        return func(*args, **kwargs)
+
+def callThreadsafe(func:Callable):
+    def pred(*args, **kwargs):
+        with _canLock:
+            return func(*args, **kwargs)
+    return functools.update_wrapper(pred, func)
+
 class Bridge(Node):
     def __init__(self):
         super().__init__('control_board_bridge', namespace='control_board_bridge')
@@ -151,19 +193,20 @@ class Bridge(Node):
         self._yOffset = self.get_parameter_or('tpv_y_offset', 45)
         self._ySpeed = self.get_parameter_or('tpv_y_speed', 3500)
         
+        
         # Setup pubs and subs
         self.servo_pos = self.create_publisher(Vector3Stamped, 'servo_pos', 0)
-        self.servo_set_pos = self.create_subscription(Vector3Stamped, 'servo_set_pos', self.setPos, 3)
-        self.servo_set_vel = self.create_subscription(Vector3Stamped, 'servo_set_vel', self.setVel, 3)
-        self.servo_set_acc = self.create_subscription(Vector3Stamped, 'servo_set_acc', self.setAcc, 3)
+        self.servo_set_pos = self.create_subscription(Vector3Stamped, 'servo_set_pos', callThreadsafe(self.setPos), 3)
+        self.servo_set_vel = self.create_subscription(Vector3Stamped, 'servo_set_vel', callThreadsafe(self.setVel), 3)
+        self.servo_set_acc = self.create_subscription(Vector3Stamped, 'servo_set_acc', callThreadsafe(self.setAcc), 3)
         # self.servo_set_mode = self.create_subscription(UInt32, 'servo_set_mode', self.setMode, 3)
         self.servo_joy = self.create_subscription(Joy, '/joy', self.joy, 0)
         self.led_front = self.create_publisher(Bool, 'led_front', 0)
-        self.led_front_set = self.create_subscription(Bool, 'led_front_set', self.setLEDFront, 3)
+        self.led_front_set = self.create_subscription(Bool, 'led_front_set', callThreadsafe(self.setLEDFront), 3)
         self.led_back = self.create_publisher(Bool, 'led_back', 0)
-        self.led_back_set = self.create_subscription(Bool, 'led_back_set', self.setLEDBack, 3)
+        self.led_back_set = self.create_subscription(Bool, 'led_back_set', callThreadsafe(self.setLEDBack), 3)
         self.led_strobe = self.create_publisher(Bool, 'led_strobe', 0)
-        self.led_strobe_set = self.create_subscription(Bool, 'led_strobe_set', self.setLEDStrobe, 3)
+        self.led_strobe_set = self.create_subscription(Bool, 'led_strobe_set', callThreadsafe(self.setLEDStrobe), 3)
         
         self._control_mode = api.ServoControlMode.SCMPosition
         self._control_mode_timeout = 5
@@ -171,13 +214,14 @@ class Bridge(Node):
         self._last_send = 0
         
         # Setup status report
-        self.heartbeat = self.create_timer(1/15, self.statusReport)
+        self.heartbeat = self.create_timer(1/15, callThreadsafe(self.statusReport))
         # self.create_timer(1/100, self.ping)
         
         self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
         
         # Setup api memory
         self.reset()
+        
     
     def reset(self):
         self._led_front = False
@@ -194,6 +238,8 @@ class Bridge(Node):
         self._confIterator = None
         self._configured = False
     
+    
+    
     def connect(self):
         if self._connected:
             return
@@ -208,6 +254,7 @@ class Bridge(Node):
                     continue
                 self.get_logger().info("API hash matches")
                 self._connected = True
+                self.get_logger().info("Connected")
                 break
             except TimeoutError as e:
                 self.get_logger().error(f"Timed out: {str(e)}")
@@ -267,21 +314,20 @@ class Bridge(Node):
     def nowSeconds(self):
         return time.time()
         # return self.get_clock().now().nanoseconds / 1000000000.0
-    
     def _pushbackControlTimeout(self):
         self._control_mode_return = self.nowSeconds + self._control_mode_timeout
         if self._control_mode == api.ServoControlMode.SCMPosition:
             self.setMode(api.ServoControlMode.SCMSpeed)
-            r = api.setServoSpeed(api.Vector2D(int(self._move_vel[0] * self._xSpeed), int(self._move_vel[1] * self._ySpeed)))
-            if not r.b:
-                self.get_logger().warning(f"Last command didn't ack (from _pushbackControlTimeout)")
-    
+        r = api.setServoSpeed(api.Vector2D(int(self._move_act_vel[0] * self._xSpeed), int(self._move_act_vel[1] * self._ySpeed)))
+        if not r.b:
+            self.get_logger().warning(f"Last command didn't ack (from _pushbackControlTimeout)")
     def _checkControlTimeout(self):
-        if self._control_mode == api.ServoControlMode.SCMSpeed and self._control_mode_return < self.nowSeconds:
-            self.setMode(api.ServoControlMode.SCMPosition)
-            r = api.setServoSpeed(api.Vector2D(self._set_vel[0], self._set_vel[1]))
-            if not r.b:
-                self.get_logger().warning(f"Last command didn't ack (from _checkControlTimeout)")
+        if self._control_mode_return < self.nowSeconds:
+            if self._control_mode == api.ServoControlMode.SCMSpeed:
+                self.setMode(api.ServoControlMode.SCMPosition)
+                r = api.setServoSpeed(api.Vector2D(self._set_vel[0], self._set_vel[1]))
+                if not r.b:
+                    self.get_logger().warning(f"Last command didn't ack (from _checkControlTimeout)")
             return True
         return False
     
@@ -417,6 +463,7 @@ class Bridge(Node):
     
     @debugFunc
     def statusReport(self):
+        
         r = api.getReport(comm.Void())
         
         if r.errorCode != api.ErrorCode.ERNone.value:
@@ -445,16 +492,17 @@ class Bridge(Node):
             self._last_send = self.nowSeconds
             self._move_act_vel[0] = self.deadzone(self._move_vel[0])
             self._move_act_vel[1] = self.deadzone(self._move_vel[1])
-            r = api.setServoSpeed(api.Vector2D(int(self._move_act_vel[0] * self._xSpeed), int(self._move_act_vel[1] * self._ySpeed)))
             self._pushbackControlTimeout()
-            if not r.b:
-                self.get_logger().warning(f"Last command didn't ack (from setMoveVel)")
+            # r = api.setServoSpeed(api.Vector2D(int(self._move_act_vel[0] * self._xSpeed), int(self._move_act_vel[1] * self._ySpeed)))
+            # if not r.b:
+            #     self.get_logger().warning(f"Last command didn't ack (from setMoveVel)")
         
         
         self.servo_pos.publish(self.getPos())
         self.led_front.publish(self.getLEDFront())
         self.led_back.publish(self.getLEDBack())
         self.led_strobe.publish(self.getLEDStrobe())
+        
         
     @debugFunc
     def sendConfig(self):
@@ -477,11 +525,11 @@ class Bridge(Node):
             # sleep(delay)
         
         res = [
-            ensure(
-                api.configure, 
-                api.Configuration(
-                    api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._xMax - self._xMin))),
-                    api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._yMax - self._yMin))))),
+            # ensure(
+            #     api.configure, 
+            #     api.Configuration(
+            #         api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._xMax - self._xMin))),
+            #         api.Bounds(int(self._xToStep(0)), int(self._xToStep(self._yMax - self._yMin))))),
             ensure(api.setServoControlMode, comm.UShort(api.ServoControlMode.SCMPosition.value)),
             ensure(api.setServoXAcc, comm.Byte(int(self._set_acc[0]))),
             ensure(api.setServoYAcc, comm.Byte(int(self._set_acc[1]))),
@@ -664,8 +712,8 @@ def openSocket():
                 print(e)
             except can.CanOperationError as e:
                 print(e)
-            except TimeoutError:
-                print("Timed out")
+            except TimeoutError as e:
+                print(f"Timed out: {str(e)}")
         if not isnan(p) and not isinf(p):
             break
         else:
