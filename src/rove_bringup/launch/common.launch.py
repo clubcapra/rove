@@ -45,23 +45,24 @@ def generate_launch_description():
     # used tutorial: https://navigation.ros.org/tutorials/docs/navigation2_with_gps.html
 
     robot_localization_node_local = Node(
-       package='robot_localization',
-       executable='ekf_node',
-       name='ekf_filter_node_local',
-       output='screen',
-       parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
-                   {'use_sim_time': True}]
-                   )
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node_local',
+        output='screen',
+        parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
+                    {'use_sim_time': True}],
+        remappings=[('odometry/filtered', 'odometry/local')])
+    
 
     robot_localization_node_global = Node(
-       package='robot_localization',
-       executable='ekf_node',
-       name='ekf_filter_node_global',
-       output='screen',
-       parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
-                   {'use_sim_time': True}],
-       remappings=[("odometry/filtered", "odometry/filtered/global")],
-    )
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node_global',
+        output='screen',
+        parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
+                    {'use_sim_time': True}],
+        remappings=[('odometry/filtered', 'odometry/global')])
+
 
     navsat_transform = Node(
         package="robot_localization",
@@ -74,10 +75,7 @@ def generate_launch_description():
             # Subscribed Topics
                     ("imu/data", "imu"),
                     ("gps/fix", "gps"),
-                    ("odometry/filtered", "odometry/filtered/global"),
-            # Published Topics
-                    ("gps/filtered", "gps/filtered"),
-                    ("odometry/gps", "odometry/gps"),
+                    ('odometry/filtered', 'odometry/global'),
                 ],
     )
 

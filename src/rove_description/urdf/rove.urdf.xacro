@@ -19,7 +19,6 @@
     
     <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" />
 
-    <link name="base_footprint"/>
 
     <link name="base_link">
         <visual>
@@ -42,11 +41,6 @@
         </inertial>
     </link>
 
-    <joint name="base_joint" type="fixed">
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <parent link="base_footprint"/>
-        <child link="base_link"/>
-    </joint>
 
     <!-- Insert ovis on top of rove -->
     <xacro:property name="robot_root" value="base_link" />
