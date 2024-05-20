@@ -941,5 +941,37 @@
             </link>
             <static>1</static>
         </model>
+        <actor name="actor">
+            <skin>
+              <filename>robin/models.dae</filename>
+            </skin>
+            <animation name="animation">
+              <filename>robin/models.dae</filename>
+            </animation>
+            <script>
+              <trajectory id="0" type="walking">
+                <waypoint>
+                  <time>0</time> <!-- Move right -->
+                  <pose>2 -9 1 0 0 -1.57</pose>
+                </waypoint>
+                <waypoint> <!--Turn around -->
+                    <time>5</time>
+                    <pose>2 -9 1 0 0 1.57</pose>
+                </waypoint>
+                <waypoint> <!-- Move left -->
+                    <time>25</time>
+                    <pose>2 7 1 0 0 1.57</pose>
+                </waypoint>
+                <waypoint> <!-- Turn around -->
+                  <time>30</time>
+                  <pose>2 7 1 0 0 -1.57</pose>
+                </waypoint>
+                <waypoint>
+                  <time>50</time>
+                  <pose>2 -9 1 0 0 -1.57</pose>
+                </waypoint>
+              </trajectory>
+            </script>
+          </actor>
     </world>
 </sdf>
