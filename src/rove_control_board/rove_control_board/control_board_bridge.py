@@ -214,7 +214,7 @@ class Bridge(Node):
         self._last_send = 0
         
         # Setup status report
-        self.heartbeat = self.create_timer(1/15, callThreadsafe(self.statusReport))
+        self.heartbeat = self.create_timer(1/30, callThreadsafe(self.statusReport))
         # self.create_timer(1/100, self.ping)
         
         self.get_logger().set_level(rclpy.logging.LoggingSeverity.DEBUG)
@@ -466,24 +466,24 @@ class Bridge(Node):
         
         r = api.getReport(comm.Void())
         
-        if r.errorCode != api.ErrorCode.ERNone.value:
-            try:
-                self.printErrors(r.errorCode)
-            except ValueError as e:
-                self.get_logger().error(str(e))
-        if r.statusCode == api.StatusCode.STNotInitialized.value:
-            self.get_logger().warning("Not initialized")
-            # sleep(2)
-            return
-        if r.statusCode == api.StatusCode.STInitialized.value and not self._configured:
-            if self._confIterator is None:
-                self.get_logger().info("Configuring")
-                self._confIterator = iter(self.sendConfig())
-                # sleep(2)
-            next(self._confIterator)
-            if self._configured:
-                self.get_logger().info("Done")
-            return
+        # if r.errorCode != api.ErrorCode.ERNone.value:
+        #     try:
+        #         self.printErrors(r.errorCode)
+        #     except ValueError as e:
+        #         self.get_logger().error(str(e))
+        # if r.statusCode == api.StatusCode.STNotInitialized.value:
+        #     self.get_logger().warning("Not initialized")
+        #     # sleep(2)
+        #     return
+        # if r.statusCode == api.StatusCode.STInitialized.value and not self._configured:
+        #     if self._confIterator is None:
+        #         self.get_logger().info("Configuring")
+        #         self._confIterator = iter(self.sendConfig())
+        #         # sleep(2)
+        #     next(self._confIterator)
+        #     if self._configured:
+        #         self.get_logger().info("Done")
+        #     return
             
         self._pos[0] = r.pos.x
         self._pos[1] = r.pos.y

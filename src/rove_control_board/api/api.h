@@ -262,106 +262,44 @@ static_assert((sizeof(RGBLed)+1) == 6);
 Bool_ configure(Configuration);
 static_assert((sizeof(Configuration)+1) == 9);
 
-// 0
-// 1
-// 2
-// 3
-// 4
-// 5
-// 6
-// 7
-// 8
-// 9
-
-
-
-// 0x00 : 00
-// 0x01 : 01
-// 0x02 : 02
-// 0x03 : 03
-// 0x04 : 04
-// 0x05 : 05
-// 0x06 : 06
-// 0x07 : 07
-// 0x08 : 08
-// 0x09 : 09
-// 0x0A : 10
-// 0x0B : 11
-// 0x0C : 12
-// 0x0D : 13
-// 0x0E : 14
-// 0x0F : 15
-// 0x10 : 16
-// 0x11 : 17
-// 0x12 : 18
-// 0x13 : 19
-// 0x14 : 20
-// 0x15 : 21
-// 0x16 : 22
-// 0x17 : 23
-// 0x18 : 24
-// 0x19 : 25
-// 0x1A : 26
-// 0x1B : 27
-// 0x1C : 28
-// 0x1D : 29
-// 0x1E : 30
-// 0x1F : 31
-// 0x10 : 32
-// 0x11 : 33
-// 0x12 : 34
-// 0x13 : 35
-// 0x14 : 36
-// 0x15 : 37
-// 0x16 : 38
-// 0x17 : 39
-// 0x18
-// 0x19
-// 0x1A
-// 0x1B
-// 0x1C
-// 0x1D
-// 0x1E
-// 0x1F
-
 static BaseFunction_ptr commands[] = {
-    new Function<Int, Int>(&ping),                          // 0x00 : 00
-    new Function<ULong, Void>(&hashCheck),                  // 0x01 : 01
-    new Function<Bool_, Vector2D>(&setServoPosition),       // 0x02 : 02
-    new Function<Vector2D, Void>(&getServoPosition),        // 0x03 : 03
-    new Function<Bool_, Void>(&setServoPositionZero),       // 0x04 : 04
-    new Function<Bool_, Vector2D>(&setServoSpeed),          // 0x05 : 05
-    new Function<Vector2D, Void>(&getServoSpeed),           // 0x06 : 06
-    new Function<Short, Void>(&getServoPositionX),          // 0x07 : 07
-    new Function<Short, Void>(&getServoPositionY),          // 0x08 : 08
-    new Function<Short, Void>(&getServoSpeedX),             // 0x09 : 09
-    new Function<Short, Void>(&getServoSpeedY),             // 0x0A : 10
-    new Function<Bool_, Byte>(&setServoXAcc),               // 0x0B : 11
-    new Function<Bool_, Byte>(&setServoYAcc),               // 0x0C : 12
-    new Function<Byte, Void>(&getServoXAcc),                // 0x0D : 13
-    new Function<Byte, Void>(&getServoYAcc),                // 0x0E : 14
-    new Function<Bool_, Bool_>(&setLEDFront),               // 0x0F : 15
-    new Function<Bool_, Bool_>(&setLEDBack),                // 0x10 : 16
-    new Function<Bool_, Bool_>(&setLEDStrobe),              // 0x11 : 17
-    new Function<Bool_, Void>(&getLEDFront),                // 0x12 : 18
-    new Function<Bool_, Void>(&getLEDBack),                 // 0x13 : 19
-    new Function<Bool_, Void>(&getLEDStrobe),               // 0x14 : 20
-    new Function<Report, Void>(&getReport),                 // 0x15 : 21
-    new Function<UShort, Void>(&getWinchMode),              // 0x16 : 22
-    new Function<Bool_, UShort>(&setWinchMode),             // 0x17 : 23
-    new Function<Bool_, Void>(&getWinchLock),               // 0x18 : 24
-    new Function<Bool_, Void>(&setWinchLock),               // 0x19 : 25
-    new Function<UShort, Void>(&getServoControlMode),       // 0x1A : 26
-    new Function<Bool_, UShort>(&setServoControlMode),      // 0x1B : 27
-    new Function<Bool_, Void>(&getGPIO1),                   // 0x1C : 28
-    new Function<Bool_, Bool_>(&setGPIO1),                  // 0x1D : 29
-    new Function<Bool_, Void>(&getGPIO2),                   // 0x1E : 30
-    new Function<Bool_, Bool_>(&setGPIO2),                  // 0x1F : 31
-    new Function<Bool_, Void>(&getGPIO3),                   // 0x10 : 32
-    new Function<Bool_, Bool_>(&setGPIO3),                  // 0x11 : 33
-    new Function<RGB, Int>(&getRGBLed),                     // 0x12 : 34
-    new Function<Bool_, RGBLed>(&setRGBLed),                // 0x13 : 35
-    new Function<Bool_, Configuration>(&configure),         // 0x14 : 36
+    new Function<Int, Int>(&ping),
+    new Function<ULong, Void>(&hashCheck),
+    new Function<Bool_, Vector2D>(&setServoPosition),
+    new Function<Vector2D, Void>(&getServoPosition),
+    new Function<Bool_, Void>(&setServoPositionZero),
+    new Function<Bool_, Vector2D>(&setServoSpeed),
+    new Function<Vector2D, Void>(&getServoSpeed),
+    new Function<Short, Void>(&getServoPositionX),
+    new Function<Short, Void>(&getServoPositionY),
+    new Function<Short, Void>(&getServoSpeedX),
+    new Function<Short, Void>(&getServoSpeedY),
+    new Function<Bool_, Byte>(&setServoXAcc),
+    new Function<Bool_, Byte>(&setServoYAcc),
+    new Function<Byte, Void>(&getServoXAcc),
+    new Function<Byte, Void>(&getServoYAcc),
+    new Function<Bool_, Bool_>(&setLEDFront),
+    new Function<Bool_, Bool_>(&setLEDBack),
+    new Function<Bool_, Bool_>(&setLEDStrobe),
+    new Function<Bool_, Void>(&getLEDFront),
+    new Function<Bool_, Void>(&getLEDBack),
+    new Function<Bool_, Void>(&getLEDStrobe),
+    new Function<Report, Void>(&getReport),
+    new Function<UShort, Void>(&getWinchMode),
+    new Function<Bool_, UShort>(&setWinchMode),
+    new Function<Bool_, Void>(&getWinchLock),
+    new Function<Bool_, Void>(&setWinchLock),
+    new Function<UShort, Void>(&getServoControlMode),
+    new Function<Bool_, UShort>(&setServoControlMode),
+    new Function<Bool_, Void>(&getGPIO1),
+    new Function<Bool_, Bool_>(&setGPIO1),
+    new Function<Bool_, Void>(&getGPIO2),
+    new Function<Bool_, Bool_>(&setGPIO2),
+    new Function<Bool_, Void>(&getGPIO3),
+    new Function<Bool_, Bool_>(&setGPIO3),
+    new Function<RGB, Int>(&getRGBLed),
+    new Function<Bool_, RGBLed>(&setRGBLed),
+    new Function<Bool_, Configuration>(&configure),
 };
 #define COMMANDS_COUNT 37
 #define MAX_DECODED_SIZE 9
