@@ -9,3 +9,20 @@
             clicked_point_topic: "/clicked_point" # Topic published by Rviz when a point of the cloud is clicked. Used for plane detection
             pd_max_distance_threshold: 0.15 # Plane detection: controls the spread of plane by checking the position difference.
             pd_normal_similarity_threshold: 15.0 # Plane detection: controls the spread of plane by checking the angle difference
+
+
+
+
+docker run -it --rm \
+  --privileged \
+  -e DISPLAY=$DISPLAY \
+  -e QT_X11_NO_MITSHM=1 \
+  -e NVIDIA_VISIBLE_DEVICES=all \
+  -e NVIDIA_DRIVER_CAPABILITIES=all \
+  -e XAUTHORITY=$XAUTH \
+  --runtime=nvidia \
+  --network host \
+  -v $XAUTH:$XAUTH \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  introlab3it/rtabmap_ros:humble-latest \
+  /bin/bash -c "export ROS_NAMESPACE=rtabmap && ros2 launch rtabmap_viz rtabmap_viz"

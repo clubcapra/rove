@@ -8,7 +8,7 @@ import os
 
 def generate_launch_description():
 
-    camera_model = 'zed2i'
+    camera_model = 'zedm'
 
     pkg_zed_wrapper = get_package_share_directory('zed_wrapper')
     launch_file_path = os.path.join(pkg_zed_wrapper, 'launch', 'zed_camera.launch.py')
