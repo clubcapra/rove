@@ -28,7 +28,14 @@ def generate_launch_description():
         ),
     )
 
+    velodyne = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_bringup, "launch", "velodyne.launch.py"),
+        ),
+    )
+
     return LaunchDescription([
             common,
             vectornav,
+            velodyne,
             ])
