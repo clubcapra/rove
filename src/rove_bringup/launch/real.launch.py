@@ -18,6 +18,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_bringup, "launch", "common.launch.py"),
         ),
+        launch_arguments={
+            "use_sim_time": "false",
+        }.items(),
     )
 
 
