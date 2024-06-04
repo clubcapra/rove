@@ -10,6 +10,17 @@
 
   <build_depend>zed_wrapper</build_depend>
 
+  <exec_depend>rtabmap_odom</exec_depend>
+  <exec_depend>rtabmap_slam</exec_depend>
+  <exec_depend>rtabmap_util</exec_depend>
+  <exec_depend>rtabmap_rviz_plugins</exec_depend>
+  <exec_depend>rtabmap_slam</exec_depend>
+  <exec_depend>rtabmap_util</exec_depend>
+  <exec_depend>rtabmap_viz</exec_depend>
+  <exec_depend>imu_filter_madgwick</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
+  <exec_depend>velodyne</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

@@ -9,20 +9,11 @@
             clicked_point_topic: "/clicked_point" # Topic published by Rviz when a point of the cloud is clicked. Used for plane detection
             pd_max_distance_threshold: 0.15 # Plane detection: controls the spread of plane by checking the position difference.
             pd_normal_similarity_threshold: 15.0 # Plane detection: controls the spread of plane by checking the angle difference
-
-
-
-
-docker run -it --rm \
-  --privileged \
-  -e DISPLAY=$DISPLAY \
-  -e QT_X11_NO_MITSHM=1 \
-  -e NVIDIA_VISIBLE_DEVICES=all \
-  -e NVIDIA_DRIVER_CAPABILITIES=all \
-  -e XAUTHORITY=$XAUTH \
-  --runtime=nvidia \
-  --network host \
-  -v $XAUTH:$XAUTH \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
-  introlab3it/rtabmap_ros:humble-latest \
-  /bin/bash -c "export ROS_NAMESPACE=rtabmap && ros2 launch rtabmap_viz rtabmap_viz"
+        depth:
+            depth_mode: "ULTRA" # Matches the ZED SDK setting: 'NONE', 'PERFORMANCE', 'QUALITY', 'ULTRA', 'NEURAL', 'NEURAL_PLUS' - Note: if 'NONE' all the modules that requires depth extraction are disabled by default (Pos. Tracking, Obj. Detection, Mapping, ...)
+            depth_stabilization: 1 # Forces positional tracking to start if major than 0 - Range: [0,100]
+            openni_depth_mode: false # 'false': 32bit float [meters], 'true': 16bit unsigned int [millimeters]
+            point_cloud_freq: 10.0 # [DYNAMIC] - frequency of the pointcloud publishing (equal or less to `grab_frame_rate` value)
+            depth_confidence: 100 # [DYNAMIC]
+            depth_texture_conf: 100 # [DYNAMIC]
+            remove_saturated_areas: true # [DYNAMIC]
