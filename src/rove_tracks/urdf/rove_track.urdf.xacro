@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<xacro:macro name="track_motor_control" params="position suffix nodeid">
+		<joint name="track_${position}${suffix}_j">
+			<param name="node_id">${nodeid}</param>
+		</joint>
+	</xacro:macro>
+
+	<xacro:macro name="track_fake_motor_control" params="position suffix">
+		<joint name="track_${position}${suffix}_j">
+			<command_interface name="velocity"/>
+			<state_interface name="position"/>
+			<state_interface name="velocity"/>
+			<state_interface name="effort"/>
+		</joint>
+	</xacro:macro>
+
+	<xacro:macro name="track_control" params="suffix">
+		<ros2_control name="track_control_${suffix}" type="system">
+            <hardware>
+                <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+                <!-- <plugin>mock_components/GenericSystem</plugin> -->
+                
+                <!-- <plugin>rove_tracks/ChainedController</plugin> -->
+				<plugin>mock_components/GenericSystem</plugin>
+
+            </hardware>
+			<joint name="track_${suffix}_vj">
+				<command_interface name="velocity"/>
+				<state_interface name="position"/>
+				<state_interface name="velocity"/>
+				<state_interface name="effort"/>
+			</joint>
+		</ros2_control>
+	</xacro:macro>
+</robot>

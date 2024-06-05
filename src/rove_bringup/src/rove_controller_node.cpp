@@ -1,6 +1,9 @@
 // rove_controller.cpp
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
+#include "geometry_msgs/msg/twist.hpp"
+#include "geometry_msgs/msg/twist_stamped.hpp"
+#include "std_msgs/msg/float64_multi_array.hpp"
 
 enum ControllerMode{
     FLIPPER_MODE = 0,
@@ -39,8 +42,14 @@ public:
         joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
             "/joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
         );
+        // cmd_vel_sub_ = create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 1, std::bind(&RoveController::cmdvelCallback, this, std::placeholders::_1));
 
-        joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 10);
+        joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 1);
+        // cmd_vel_stamped_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>("/diff_drive_controller/cmd_vel", 1);
+
+        // auto x = create_wall_timer(
+        //     std::chrono::milliseconds(1000/20), std::bind(&RoveController::cmdvelTimerCallback, this, std::placeholders::_1)
+        // );
 
         previous_msg_ = sensor_msgs::msg::Joy();
         previous_msg_.axes.resize(6, 0.0);
@@ -49,6 +58,9 @@ public:
         teleop_msg_ = sensor_msgs::msg::Joy();
         teleop_msg_.axes.resize(2,0);
         teleop_msg_.buttons.resize(1,0);
+
+        // cmd_vel_msg_ = geometry_msgs::msg::Twist();
+        // cmd_vel_stamped_msg_ = geometry_msgs::msg::TwistStamped();
     }
 
 private:
@@ -77,6 +89,7 @@ private:
     }
 
     void arm_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        log("Arm");
         if(button_pressed(joy_msg, B)){
             log("Arm B pressed");
         }
@@ -88,6 +101,7 @@ private:
         if(buttton_down(joy_msg, X)){
             log("Arm X down");
         }
+
     }
 
     void flipper_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
@@ -109,6 +123,11 @@ private:
     }
 
     void log(const char *text){
+        static rclcpp::Clock clk{};
+        static const char* last = nullptr;
+        if (last == text) return;
+        last = text;
+        // RCLCPP_INFO_THROTTLE(get_logger(), clk, 2000, text);
         RCLCPP_INFO(get_logger(), text);
     }
 
@@ -126,11 +145,26 @@ private:
         previous_msg_ = *joy_msg;
     }
 
+    // void cmdvelCallback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg) {
+    //     cmd_vel_msg_ = *cmd_vel_msg;
+    //     cmd_vel_stamped_msg_.twist = cmd_vel_msg_;
+    //     auto header = std_msgs::msg::Header();
+    //     header.stamp = this->get_clock()->now();
+    //     cmd_vel_stamped_msg_.header = header;
+    // }
+
+    // void cmdvelTimerCallback() {
+    //     cmd_vel_stamped_pub_->publish(cmd_vel_stamped_msg_);
+    // }
+
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
+    // rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
+    // rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
     sensor_msgs::msg::Joy previous_msg_; 
     sensor_msgs::msg::Joy teleop_msg_;
-    
+    // geometry_msgs::msg::Twist cmd_vel_msg_;
+    // geometry_msgs::msg::TwistStamped cmd_vel_stamped_msg_;
 };
 
 int main(int argc, char **argv) {

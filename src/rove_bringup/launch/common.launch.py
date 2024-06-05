@@ -15,24 +15,12 @@ def generate_launch_description():
     pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
     pkg_rove_slam = get_package_share_directory('rove_slam')
-    bringup_pkg_path = get_package_share_directory('rove_bringup')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
     robot_desc = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
 
-    # Takes the description and joint angles as inputs and publishes
-    # the 3D poses of the robot links
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='both',
-        parameters=[
-            {'robot_description': robot_desc},
-            {"use_sim_time": True, }
-        ]
-    )
+    
 
     # Visualize in RViz
     rviz = Node(
@@ -83,7 +71,7 @@ def generate_launch_description():
 
     teleop = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(bringup_pkg_path, "launch", "rove_controller_usb.launch.py"),
+            os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
         ),
     )
 
@@ -99,11 +87,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-            robot_state_publisher,
-            robot_localization_node_local,
-            robot_localization_node_global,
-            navsat_transform,
+            # robot_state_publisher,
+            # robot_localization_node_local,
+            # robot_localization_node_global,
+            # navsat_transform,
             rviz,
             teleop,
-            autonomy,
+            # autonomy,
             ])

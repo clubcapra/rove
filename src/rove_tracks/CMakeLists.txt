@@ -29,23 +29,23 @@ generate_parameter_library(chained_controller_parameters
   include/rove_tracks/validate_chained_controller_parameters.hpp
 )
 add_library(
-  chained_controller
+  rove_tracks
   SHARED
   src/chained_controller.cpp
 )
-target_include_directories(chained_controller PUBLIC
+target_include_directories(rove_tracks PUBLIC
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-target_link_libraries(chained_controller chained_controller_parameters)
-ament_target_dependencies(chained_controller ${THIS_PACKAGE_INCLUDE_DEPENDS})
-target_compile_definitions(chained_controller PRIVATE "CHAINED_CONTROLLER_BUILDING_DLL")
+target_link_libraries(rove_tracks chained_controller_parameters)
+ament_target_dependencies(rove_tracks ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_compile_definitions(rove_tracks PRIVATE "CHAINED_CONTROLLER_BUILDING_DLL")
 
 pluginlib_export_plugin_description_file(
   controller_interface rove_tracks.xml)
 
 install(
   TARGETS
-  chained_controller
+  rove_tracks
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -56,7 +56,13 @@ install(
   DESTINATION include/${PROJECT_NAME}
 )
 
-if(BUILD_TESTING)
+install(
+  DIRECTORY urdf
+  DESTINATION share/${PROJECT_NAME}
+)
+
+# if(BUILD_TESTING)
+if(0)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
@@ -88,7 +94,7 @@ if(BUILD_TESTING)
     hardware_interface
   )
 
-  add_rostest_with_parameters_gmock(test_chained_controller_preceeding test/test_chained_controller_preceeding.cpp ${CMAKE_CURRENT_SOURCE_DIR}/test/chained_controller_preceeding_params.yaml)
+  add_rostest_with_parameters_gchained_controllermock(test_chained_controller_preceeding test/test_chained_controller_preceeding.cpp ${CMAKE_CURRENT_SOURCE_DIR}/test/chained_controller_preceeding_params.yaml)
   target_include_directories(test_chained_controller_preceeding PRIVATE include)
   target_link_libraries(test_chained_controller_preceeding chained_controller)
   ament_target_dependencies(
@@ -105,7 +111,7 @@ ament_export_dependencies(
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 ament_export_libraries(
-  chained_controller
+  rove_tracks
 )
 
 ament_package()

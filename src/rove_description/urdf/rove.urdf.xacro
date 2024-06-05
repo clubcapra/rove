@@ -16,8 +16,10 @@
     
     <xacro:include filename="$(find rove_description)/urdf/flipper.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/track.urdf.xacro" />
+    <xacro:include filename="$(find rove_description)/urdf/rove.ros2_control.urdf.xacro" />
     
-    <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" />
+    <!-- <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" /> -->
+
 
     <link name="base_footprint"/>
 
@@ -48,10 +50,14 @@
         <child link="base_link"/>
     </joint>
 
+    <!-- <xacro:rove_ros2_control/> -->
+    <xacro:odrive_control fl_id="0" rl_id="-1" fr_id="-1" rr_id="-1"/>
+
+
     <!-- Insert ovis on top of rove -->
-    <xacro:property name="robot_root" value="base_link" />
+    <!-- <xacro:property name="robot_root" value="base_link" />
     <xacro:property name="ovis_robot_namespace" value="rove" />
     <xacro:property name="ovis_base_origin" value="-0.2 0 0.2" />
-    <xacro:ovis base_parent="${robot_root}" prefix="${ovis_robot_namespace}" joint_base_origin_xyz="${ovis_base_origin}" />
+    <xacro:ovis base_parent="${robot_root}" prefix="${ovis_robot_namespace}" joint_base_origin_xyz="${ovis_base_origin}" /> -->
 
 </robot>

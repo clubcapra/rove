@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find rove_tracks)/urdf/rove_track.urdf.xacro"/>
+    
+    <xacro:macro name="rove_odrive_motor" params="position suffix id">
+        <xacro:unless value="${(id == -1)}">
+            <xacro:track_motor_control position="${position}" suffix="${suffix}" nodeid="${id}"/>
+        </xacro:unless>
+    </xacro:macro>
+
+    <xacro:macro name="rove_fake_odrive_motor" params="position suffix id">
+        <xacro:if value="${(id == -1)}">
+            <xacro:track_fake_motor_control position="${position}" suffix="${suffix}"/>
+        </xacro:if>
+    </xacro:macro>
+
+    <xacro:macro name="odrive_control" params="fl_id:=21 rl_id:=22 fr_id:=23 rr_id:=24">
+        <ros2_control name="odrive_control" type="system">
+            <hardware>
+                <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
+                <param name="can">can0</param>
+            </hardware>
+            <joint name="track_fr_j">
+                <param name="node_id">23</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="track_rr_j">
+                <param name="node_id">24</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+
+            <joint name="track_fl_j">
+                <param name="node_id">21</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="track_rl_j">
+                <param name="node_id">22</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <!-- <joint name="track_rl_j">
+                <param name="node_id">1</param>
+            </joint> -->
+            <!-- <xacro:rove_odrive_motor position="f" suffix="l" id="${fl_id}"/>
+            <xacro:rove_odrive_motor position="r" suffix="l" id="${rl_id}"/>
+            <xacro:rove_odrive_motor position="f" suffix="r" id="${fr_id}"/>
+            <xacro:rove_odrive_motor position="r" suffix="r" id="${rr_id}"/> -->
+        </ros2_control>
+        <ros2_control name="fake_odrive_control" type="system">
+            <hardware>
+                <plugin>mock_components/GenericSystem</plugin>
+                <param name="calculate_dynamics">true</param>
+            </hardware>
+            <!-- <joint name="track_fl_j">
+                <param name="node_id">1</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="track_rl_j">
+                <param name="node_id">2</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint> -->
+            <!-- <joint name="track_fr_j">
+                <param name="node_id">3</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint>
+            <joint name="track_rr_j">
+                <param name="node_id">3</param>
+                <command_interface name="velocity"/>
+                <state_interface name="position"/>
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+            </joint> -->
+        </ros2_control>
+        <!-- <ros2_control name="fake_odrive_control" type="system">
+            <hardware>
+                <plugin>mock_components/GenericSystem</plugin>
+            </hardware>
+            <xacro:rove_fake_odrive_motor position="f" suffix="l" id="${fl_id}"/>
+            <xacro:rove_fake_odrive_motor position="r" suffix="l" id="${rl_id}"/>
+            <xacro:rove_fake_odrive_motor position="f" suffix="r" id="${fr_id}"/>
+            <xacro:rove_fake_odrive_motor position="r" suffix="r" id="${rr_id}"/>
+        </ros2_control> -->
+    </xacro:macro>
+
+
+    <xacro:macro name="rove_ros2_control">
+        <xacro:odrive_control/>
+        <!-- <xacro:track_control suffix="l"/> -->
+        <!-- <xacro:track_control suffix="r"/> -->
+    </xacro:macro>
+</robot>

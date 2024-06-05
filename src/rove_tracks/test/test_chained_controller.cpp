@@ -22,7 +22,6 @@
 #include <vector>
 
 using rove_tracks::CMD_MY_ITFS;
-using rove_tracks::control_mode_type;
 using rove_tracks::STATE_MY_ITFS;
 
 class ChainedControllerTest : public ChainedControllerFixture<TestableChainedController>
@@ -33,9 +32,9 @@ TEST_F(ChainedControllerTest, all_parameters_set_configure_success)
 {
   SetUpController();
 
-  ASSERT_TRUE(controller_->params_.joints.empty());
-  ASSERT_TRUE(controller_->params_.state_joints.empty());
-  ASSERT_TRUE(controller_->params_.interface_name.empty());
+  ASSERT_TRUE(controller_->params_.front_joint == "");
+  ASSERT_TRUE(controller_->params_.back_joint == "");
+  ASSERT_TRUE(controller_->params_.track_joint_name == "");
 
   ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), NODE_SUCCESS);
 

@@ -35,18 +35,38 @@
 
 namespace rove_tracks
 {
-// name constants for state interfaces
-static constexpr size_t STATE_MY_ITFS = 0;
+
+enum track_cmd_id : int
+{
+  TRK_CMD_FRONT_VELOCITY = 0,
+  TRK_CMD_BACK_VELOCITY,
+  TRK_CMD_FRONT_EFFORT,
+  TRK_CMD_BACK_EFFORT,
+  TRK_CMD_COUNT,
+  TRK_CMD_TRACK_VELOCITY = TRK_CMD_COUNT,
+  TRK_CMD_TOTAL_COUNT,
+  TRK_CMD_NONE = -1,
+};
+
+enum track_state_id : int
+{
+  TRK_ST_FRONT_POSITION = 0,
+  TRK_ST_BACK_POSITION,
+  TRK_ST_FRONT_VELOCITY,
+  TRK_ST_BACK_VELOCITY,
+  TRK_ST_FRONT_EFFORT,
+  TRK_ST_BACK_EFFORT,
+  TRK_ST_COUNT,
+  TRK_ST_TRACK_VELOCITY = TRK_ST_COUNT,
+  TRK_ST_TOTAL_COUNT,
+  TRK_ST_NONE = -1,
+};
 
 // name constants for command interfaces
-static constexpr size_t CMD_MY_ITFS = 0;
+static constexpr size_t CMD_MY_ITFS = TRK_CMD_COUNT;
 
-// TODO(anyone: example setup for control mode (usually you will use some enums defined in messages)
-enum class control_mode_type : std::uint8_t
-{
-  FAST = 0,
-  SLOW = 1,
-};
+// name constants for state interfaces
+static constexpr size_t STATE_MY_ITFS = TRK_ST_COUNT;
 
 class ChainedController : public controller_interface::ChainableControllerInterface
 {
@@ -88,17 +108,20 @@ public:
   using ControllerStateMsg = control_msgs::msg::JointControllerState;
 
 protected:
-  std::shared_ptr<chained_controller::ParamListener> param_listener_;
-  chained_controller::Params params_;
+  std::shared_ptr<rove_tracks::ParamListener> param_listener_;
+  rove_tracks::Params params_;
 
-  std::vector<std::string> state_joints_;
+  std::string front_joint_;
+  std::string back_joint_;
+  std::string track_joint_;
+  int direction_ = 0;
+  int coasting_direction_ = 0;
+  const double inrush_torque_ = 0;
+  bool caught_up_ = false;
 
   // Command subscribers and Controller State publisher
   rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ = nullptr;
   realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> input_ref_;
-
-  rclcpp::Service<ControllerModeSrvType>::SharedPtr set_slow_control_mode_service_;
-  realtime_tools::RealtimeBuffer<control_mode_type> control_mode_;
 
   using ControllerStatePublisher = realtime_tools::RealtimePublisher<ControllerStateMsg>;
 
@@ -114,6 +137,8 @@ private:
   // callback for topic interface
   ROVE_TRACKS__VISIBILITY_LOCAL
   void reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg);
+
+  rclcpp::Logger logger() const;
 };
 
 }  // namespace rove_tracks

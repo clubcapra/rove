@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include <rclcpp/parameter.hpp>
 #include "parameter_traits/parameter_traits.hpp"
 
 namespace parameter_traits

@@ -14,16 +14,17 @@
     scale_angular:
       pitch: 0.0
       roll: 0.0
-      yaw: 0.5
+      yaw: 4.0
     scale_angular_turbo:
       pitch: 0.0
       roll: 0.0
       yaw: 1.0
     scale_linear:
-      x: 0.5
+      x: 15.0
       y: 0.0
       z: 0.0
     scale_linear_turbo:
       x: 1.0
       y: 0.0
       z: 0.0
+    publish_stamped_twist: true
