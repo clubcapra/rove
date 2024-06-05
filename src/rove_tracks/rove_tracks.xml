@@ -1,0 +1,8 @@
+<library path="rove_tracks">
+  <class name="rove_tracks/ChainedController"
+         type="rove_tracks::ChainedController" base_class_type="controller_interface::ChainableControllerInterface">
+  <description>
+    ChainedController ros2_control controller.
+  </description>
+  </class>
+</library>
