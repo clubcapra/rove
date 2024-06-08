@@ -2,13 +2,13 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, RegisterEventHandler
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler, ExecuteProcess
 
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, PathJoinSubstitution, FindExecutable
 from launch_ros.actions import Node, SetRemap
 from launch_ros.parameter_descriptions import ParameterValue
-from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnProcessExit, OnShutdown
 
 def generate_launch_description():
     # Get the launch directory
@@ -41,7 +41,7 @@ def generate_launch_description():
         output='both',
         parameters=[
             {'robot_description': robot_desc},
-            {"use_sim_time": True, }
+            # {"use_sim_time": True, }
         ],
         remappings=[
             # ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
@@ -120,6 +120,25 @@ def generate_launch_description():
         ),
     )
     
+    # start_can_cmd = ExecuteProcess(
+    #     cmd=[[
+    #         'ip link set can0 type can bitrate 250000; ip link set up can0'
+    #     ]],
+    #     shell=True
+    # )
+
+    # stop_can_cmd = ExecuteProcess(
+    #     cmd=[[
+    #         'ip link set down can0'
+    #     ]],
+    #     shell=True
+    # )
+
+    # shutdown = RegisterEventHandler(
+    #     event_handler=OnShutdown(
+    #         on_shutdown=[stop_can_cmd]
+    #     )
+    # )
 
     return LaunchDescription([
             robot_state_pub_node,

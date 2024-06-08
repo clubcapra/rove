@@ -1,7 +1,7 @@
 # This config file is used by ros2_control
 controller_manager:
   ros__parameters:
-    update_rate: 50  # Hz
+    update_rate: 20  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -30,19 +30,19 @@ diff_drive_controller:
     left_wheel_names: ["track_fl_j", "track_rl_j"]
     # right_wheel_names: ["track_fr_j"]
 
-    wheel_separation: 0.419
-    wheel_radius: 0.0855
+    wheel_separation: 0.230
+    wheel_radius: 0.220
 
     wheel_separation_multiplier: 1.0
     left_wheel_radius_multiplier: -1.0
     right_wheel_radius_multiplier: 1.0
 
-    publish_rate: 50.0
+    publish_rate: 20.0
     odom_frame_id: odom
     # allow_multiple_cmd_vel_publishers: true
     base_frame_id: base_link
-    pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
-    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    # pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    # twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
     open_loop: true
     enable_odom_tf: true
@@ -60,16 +60,16 @@ diff_drive_controller:
     linear.x.has_jerk_limits: false
     linear.x.max_velocity: 100.0
     # linear.x.min_velocity: -1.0
-    linear.x.max_acceleration: 100.0
+    linear.x.max_acceleration: 200.0
     linear.x.max_jerk: 0.0
     linear.x.min_jerk: 0.0
 
     angular.z.has_velocity_limits: true
     angular.z.has_acceleration_limits: true
     angular.z.has_jerk_limits: false
-    angular.z.max_velocity: 100.0
+    angular.z.max_velocity: 500.0
     # angular.z.min_velocity: -1.0
-    angular.z.max_acceleration: 1.0
+    angular.z.max_acceleration: 800.0
     # angular.z.min_acceleration: -1.0
     angular.z.max_jerk: 0.0
     angular.z.min_jerk: 0.0
