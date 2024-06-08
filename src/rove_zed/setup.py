@@ -18,7 +18,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='rove',
-    maintainer_email='capra@etsmtl.ca',
+    maintainer_email='capra@ens.etsmtl.ca',
     description='Zed package for rove',
     license='MIT',
     tests_require=['pytest'],

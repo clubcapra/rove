@@ -67,6 +67,10 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
 COPY --chown=$USERNAME ./ /workspace/$USERNAME
 
+# Add needed packages
+RUN vcs import src < rove.repos
+
+
 # Rosdep update
 RUN rosdep update
 
