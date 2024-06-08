@@ -36,6 +36,13 @@
         <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
         <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
         <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+        <gazebo>
+            <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+              <robot_param>robot_description</robot_param>
+              <robot_param_node>robot_state_publisher</robot_param_node>
+              <parameters>$(find gz_ros2_control_demos)/config/cart_controller.yaml</parameters>
+            </plugin>
+        </gazebo>
 
         <light type="directional" name="sun">
           <cast_shadows>true</cast_shadows>
@@ -943,10 +950,10 @@
         </model>
         <actor name="actor">
             <skin>
-              <filename>robin/models.dae</filename>
+              <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
             </skin>
             <animation name="animation">
-              <filename>robin/models.dae</filename>
+              <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
             </animation>
             <script>
               <trajectory id="0" type="walking">

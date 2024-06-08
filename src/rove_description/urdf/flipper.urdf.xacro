@@ -10,21 +10,35 @@
             <xacro:property name="mesh_rotation" value="0 0 ${pi}"/>
             <xacro:property name="joint_origin" value="${flipper_j_x} ${-flipper_j_y} ${flipper_j_z}"/>
             <xacro:property name="joint_axis" value="0 -1 0"/>
+            <xacro:property name="node_id" value="13"/>
+            <command_interface name="position">
+                <param name="min">-1</param>
+                <param name="max">1</param>
+            </command_interface>
+            <state_interface name="position"/>
         </xacro:if>
         <xacro:if value="${(suffix == 'fl')}">
             <xacro:property name="mesh_rotation" value="0 ${pi} 0" />
             <xacro:property name="joint_origin" value="${flipper_j_x} ${flipper_j_y}  ${flipper_j_z}"/>
             <xacro:property name="joint_axis" value="0 -1 0"/>
+            <xacro:property name="node_id" value="11"/>
+            <command_interface name="position">
+                <param name="min">-1</param>
+                <param name="max">1</param>
+            </command_interface>
+            <state_interface name="position"/>
         </xacro:if>
         <xacro:if value="${(suffix == 'rr')}">
             <xacro:property name="mesh_rotation" value="${pi} 0 0" />
             <xacro:property name="joint_origin" value="${-flipper_j_x} ${-flipper_j_y}  ${flipper_j_z}"/>
             <xacro:property name="joint_axis" value="0 1 0"/>
+            <xacro:property name="node_id" value="11"/>
         </xacro:if>
         <xacro:if value="${(suffix == 'rl')}">
             <xacro:property name="mesh_rotation" value="0 0 0" />
             <xacro:property name="joint_origin" value="${-flipper_j_x} ${flipper_j_y} ${flipper_j_z}"/>
             <xacro:property name="joint_axis" value="0 1 0"/>
+            <xacro:property name="node_id" value="11"/>
         </xacro:if>
 
         <joint name="flipper_${suffix}_j" type="continuous">
