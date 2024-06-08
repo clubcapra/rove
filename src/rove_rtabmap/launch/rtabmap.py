@@ -24,13 +24,14 @@ def generate_launch_description():
 # ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zedm
 # ros2 launch rtabmap_launch rtabmap.launch.py \
 #     rtabmap_args:="--delete_db_on_start" \
+#     database_path:="/media/SSD/stable/rove/src/rove_rtabmap/maps/map.db" \
 #     rgb_topic:=/zed/zed_node/rgb/image_rect_color \
 #     depth_topic:=/zed/zed_node/depth/depth_registered \
 #     camera_info_topic:=/zed/zed_node/depth/camera_info \
 #     odom_topic:=/zed/zed_node/odom \
 #     imu_topic:=/zed/zed_node/imu/data \
 #     visual_odometry:=false \
-#     frame_id:=base_link \
+#     frame_id:=zed_camera_link \
 #     approx_sync:=false \
 #     rgbd_sync:=true \
 #     approx_rgbd_sync:=false

@@ -1,6 +1,12 @@
 # Parameters to override zed_wrapper parameters 
 /**:
     ros__parameters:
+        general:
+            camera_model: 'zedm'
+            camera_name: 'zedm' # usually overwritten by launch file
+            grab_resolution: 'VGA' # The native camera grab resolution. 'HD2K', 'HD1080', 'HD720', 'VGA', 'AUTO'
+            pub_frame_rate: 30.0 # frequency of publishing of visual images and depth images
+            grab_frame_rate: 30 # ZED SDK internal grabbing rate
         mapping:
             mapping_enabled: true # True to enable mapping and fused point cloud pubblication
             resolution: 0.05 # maps resolution in meters [min: 0.01f - max: 0.2f]
@@ -10,10 +16,10 @@
             pd_max_distance_threshold: 0.15 # Plane detection: controls the spread of plane by checking the position difference.
             pd_normal_similarity_threshold: 15.0 # Plane detection: controls the spread of plane by checking the angle difference
         depth:
-            depth_mode: "ULTRA" # Matches the ZED SDK setting: 'NONE', 'PERFORMANCE', 'QUALITY', 'ULTRA', 'NEURAL', 'NEURAL_PLUS' - Note: if 'NONE' all the modules that requires depth extraction are disabled by default (Pos. Tracking, Obj. Detection, Mapping, ...)
+            depth_mode: "PERFORMANCE" # Matches the ZED SDK setting: 'NONE', 'PERFORMANCE', 'QUALITY', 'ULTRA', 'NEURAL', 'NEURAL_PLUS' - Note: if 'NONE' all the modules that requires depth extraction are disabled by default (Pos. Tracking, Obj. Detection, Mapping, ...)
             depth_stabilization: 1 # Forces positional tracking to start if major than 0 - Range: [0,100]
             openni_depth_mode: false # 'false': 32bit float [meters], 'true': 16bit unsigned int [millimeters]
-            point_cloud_freq: 10.0 # [DYNAMIC] - frequency of the pointcloud publishing (equal or less to `grab_frame_rate` value)
+            point_cloud_freq: 30.0 # [DYNAMIC] - frequency of the pointcloud publishing (equal or less to `grab_frame_rate` value)
             depth_confidence: 100 # [DYNAMIC]
             depth_texture_conf: 100 # [DYNAMIC]
             remove_saturated_areas: true # [DYNAMIC]
