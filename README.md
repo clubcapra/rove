@@ -58,7 +58,7 @@ Do these commands to run the gazebo simulation with physics enabled
 ```bash
 colcon build --symlink-install
 source install/setup.bash
-ros2 launch rove_description sim.launch.py
+ros2 launch rove_bringup sim.launch.py
 ```
 OR Do these commands to only run the rviz simulation (with joints control)
 ```bash

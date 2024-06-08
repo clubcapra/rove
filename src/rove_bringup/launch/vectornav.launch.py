@@ -21,5 +21,9 @@ def generate_launch_description():
             executable='vn_sensor_msgs',
             output='screen',
             parameters=[vn_param_file],
+            remappings=[
+                ('/vectornav/gnss', '/gps'),
+                ('/vectornav/imu', '/imu'),
+            ]
         ),
     ])
