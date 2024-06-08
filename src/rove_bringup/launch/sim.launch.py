@@ -19,6 +19,8 @@ def generate_launch_description():
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
     robot_desc = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
+
+    # Get simulation file
     world_file_name = 'worlds/base_world.world'
     world = os.path.join(pkg_rove_description, world_file_name)
 
@@ -72,6 +74,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_bringup, "launch", "common.launch.py"),
         ),
+        launch_arguments={
+            "use_sim_time": "true",
+        }.items(),
     )
 
     return LaunchDescription([
