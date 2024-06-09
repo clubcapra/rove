@@ -1,6 +1,0 @@
-test_chained_controller:
-  ros__parameters:
-    track_joint_name: joint1
-    front_joint: joint2
-    back_joint: joint3
-
