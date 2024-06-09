@@ -29,6 +29,8 @@
 
             <topic>cmd_vel</topic>
             <odom_topic>odom</odom_topic>
+            <frame_id>odom</frame_id>    
+            <child_frame_id>base_link</child_frame_id>
         </plugin>
 
         <plugin 

@@ -5,6 +5,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+    camera_model = 'zed2i'
+
     lidar_frame_id = LaunchConfiguration('lidar_frame_id')
 
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -62,7 +64,6 @@ def generate_launch_description():
                 package='rtabmap_util', executable='point_cloud_assembler', output='screen',
                 parameters=[{
                     'max_clouds': 10,
-                    'fixed_frame_id': '',
                     'use_sim_time': use_sim_time,
                 }],
                 remappings=[

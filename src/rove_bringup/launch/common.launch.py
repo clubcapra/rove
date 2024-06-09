@@ -94,7 +94,7 @@ def generate_launch_description():
         launch_arguments={
             'use_sim_time': use_sim_time,
             "deskewing": "true",
-            "use_slam3d": "false",
+            "use_slam3d": "true",
         }.items(),
     )
 
