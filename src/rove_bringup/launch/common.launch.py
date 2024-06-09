@@ -18,7 +18,6 @@ def generate_launch_description():
     pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
     pkg_rove_slam = get_package_share_directory('rove_slam')
-    bringup_pkg_path = get_package_share_directory('rove_bringup')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
@@ -84,7 +83,7 @@ def generate_launch_description():
 
     teleop = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(bringup_pkg_path, "launch", "rove_controller_usb.launch.py"),
+            os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
         ),
     )
 
@@ -102,8 +101,8 @@ def generate_launch_description():
     return LaunchDescription([
             robot_state_publisher,
             robot_localization_node_local,
-            robot_localization_node_global,
-            navsat_transform,
+            #robot_localization_node_global,
+            #navsat_transform,
             rviz,
             teleop,
             autonomy,

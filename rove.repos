@@ -1,8 +1,12 @@
 repositories:
-  ovis_description:
+  ovis_ros2:
     type: git
-    url: https://github.com/clubcapra/ovis_ros2.git
-    version: master
+    url: https://github.com/clubcapra/ovis_ros2
+    version: new-env-with-arm
+  ros_odrive:
+    type: git
+    url: https://github.com/IliTheButterfly/ros_odrive.git
+    version: 0fa84d3745a8c385076d29b7f54971e9f2d14de7
   vectornav:
     type: git
     url: https://github.com/dawonn/vectornav.git
