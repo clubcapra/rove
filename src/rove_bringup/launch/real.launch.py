@@ -17,7 +17,6 @@ def generate_launch_description():
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
-    robot_desc = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -32,30 +31,8 @@ def generate_launch_description():
     )
     robot_description = {"robot_description": robot_description_content}
     
-    # Takes the description and joint angles as inputs and publishes
-    # the 3D poses of the robot links
-    robot_state_pub_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        # name='robot_state_publisher',
-        output='both',
-        parameters=[
-            {'robot_description': robot_desc},
-            # {"use_sim_time": True, }
-        ],
-        remappings=[
-            # ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
-            # ("/diff_drive_controller/cmd_vel", "/cmd_vel"),
-            # ("/cmd_vel", "/diff_drive_controller/cmd_vel_unstamped"),
-            # ("/cmd_vel", "/diff_drive_controller/cmd_vel"),
-        ],
-    )
-    
     # Controllers
-    # controller_nodes = ["left_track_controller", "right_track_controller", "diff_drive_controller"]
     controller_nodes = ["diff_drive_controller"]
-    # controller_nodes = ["velocity_controller"]
-    # controller_nodes = ["forward_controller"]
 
     common = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -72,7 +49,6 @@ def generate_launch_description():
             pkg_rove_description,
             "config",
             "tracks_controllers.yaml",
-            # "test_controllers.yaml",
         ]
     )
     
@@ -80,13 +56,9 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[
-            # robot_desc,
             robot_description,
             controllers,
         ],
-        # remappings=[
-        #     ('/cmd_vel', '/diff_drive_controller/cmd_vel_unstamped'),
-        # ],
         output="both",
     )
     
@@ -115,14 +87,6 @@ def generate_launch_description():
         
     delayed_controller_nodes = list([create_controller_node(node_name) for node_name in controller_nodes])
     
-
-    ###### Sensor ######
-    vectornav = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_bringup, "launch", "vectornav.launch.py"),
-        ),
-    )
-    
     # start_can_cmd = ExecuteProcess(
     #     cmd=[[
     #         'ip link set can0 type can bitrate 250000; ip link set up can0'
@@ -143,14 +107,7 @@ def generate_launch_description():
     #     )
     # )
 
-    velodyne = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_bringup, "launch", "velodyne.launch.py"),
-        ),
-    )
-
     return LaunchDescription([
-            robot_state_pub_node,
             control_node,
             common,
             joint_state_broadcaster_spawner,

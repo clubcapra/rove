@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:include filename="$(find rove_tracks)/urdf/rove_track.urdf.xacro"/>
-    
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">    
     <xacro:macro name="rove_odrive_motor" params="position suffix id">
         <xacro:unless value="${(id == -1)}">
             <xacro:track_motor_control position="${position}" suffix="${suffix}" nodeid="${id}"/>
@@ -50,41 +48,6 @@
                 <state_interface name="effort"/>
             </joint>
 
-            <transmission name="transmission_fr">
-                <plugin>transmission_interface/SimpleTransmission</plugin>
-                <actuator name="actuator_fr" role="actuator_fr"/>
-                <joint name="track_fr_j" role="track_fr_j">
-                  <mechanical_reduction>30.76923077</mechanical_reduction>
-                  <offset>0.0</offset>
-                </joint>
-              </transmission>
-
-              <transmission name="transmission_rr">
-                <plugin>transmission_interface/SimpleTransmission</plugin>
-                <actuator name="actuator_rr" role="actuator_rr"/>
-                <joint name="track_rr_j" role="track_rr_j">
-                  <mechanical_reduction>30.76923077</mechanical_reduction>
-                  <offset>0.0</offset>
-                </joint>
-              </transmission>
-
-              <transmission name="transmission_fl">
-                <plugin>transmission_interface/SimpleTransmission</plugin>
-                <actuator name="actuator_fl" role="actuator_fl"/>
-                <joint name="track_fl_j" role="track_fl_j">
-                  <mechanical_reduction>30.76923077</mechanical_reduction>
-                  <offset>0.0</offset>
-                </joint>
-              </transmission>
-
-              <transmission name="transmission_rl">
-                <plugin>transmission_interface/SimpleTransmission</plugin>
-                <actuator name="actuator_rl" role="actuator_rl"/>
-                <joint name="track_rl_j" role="track_rl_j">
-                  <mechanical_reduction>30.76923077</mechanical_reduction>
-                  <offset>0.0</offset>
-                </joint>
-              </transmission>
             <!-- <joint name="track_rl_j">
                 <param name="node_id">1</param>
             </joint> -->
@@ -141,7 +104,5 @@
 
     <xacro:macro name="rove_ros2_control">
         <xacro:odrive_control/>
-        <!-- <xacro:track_control suffix="l"/> -->
-        <!-- <xacro:track_control suffix="r"/> -->
     </xacro:macro>
 </robot>
