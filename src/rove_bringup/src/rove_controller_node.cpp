@@ -45,7 +45,6 @@ public:
         // cmd_vel_sub_ = create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 1, std::bind(&RoveController::cmdvelCallback, this, std::placeholders::_1));
 
         joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 1);
-        // cmd_vel_stamped_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>("/diff_drive_controller/cmd_vel", 1);
 
         // auto x = create_wall_timer(
         //     std::chrono::milliseconds(1000/20), std::bind(&RoveController::cmdvelTimerCallback, this, std::placeholders::_1)
@@ -145,22 +144,9 @@ private:
         previous_msg_ = *joy_msg;
     }
 
-    // void cmdvelCallback(const geometry_msgs::msg::Twist::SharedPtr cmd_vel_msg) {
-    //     cmd_vel_msg_ = *cmd_vel_msg;
-    //     cmd_vel_stamped_msg_.twist = cmd_vel_msg_;
-    //     auto header = std_msgs::msg::Header();
-    //     header.stamp = this->get_clock()->now();
-    //     cmd_vel_stamped_msg_.header = header;
-    // }
-
-    // void cmdvelTimerCallback() {
-    //     cmd_vel_stamped_pub_->publish(cmd_vel_stamped_msg_);
-    // }
-
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
     // rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
-    // rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
     sensor_msgs::msg::Joy previous_msg_; 
     sensor_msgs::msg::Joy teleop_msg_;
     // geometry_msgs::msg::Twist cmd_vel_msg_;
