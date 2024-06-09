@@ -8,16 +8,14 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time')
-
     # Get the launch directory
     pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
     pkg_rove_slam = get_package_share_directory('rove_slam')
+    bringup_pkg_path = get_package_share_directory('rove_bringup')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
@@ -32,7 +30,7 @@ def generate_launch_description():
         output='both',
         parameters=[
             {'robot_description': robot_desc},
-            {"use_sim_time": use_sim_time, }
+            # {"use_sim_time": True, }
         ]
     )
 
@@ -40,8 +38,10 @@ def generate_launch_description():
     rviz = Node(
        package='rviz2',
        executable='rviz2',
-       arguments=['-d', os.path.join(pkg_rove_description, 'config',
-                                     'basic.rviz')],
+       arguments=[
+        '-f', 'velodyne',
+        # '-d', os.path.join(pkg_rove_description, 'config','basic.rviz')
+        ],
     )
 
     # used tutorial: https://navigation.ros.org/tutorials/docs/navigation2_with_gps.html
@@ -52,7 +52,8 @@ def generate_launch_description():
         name='ekf_filter_node_local',
         output='screen',
         parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
-                    {'use_sim_time': use_sim_time}],
+                    # {'use_sim_time': True}
+                    ],
         remappings=[('odometry/filtered', 'odometry/local')])
     
 
@@ -62,7 +63,8 @@ def generate_launch_description():
         name='ekf_filter_node_global',
         output='screen',
         parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
-                    {'use_sim_time': use_sim_time}],
+                    # {'use_sim_time': True}
+                    ],
         remappings=[('odometry/filtered', 'odometry/global')])
 
 
@@ -72,7 +74,8 @@ def generate_launch_description():
         name="navsat_transform",
         output="screen",
         parameters=[os.path.join(pkg_rove_description, 'config/navsat_transform.yaml'),
-                   {'use_sim_time': use_sim_time}],
+                    # {'use_sim_time': True}
+                   ],
         remappings=[
             # Subscribed Topics
                     ("imu/data", "imu"),
@@ -81,29 +84,25 @@ def generate_launch_description():
                 ],
     )
 
-    teleop = IncludeLaunchDescription(
+    ###### Sensor ######
+    vectornav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
+            os.path.join(pkg_rove_bringup, "launch", "vectornav.launch.py"),
         ),
     )
 
-    autonomy = IncludeLaunchDescription(
+    velodyne = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_bringup, "launch", "autonomy.launch.py"),
+            os.path.join(pkg_rove_bringup, "launch", "velodyne.launch.py"),
         ),
-        launch_arguments={
-            'use_sim_time': use_sim_time,
-            "deskewing": "true",
-            "use_slam3d": "false",
-        }.items(),
     )
 
     return LaunchDescription([
             # robot_state_publisher,
-            # robot_localization_node_local,
-            # robot_localization_node_global,
-            # navsat_transform,
+            robot_localization_node_local,
+            robot_localization_node_global,
+            navsat_transform,
+            vectornav,
+            velodyne,
             rviz,
-            teleop,
-            # autonomy,
             ])

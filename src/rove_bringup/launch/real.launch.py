@@ -61,6 +61,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_bringup, "launch", "common.launch.py"),
         ),
+        launch_arguments={
+            "use_sim_time": "false",
+        }.items(),
     )
 
     ###### ROS2 control ######
@@ -140,6 +143,12 @@ def generate_launch_description():
     #     )
     # )
 
+    velodyne = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_bringup, "launch", "velodyne.launch.py"),
+        ),
+    )
+
     return LaunchDescription([
             robot_state_pub_node,
             control_node,
@@ -147,4 +156,6 @@ def generate_launch_description():
             joint_state_broadcaster_spawner,
             *delayed_controller_nodes,
             # vectornav,
+            vectornav,
+            velodyne,
             ])

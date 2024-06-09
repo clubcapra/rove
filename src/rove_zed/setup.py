@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'rove_slam'
+package_name = 'rove_zed'
 
 setup(
     name=package_name,
@@ -19,12 +19,11 @@ setup(
     zip_safe=True,
     maintainer='rove',
     maintainer_email='capra@ens.etsmtl.ca',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='Zed package for rove',
+    license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'odom_transform_node = rove_slam.odom_transform_node:main',
         ],
     },
 )

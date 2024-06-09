@@ -41,16 +41,7 @@ RUN apt-get update && apt-get install -y \
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
-RUN apt update -y
-
-RUN apt install -y ros-humble-ros-gzharmonic
-
-# Adding an APT update and clean step
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-utils && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    apt-get update
+RUN apt update -y --fix-missing
 
 # Change user
 RUN chown $USER_UID:$USER_GID /workspace/$USERNAME
@@ -60,15 +51,20 @@ USER $USERNAME
 # Copy to preload the ros packages
 COPY ./ /workspace/$USERNAME/
 
-# Install Tesseract
-
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
 COPY --chown=$USERNAME ./ /workspace/$USERNAME
+
+# Add needed packages
+RUN vcs import src < rove.repos
+
 
 # Rosdep update
 RUN rosdep update
 
 # Install ROS dependencies
 RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
+
+# Install gzharmonic after rosdep install
+RUN sudo apt install -y ros-humble-ros-gzharmonic
