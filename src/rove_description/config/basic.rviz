@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /3d map1
       Splitter Ratio: 0.5
     Tree Height: 517
   - Class: rviz_common/Selection
@@ -390,7 +391,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /assembled_cloud
+        Value: /cloud_map
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -440,25 +441,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 19.558191299438477
+      Distance: 10.68095874786377
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.7862069010734558
-        Y: 0.829606294631958
-        Z: -1.3278541564941406
+        X: -1.4718998670578003
+        Y: 2.8054065704345703
+        Z: 2.2840819358825684
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7503987550735474
+      Pitch: 0.6003987789154053
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.633583068847656
+      Yaw: 3.7735798358917236
     Saved: ~
 Window Geometry:
   Displays:
