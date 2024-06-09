@@ -155,7 +155,6 @@ def generate_launch_description():
             common,
             joint_state_broadcaster_spawner,
             *delayed_controller_nodes,
-            # vectornav,
             vectornav,
             velodyne,
             ])

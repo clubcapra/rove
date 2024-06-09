@@ -49,6 +49,42 @@
                 <state_interface name="velocity"/>
                 <state_interface name="effort"/>
             </joint>
+
+            <transmission name="transmission_fr">
+                <plugin>transmission_interface/SimpleTransmission</plugin>
+                <actuator name="actuator_fr" role="actuator_fr"/>
+                <joint name="track_fr_j" role="track_fr_j">
+                  <mechanical_reduction>30.76923077</mechanical_reduction>
+                  <offset>0.0</offset>
+                </joint>
+              </transmission>
+
+              <transmission name="transmission_rr">
+                <plugin>transmission_interface/SimpleTransmission</plugin>
+                <actuator name="actuator_rr" role="actuator_rr"/>
+                <joint name="track_rr_j" role="track_rr_j">
+                  <mechanical_reduction>30.76923077</mechanical_reduction>
+                  <offset>0.0</offset>
+                </joint>
+              </transmission>
+
+              <transmission name="transmission_fl">
+                <plugin>transmission_interface/SimpleTransmission</plugin>
+                <actuator name="actuator_fl" role="actuator_fl"/>
+                <joint name="track_fl_j" role="track_fl_j">
+                  <mechanical_reduction>30.76923077</mechanical_reduction>
+                  <offset>0.0</offset>
+                </joint>
+              </transmission>
+
+              <transmission name="transmission_rl">
+                <plugin>transmission_interface/SimpleTransmission</plugin>
+                <actuator name="actuator_rl" role="actuator_rl"/>
+                <joint name="track_rl_j" role="track_rl_j">
+                  <mechanical_reduction>30.76923077</mechanical_reduction>
+                  <offset>0.0</offset>
+                </joint>
+              </transmission>
             <!-- <joint name="track_rl_j">
                 <param name="node_id">1</param>
             </joint> -->
