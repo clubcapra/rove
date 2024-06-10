@@ -6,7 +6,7 @@ from launch.actions import IncludeLaunchDescription
 
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
@@ -29,7 +29,7 @@ def generate_launch_description():
                 pkg_rove_slam, "config", "slam_config.yaml"
             )
         }.items(),
-        condition=IfCondition(use_slam3d)
+        condition=UnlessCondition(use_slam3d)
     )
 
     slam3d = IncludeLaunchDescription(
@@ -53,7 +53,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-            #slam,
+            slam,
             slam3d,
             nav,
             ])
