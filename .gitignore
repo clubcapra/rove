@@ -17,3 +17,6 @@ __pycache__/
 
 # Ignore files related to your dev environment
 .vscode/
+
+# generated map database by rtabmap
+*.db
