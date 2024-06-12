@@ -107,11 +107,24 @@ def generate_launch_description():
     #     )
     # )
 
+    ###### Sensor ######
+    vectornav = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_bringup, "launch", "vectornav.launch.py"),
+        ),
+    )
+
+    velodyne = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_bringup, "launch", "velodyne.launch.py"),
+        ),
+    )
+
     return LaunchDescription([
             control_node,
             common,
             joint_state_broadcaster_spawner,
             *delayed_controller_nodes,
-            # vectornav,
-            # velodyne,
+            vectornav,
+            velodyne,
             ])

@@ -8,7 +8,7 @@ velodyne_driver_node:
         read_once: false
         read_fast: false
         repeat_delay: 0.0
-        frame_id: velodyne
+        frame_id: velodyne_laser
         model: VLP16
         rpm: 600.0
         port: 2368
@@ -25,6 +25,6 @@ velodyne_transform_node:
         min_range: 0.9
         max_range: 130.0
         view_direction: 0.0
-        fixed_frame: ""
-        target_frame: ""
+        fixed_frame: "base_link"
+        target_frame: "velodyne_laser"
         organize_cloud: true

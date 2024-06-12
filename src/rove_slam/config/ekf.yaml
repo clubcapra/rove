@@ -21,7 +21,7 @@ ekf_filter_node_local:
                       false,  false,  true, # roll pitch yaw
                       false,  false,  false, # vx vy vz
                       false,  false,  true, # vroll vpitch vyaw
-                      true, true, false] # ax ay az
+                      false, false, false] # ax ay az
         imu0_queue_size: 20
 
 ekf_filter_node_global:
@@ -46,7 +46,7 @@ ekf_filter_node_global:
                       false,  false,  true, # roll pitch yaw
                       false,  false,  false, # vx vy vz
                       false,  false,  true, # vroll vpitch vyaw
-                      true, true, false] # ax ay az
+                      false, false, false] # ax ay az
         imu0_queue_size: 20
 
         # description from https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/ekf.yaml

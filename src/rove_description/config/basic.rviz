@@ -3,8 +3,7 @@ Panels:
     Help Height: 78
     Name: Displays
     Property Tree Widget:
-      Expanded:
-        - /RobotModel1/Status1
+      Expanded: ~
       Splitter Ratio: 0.5
     Tree Height: 517
   - Class: rviz_common/Selection
@@ -71,50 +70,19 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        rove_end_effector:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rove_link_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rove_link_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rove_link_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rove_link_4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rove_link_5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rove_link_6:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rove_link_base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         sensor_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        track_fl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        track_fr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         track_l:
           Alpha: 1
           Show Axes: false
@@ -125,6 +93,14 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        track_rl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        track_rr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         velodyne_laser:
           Alpha: 1
           Show Axes: false
@@ -176,9 +152,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: 125
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 1
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -202,39 +178,19 @@ Visualization Manager:
         All Enabled: false
         base_link:
           Value: true
-        flipper_fl:
-          Value: true
-        flipper_fr:
-          Value: true
-        flipper_rl:
-          Value: true
-        flipper_rr:
-          Value: true
-        map:
-          Value: true
-        odom:
-          Value: true
-        rove_end_effector:
-          Value: true
-        rove_link_1:
-          Value: true
-        rove_link_2:
-          Value: true
-        rove_link_3:
-          Value: true
-        rove_link_4:
-          Value: true
-        rove_link_5:
-          Value: true
-        rove_link_6:
-          Value: true
-        rove_link_base:
-          Value: true
         sensor_link:
+          Value: true
+        track_fl:
+          Value: true
+        track_fr:
           Value: true
         track_l:
           Value: true
         track_r:
+          Value: true
+        track_rl:
+          Value: true
+        track_rr:
           Value: true
         velodyne_laser:
           Value: true
@@ -246,35 +202,22 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        map:
-          odom:
-            base_link:
-              flipper_fl:
-                {}
-              flipper_fr:
-                {}
-              flipper_rl:
-                {}
-              flipper_rr:
-                {}
-              rove_link_base:
-                rove_link_1:
-                  rove_link_2:
-                    rove_link_3:
-                      rove_link_4:
-                        rove_link_5:
-                          rove_link_6:
-                            rove_end_effector:
-                              {}
-              sensor_link:
-                {}
-              track_l:
-                {}
-              track_r:
-                {}
-              velodyne_link:
-                velodyne_laser:
-                  {}
+        base_link:
+          sensor_link:
+            {}
+          track_l:
+            track_fl:
+              {}
+            track_rl:
+              {}
+          track_r:
+            track_fr:
+              {}
+            track_rr:
+              {}
+          velodyne_link:
+            velodyne_laser:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
@@ -382,7 +325,7 @@ Visualization Manager:
         y_scale: 1
         z_scale: 1
       Class: rviz_imu_plugin/Imu
-      Enabled: false
+      Enabled: true
       Name: Imu
       Topic:
         Depth: 5
@@ -391,12 +334,12 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /imu
-      Value: false
+      Value: true
       fixed_frame_orientation: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: map
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -439,7 +382,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 15.358924865722656
+      Distance: 7.311348915100098
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -454,10 +397,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.900398313999176
+      Pitch: 1.0553982257843018
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.728583812713623
+      Yaw: 4.913582801818848
     Saved: ~
 Window Geometry:
   Displays:
