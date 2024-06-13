@@ -13,7 +13,6 @@ def generate_launch_description():
     pkg_zed_wrapper = get_package_share_directory('zed_wrapper')
     launch_file_path = os.path.join(pkg_zed_wrapper, 'launch', 'zed_camera.launch.py')
 
-    # Parse yml config file to iterable array
     pkg_rove_zed = get_package_share_directory('rove_zed')
     config_override_path = os.path.join(pkg_rove_zed, 'config', 'zed_mapping.yaml')
 
