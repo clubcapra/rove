@@ -21,7 +21,7 @@ def generate_launch_description():
             ['rgbd_sync', 'true' ],
             ['approx_rgbd_sync', 'false'],
             ['delete_db_on_start', 'true'],
-            # ['subscribe_scan_cloud', 'true'],
+            # ['subscribe_scan_cloud', 'true'], https://wiki.ros.org/rtabmap_ros/Tutorials/SetupOnYourRobot#Kinect_.2B-_Odometry_.2B-_2D_laser
             # ['scan_cloud_topic', '/velodyne_points'],
             # ['RGBD/NeighborLinkRefining', 'true'],
             # ['RGBD/ProximityBySpace', 'true'],
