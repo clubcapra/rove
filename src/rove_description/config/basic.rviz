@@ -154,9 +154,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: 100
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 1
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -179,16 +179,6 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base_link:
-          Value: true
-        flipper_fl:
-          Value: true
-        flipper_fr:
-          Value: true
-        flipper_rl:
-          Value: true
-        flipper_rr:
-          Value: true
-        map:
           Value: true
         odom:
           Value: true
@@ -216,33 +206,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        map:
-          odom:
-            base_link:
-              flipper_fl:
-                {}
-              flipper_fr:
-                {}
-              flipper_rl:
-                {}
-              flipper_rr:
-                {}
-              sensor_link:
-                {}
-              track_l:
-                track_fl:
-                  {}
-                track_rl:
-                  {}
-              track_r:
-                track_fr:
-                  {}
-                track_rr:
-                  {}
-              velodyne_link:
-                {}
-            velodyne_laser:
+        odom:
+          base_link:
+            sensor_link:
               {}
+            track_l:
+              track_fl:
+                {}
+              track_rl:
+                {}
+            track_r:
+              track_fr:
+                {}
+              track_rr:
+                {}
+            velodyne_link:
+              velodyne_laser:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
@@ -331,7 +311,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /odometry/filtered
+        Value: /odometry/local
       Value: true
     - Acceleration properties:
         Acc. vector alpha: 1
@@ -376,7 +356,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: 255
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: 3d map
@@ -391,7 +371,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /cloud_map
+        Value: /assembled_cloud
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -441,25 +421,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10.68095874786377
+      Distance: 9.305854797363281
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.4718998670578003
-        Y: 2.8054065704345703
-        Z: 2.2840819358825684
+        X: -0.6736313104629517
+        Y: -1.0152995586395264
+        Z: 2.0505826473236084
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6003987789154053
+      Pitch: 0.600398600101471
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.7735798358917236
+      Yaw: 1.893579363822937
     Saved: ~
 Window Geometry:
   Displays:

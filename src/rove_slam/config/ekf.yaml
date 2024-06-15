@@ -24,6 +24,15 @@ ekf_filter_node_local:
                       false, false, false] # ax ay az
         imu0_queue_size: 20
 
+        # Add ICP odometry as a new sensor input
+        odom1: /icp_odom
+        odom1_config: [true,  true,  false,
+                       false, false, true,
+                       true, true, false,
+                       false, false, true,
+                       false, false, false]
+
+
 ekf_filter_node_global:
     ros__parameters:
         frequency: 30.0
