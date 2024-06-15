@@ -102,8 +102,10 @@ def generate_launch_description():
             'Icp/Strategy', '1',
             'Icp/OutlierRatio', '0.7',
             'Icp/CorrespondenceRatio', '0.2',
-            'Grid/MaxGroundHeight', '0.05',
+            'Grid/MaxGroundHeight', '0.1',
             'Grid/MaxObstacleHeight', '1.5',
+            'Grid/RayTracing', 'true',
+            'Grid/3D', 'false',
             'Reg/Force3DoF', 'true',
             'Optimizer/Slam2D', 'true',
         ]
