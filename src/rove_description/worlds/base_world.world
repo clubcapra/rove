@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <sdf version="1.6">
     <world name="default">
         <!--
@@ -9,11 +9,88 @@
             (x and yaw command the motion).
         -->
         <gui fullscreen='0'>
-            <camera name='user_camera'>
-                <pose>2 18 15 0 0.75 -1.7</pose>
-            </camera>
+            <!-- 3D scene -->
+            <plugin filename="MinimalScene" name="3D View">
+                <gz-gui>
+                    <title>3D View</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="string" key="state">docked</property>
+                </gz-gui>
+
+                <engine>ogre2</engine>
+                <scene>scene</scene>
+                <ambient_light>0.4 0.4 0.4</ambient_light>
+                <background_color>0.8 0.8 0.8</background_color>
+                <camera_pose>-6 0 6 0 0.5 0</camera_pose>
+            </plugin>
+
+            <!-- Plugins that add functionality to the scene -->
+            <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+                <gz-gui>
+                    <property key="state" type="string">floating</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="GzSceneManager" name="Scene Manager">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="InteractiveViewControl" name="Interactive view control">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <plugin filename="CameraTracking" name="Camera Tracking">
+                <gz-gui>
+                    <property key="resizable" type="bool">false</property>
+                    <property key="width" type="double">5</property>
+                    <property key="height" type="double">5</property>
+                    <property key="state" type="string">floating</property>
+                    <property key="showTitleBar" type="bool">false</property>
+                </gz-gui>
+            </plugin>
+            <!-- World control -->
+            <plugin filename="WorldControl" name="World control">
+                <gz-gui>
+                    <title>World control</title>
+                    <property type="bool" key="showTitleBar">false</property>
+                    <property type="bool" key="resizable">false</property>
+                    <property type="double" key="height">72</property>
+                    <property type="double" key="z">1</property>
+
+                    <property type="string" key="state">floating</property>
+                    <anchors target="3D View">
+                        <line own="left" target="left" />
+                        <line own="bottom" target="bottom" />
+                    </anchors>
+                </gz-gui>
+            </plugin>
+
+            <plugin filename="ImageDisplay" name="Image Display">
+                <gz-gui>
+                    <property key="state" type="string">docked</property>
+                </gz-gui>
+                <topic>depth_camera</topic>
+            </plugin>
+            <plugin filename="ImageDisplay" name="Image Display">
+                <gz-gui>
+                    <property key="state" type="string">docked</property>
+                </gz-gui>
+                <topic>camera</topic>
+            </plugin>
         </gui>
-        
+
         <spherical_coordinates>
             <!-- currently gazebo has a bug: instead of outputting lat, long, altitude in ENU
             (x = East, y = North and z = Up) as the default configurations, it's outputting (-E)(-N)U,
@@ -32,51 +109,51 @@
             <real_time_update_rate>1000</real_time_update_rate>
         </physics>
 
-        <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
-        <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
-        <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
-        <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+        <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system' />
+        <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system' />
+        <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system' />
+        <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system' />
 
         <light type="directional" name="sun">
-          <cast_shadows>true</cast_shadows>
-          <pose>0 0 10 0 0 0</pose>
-          <diffuse>0.8 0.8 0.8 1</diffuse>
-          <specular>0.2 0.2 0.2 1</specular>
-          <attenuation>
-            <range>1000</range>
-            <constant>0.9</constant>
-            <linear>0.01</linear>
-            <quadratic>0.001</quadratic>
-          </attenuation>
-          <direction>-0.5 0.1 -0.9</direction>
+            <cast_shadows>true</cast_shadows>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.1 -0.9</direction>
         </light>
-        
-    
+
+
         <model name="ground_plane">
-          <static>true</static>
-          <link name="link">
-            <collision name="collision">
-              <geometry>
-                <plane>
-                  <normal>0 0 1</normal>
-                  <size>100 100</size>
-                </plane>
-              </geometry>
-            </collision>
-            <visual name="visual">
-              <geometry>
-                <plane>
-                  <normal>0 0 1</normal>
-                  <size>100 100</size>
-                </plane>
-              </geometry>
-              <material>
-                <ambient>0.8 0.8 0.8 1</ambient>
-                <diffuse>0.8 0.8 0.8 1</diffuse>
-                <specular>0.8 0.8 0.8 1</specular>
-              </material>
-            </visual>
-          </link>
+            <static>true</static>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <material>
+                        <ambient>0.8 0.8 0.8 1</ambient>
+                        <diffuse>0.8 0.8 0.8 1</diffuse>
+                        <specular>0.8 0.8 0.8 1</specular>
+                    </material>
+                </visual>
+            </link>
         </model>
 
         <model name='Frontier'>
@@ -98,7 +175,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -124,7 +201,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -150,7 +227,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -176,7 +253,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -202,7 +279,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -228,7 +305,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -254,7 +331,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -280,7 +357,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -306,7 +383,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -332,7 +409,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -358,7 +435,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -384,7 +461,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -410,7 +487,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -436,7 +513,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -462,7 +539,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -488,7 +565,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -514,7 +591,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -540,7 +617,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -566,7 +643,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -592,7 +669,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -618,7 +695,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -644,7 +721,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -670,7 +747,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -696,7 +773,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -722,7 +799,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -748,7 +825,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -774,7 +851,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -800,7 +877,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -826,7 +903,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -852,7 +929,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -878,7 +955,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -904,7 +981,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>
@@ -930,7 +1007,7 @@
                         </box>
                     </geometry>
                     <material>
-                        
+
                         <ambient>1 1 1 1</ambient>
                     </material>
                     <meta>

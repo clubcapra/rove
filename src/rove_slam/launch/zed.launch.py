@@ -14,28 +14,22 @@ def generate_launch_description():
     parameters=[{
         'odom_frame_id': 'odom',
         'publish_tf': False,
-        'frame_id':'zed_camera_link',
+        'frame_id':'base_link',
         'subscribe_depth': True,
-        'subscribe_odom_info': True,
+        'subscribe_odom_info': False,
         'approx_sync': True,
+        'Grid/MaxGroundHeight': '0.1',
+        'Grid/MaxObstacleHeight': '1.5',
+        'Grid/RayTracing': True,
+        'Grid/3D': False,
         'wait_imu_to_init':True}]
 
     remappings=[
-        ('imu', '/zed/zed_node/imu/data'),
+        ('imu', '/imu'),
         ('rgb/image', '/zed/zed_node/rgb/image_rect_color'),
         ('rgb/camera_info', '/zed/zed_node/depth/camera_info'),
-        ('depth/image', '/zed/zed_node/depth/depth_registered'),
-        ('odom', '/zed/zed_node/odom')
-
+        ('/depth/image', '/zed/zed_node/depth/depth_registered'),
         ]
-
-          
-
-    zed = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_zed, 'launch', 'zed_mapping.launch.py'),
-        )
-    )
 
     rtabmap_slam = Node(
             package='rtabmap_slam', executable='rtabmap', output='screen',
@@ -63,7 +57,6 @@ def generate_launch_description():
 
     return LaunchDescription([
         odom,
-        zed,
         rtabmap_slam,
         rtabmap_viz_node,
     ])

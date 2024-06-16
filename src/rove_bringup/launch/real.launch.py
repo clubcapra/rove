@@ -14,6 +14,7 @@ def generate_launch_description():
     # Get the launch directory
     pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
+    pkg_rove_zed = get_package_share_directory('rove_zed')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
@@ -120,6 +121,12 @@ def generate_launch_description():
         ),
     )
 
+    zed = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_zed, 'launch', 'zed_mapping.launch.py'),
+        )
+    )
+
     return LaunchDescription([
             control_node,
             common,
@@ -127,4 +134,5 @@ def generate_launch_description():
             *delayed_controller_nodes,
             vectornav,
             velodyne,
+            zed,
             ])

@@ -2,52 +2,81 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:property name="M_PI" value="3.1415926535897931" />
     <xacro:include filename="$(find rove_description)/urdf/velodyne.urdf.xacro" />
-
     <joint name="sensor_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="sensor_link"/>
-        <origin xyz="0.1 0 0.212" rpy="0 0 0"/>
+        <parent link="base_link" />
+        <child link="sensor_link" />
+        <origin xyz="0.1 0 0.4" rpy="0 0 0" />
     </joint>
-
     <link name="sensor_link">
         <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <mass value="0.1"/>
-            <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
         </inertial>
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.1" radius="0.1"/>
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.1" radius="0.1"/>
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </collision>
     </link>
-
     <xacro:velodyne_lidar name="velodyne" parent_link="base_link">
         <origin xyz="0.0 0.0 0.4" rpy="0 0 0" />
     </xacro:velodyne_lidar>
-
+    
     <gazebo reference="sensor_link">
         <material>Gazebo/Black</material>
-
         <sensor name="imu_sensor" type="imu">
             <gz_frame_id>sensor_link</gz_frame_id>
             <always_on>true</always_on>
             <update_rate>50</update_rate>
             <topic>imu</topic>
         </sensor>
-
         <sensor name="gps_sensor" type="navsat">
             <gz_frame_id>sensor_link</gz_frame_id>
             <always_on>true</always_on>
             <update_rate>1</update_rate>
             <topic>navsat</topic>
+        </sensor>
+        <sensor name="depth_camera1" type="depth_camera">
+            <gz_frame_id>sensor_link</gz_frame_id>
+            <update_rate>10</update_rate>
+            <topic>depth_camera</topic>
+            <camera>
+                <horizontal_fov>1.88</horizontal_fov>
+                <image>
+                    <width>256</width>
+                    <height>256</height>
+                    <format>R_FLOAT32</format>
+                </image>
+                <clip>
+                    <near>0.5</near>
+                    <far>20.0</far>
+                </clip>
+            </camera>
+        </sensor>
+        <sensor name="camera1" type="camera">
+            <gz_frame_id>sensor_link</gz_frame_id>
+            <update_rate>10</update_rate>
+            <topic>camera</topic>
+            <camera>
+                <horizontal_fov>1.88</horizontal_fov>
+                <image>
+                    <width>256</width>
+                    <height>256</height>
+                    <format>R_FLOAT32</format>
+                </image>
+                <clip>
+                    <near>0.5</near>
+                    <far>20.0</far>
+                </clip>
+            </camera>
         </sensor>
     </gazebo>
 </robot>
