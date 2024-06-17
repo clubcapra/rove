@@ -2,25 +2,13 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
 
-    pkg_rove_zed = get_package_share_directory('rove_zed')
-
     # Launch configuration
     use_sim_time = LaunchConfiguration('use_sim_time')
     deskewing = False
-
-    zed = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_zed, 'launch', 'zed_mapping.launch.py'),
-        )
-    )
 
     # Nodes
     icp_odometry_node = Node(
@@ -40,24 +28,9 @@ def generate_launch_description():
             ('scan_cloud', '/velodyne_points'),
             ('odom', '/icp_odom')
         ],
-        arguments=[
-            'Icp/PointToPlane', 'true',
-            'Icp/Iterations', '10',
-            'Icp/VoxelSize', '0.1',
-            'Icp/Epsilon', '0.001',
-            'Icp/PointToPlaneK', '20',
-            'Icp/PointToPlaneRadius', '0',
-            'Icp/MaxTranslation', '2',
-            'Icp/MaxCorrespondenceDistance', '1',
-            'Icp/Strategy', '1',
-            'Icp/OutlierRatio', '0.7',
-            'Icp/CorrespondenceRatio', '0.01',
-            'Odom/ScanKeyFrameThr', '0.4',
-            'OdomF2M/ScanSubtractRadius', '0.1',
-            'OdomF2M/ScanMaxSize', '15000',
-            'OdomF2M/BundleAdjustment', 'false',
-        ]
     )
+
+    
 
     point_cloud_assembler_node = Node(
         package='rtabmap_util',
@@ -73,18 +46,6 @@ def generate_launch_description():
             ('odom', '/odometry/local')
         ]
     )
-
-    camera_sync = Node(
-            package='rtabmap_sync', executable='rgbd_sync', output='screen',
-            parameters=[{
-              'approx_sync':True
-            }],
-            remappings=[
-              ('/depth/image', '/zed/zed_node/depth/depth_registered'),
-              ('/rgb/camera_info' , '/zed/zed_node/depth/camera_info'),
-              ('/rgb/image', '/zed/zed_node/rgb/image_rect_color')
-            ])
-    
 
     rtabmap_node = Node(
         package='rtabmap_slam',
@@ -142,7 +103,6 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'odom_frame_id': 'odom',
-            'subscribe_rgbd':True,
             'subscribe_odom_info': True,
             'subscribe_scan_cloud': True,
             'approx_sync': True,
@@ -158,7 +118,5 @@ def generate_launch_description():
         icp_odometry_node,
         point_cloud_assembler_node,
         rtabmap_node,
-        rtabmap_viz_node,
-        zed,
-        camera_sync,
+        rtabmap_viz_node
     ])

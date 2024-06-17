@@ -34,7 +34,7 @@ def generate_launch_description():
 
     slam3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_slam, "launch", "slam3d.launch.py"),
+            os.path.join(pkg_rove_slam, "launch", "slam3d_full.launch.py"),
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,

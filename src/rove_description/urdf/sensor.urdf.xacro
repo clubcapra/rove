@@ -11,17 +11,15 @@
     <joint name="camera_joint" type="fixed">
         <parent link="sensor_link" />
         <child link="camera_link" />
-        <origin xyz="0.1 0 0.4" rpy="-1.57 0 -1.57" />
+        <origin xyz="0.1 0 0" rpy="-1.57 0 -1.57" />
     </joint>
 
     <link name="camera_link">
         <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <mass value="0.1" />
             <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
         </inertial>
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <cylinder length="0.1" radius="0.1" />
             </geometry>
@@ -80,8 +78,8 @@
             <camera>
                 <horizontal_fov>1.88</horizontal_fov>
                 <image>
-                    <width>256</width>
-                    <height>256</height>
+                    <width>1344</width>
+                    <height>376</height>
                     <format>R_FLOAT32</format>
                 </image>
                 <clip>
@@ -99,8 +97,8 @@
             <camera>
                 <horizontal_fov>1.88</horizontal_fov>
                 <image>
-                    <width>256</width>
-                    <height>256</height>
+                    <width>1344</width>
+                    <height>376</height>
                     <format>R_FLOAT32</format>
                 </image>
                 <clip>

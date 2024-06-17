@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /DepthCloud1/Auto Size1
       Splitter Ratio: 0.5
     Tree Height: 517
   - Class: rviz_common/Selection
@@ -24,7 +25,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
 Visualization Manager:
   Class: ""
   Displays:
@@ -47,6 +48,11 @@ Visualization Manager:
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
         base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -153,9 +159,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 100
+      Max Intensity: 0
       Min Color: 0; 0; 0
-      Min Intensity: 1
+      Min Intensity: 0
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -178,6 +184,18 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base_link:
+          Value: true
+        camera_link:
+          Value: true
+        flipper_fl:
+          Value: true
+        flipper_fr:
+          Value: true
+        flipper_rl:
+          Value: true
+        flipper_rr:
+          Value: true
+        map:
           Value: true
         odom:
           Value: true
@@ -205,7 +223,33 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        map:
+          odom:
+            base_link:
+              flipper_fl:
+                {}
+              flipper_fr:
+                {}
+              flipper_rl:
+                {}
+              flipper_rr:
+                {}
+              sensor_link:
+                camera_link:
+                  {}
+              track_l:
+                track_fl:
+                  {}
+                track_rl:
+                  {}
+              track_r:
+                track_fr:
+                  {}
+                track_rr:
+                  {}
+              velodyne_link:
+                velodyne_laser:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
@@ -332,21 +376,31 @@ Visualization Manager:
         Value: true
       Axis: Z
       Channel Name: intensity
-      Class: rviz_default_plugins/PointCloud2
+      Class: rtabmap_rviz_plugins/MapCloud
+      Cloud decimation: 4
+      Cloud from scan: false
+      Cloud max depth (m): 4
+      Cloud min depth (m): 0
+      Cloud voxel size (m): 0.10000000149011612
       Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
+      Color Transformer: RGB8
+      Download graph: false
+      Download map: false
+      Download namespace: rtabmap
       Enabled: true
+      Filter ceiling (m): 10
+      Filter floor (m): 0
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 255
+      Max Intensity: 4096
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: 3d map
+      Name: MapCloud
+      Node filtering angle (degrees): 30
+      Node filtering radius (m): 0
       Position Transformer: XYZ
-      Selectable: true
       Size (Pixels): 3
-      Size (m): 0.009999999776482582
+      Size (m): 0.10000000149011612
       Style: Flat Squares
       Topic:
         Depth: 5
@@ -354,10 +408,49 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /assembled_cloud
+        Value: /mapData
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 1
+      Auto Size:
+        Auto Size Factor: 1
+        Value: true
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/DepthCloud
+      Color: 255; 255; 255
+      Color Image Topic: /zed/zed_node/rgb/image_rect_color
+      Color Transformer: RGB8
+      Color Transport Hint: raw
+      Decay Time: 0
+      Depth Map Topic: /zed/zed_node/depth/depth_registered
+      Depth Map Transport Hint: raw
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: DepthCloud
+      Occlusion Compensation:
+        Occlusion Time-Out: 30
+        Value: false
+      Position Transformer: XYZ
+      Queue Size: 5
+      Reliability Policy: Best effort
+      Selectable: true
+      Size (Pixels): 3
+      Style: Flat Squares
+      Topic Filter: true
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -404,25 +497,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 9.305854797363281
+      Distance: 11.600849151611328
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.6736313104629517
-        Y: -1.0152995586395264
-        Z: 2.0505826473236084
+        X: -1.209733486175537
+        Y: -1.5692439079284668
+        Z: 2.5361857414245605
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.600398600101471
+      Pitch: 0.9553995728492737
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.893579363822937
+      Yaw: 3.6536216735839844
     Saved: ~
 Window Geometry:
   Displays:
