@@ -7,6 +7,35 @@
         <child link="sensor_link" />
         <origin xyz="0.1 0 0.4" rpy="0 0 0" />
     </joint>
+
+    <joint name="camera_joint" type="fixed">
+        <parent link="sensor_link" />
+        <child link="camera_link" />
+        <origin xyz="0.1 0 0.4" rpy="-1.57 0 -1.57" />
+    </joint>
+
+    <link name="camera_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.1" radius="0.1" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.1" radius="0.1" />
+            </geometry>
+        </collision>
+    </link>
+
+
+
     <link name="sensor_link">
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -45,7 +74,7 @@
             <topic>navsat</topic>
         </sensor>
         <sensor name="depth_camera1" type="depth_camera">
-            <gz_frame_id>sensor_link</gz_frame_id>
+            <gz_frame_id>camera_link</gz_frame_id>
             <update_rate>10</update_rate>
             <topic>depth_camera</topic>
             <camera>
@@ -59,10 +88,12 @@
                     <near>0.5</near>
                     <far>20.0</far>
                 </clip>
+                <!-- Rotate the camera to point forward -->
+                <origin xyz="0.1 0 0.4" rpy="-1.57 0 -1.57" />
             </camera>
         </sensor>
         <sensor name="camera1" type="camera">
-            <gz_frame_id>sensor_link</gz_frame_id>
+            <gz_frame_id>camera_link</gz_frame_id>
             <update_rate>10</update_rate>
             <topic>camera</topic>
             <camera>

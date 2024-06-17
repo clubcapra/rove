@@ -114,6 +114,13 @@
         <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system' />
         <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system' />
 
+
+        <include>
+            <pose>3.5 0 0 0 0 0</pose>
+            <uri> https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine Tree
+            </uri>
+        </include>
+
         <light type="directional" name="sun">
             <cast_shadows>true</cast_shadows>
             <pose>0 0 10 0 0 0</pose>
@@ -175,8 +182,9 @@
                         </box>
                     </geometry>
                     <material>
-
-                        <ambient>1 1 1 1</ambient>
+                        <ambient>1 0 0 1</ambient>
+                        <diffuse>1 0 0 1</diffuse>
+                        <specular>1 0 0 1</specular>
                     </material>
                     <meta>
                         <layer>0</layer>
@@ -201,8 +209,9 @@
                         </box>
                     </geometry>
                     <material>
-
-                        <ambient>1 1 1 1</ambient>
+                        <ambient>1 1 0 1</ambient>
+                        <diffuse>1 1 0 1</diffuse>
+                        <specular>1 1 0 1</specular>
                     </material>
                     <meta>
                         <layer>0</layer>
@@ -253,8 +262,9 @@
                         </box>
                     </geometry>
                     <material>
-
-                        <ambient>1 1 1 1</ambient>
+                        <ambient>1 0 1 1</ambient>
+                        <diffuse>1 0 1 1</diffuse>
+                        <specular>1 0 1 1</specular>
                     </material>
                     <meta>
                         <layer>0</layer>
@@ -305,8 +315,9 @@
                         </box>
                     </geometry>
                     <material>
-
-                        <ambient>1 1 1 1</ambient>
+                        <ambient>0 0 1 1</ambient>
+                        <diffuse>0 0 1 1</diffuse>
+                        <specular>0 0 1 1</specular>
                     </material>
                     <meta>
                         <layer>0</layer>
