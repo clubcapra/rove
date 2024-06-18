@@ -6,7 +6,7 @@ from launch.actions import IncludeLaunchDescription
 
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
@@ -16,6 +16,8 @@ def generate_launch_description():
     slam_pkg_path = get_package_share_directory("slam_toolbox")  
 
     use_slam3d = LaunchConfiguration('use_slam3d')
+    use_sim_time = LaunchConfiguration('use_sim_time')
+
 
     slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -27,14 +29,15 @@ def generate_launch_description():
                 pkg_rove_slam, "config", "slam_config.yaml"
             )
         }.items(),
+        condition=UnlessCondition(use_slam3d)
     )
 
     slam3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_slam, "launch", "slam3d.launch.py"),
+            os.path.join(pkg_rove_slam, "launch", "slam3d_full.launch.py"),
         ),
         launch_arguments={
-            "use_sim_time": "true",
+            "use_sim_time": use_sim_time,
             "deskewing": "true",
         }.items(),
         condition=IfCondition(use_slam3d)
@@ -43,9 +46,11 @@ def generate_launch_description():
     nav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_nav, "navigation.launch.py"),
-        )
+        ),
+        launch_arguments={
+            "use_sim_time": use_sim_time,
+        }.items()
     )
-
 
     return LaunchDescription([
             slam,

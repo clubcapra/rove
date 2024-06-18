@@ -7,10 +7,10 @@ ekf_filter_node_local:
         map_frame: map              
         odom_frame: odom            
         base_link_frame: base_link
-        world_frame: odom           
+        world_frame: odom
 
         odom0: /odom
-        odom0_config: [true,  true,  false,
+        odom0_config: [false,  false,  false,
                        false, false, false,
                        true, true, false,
                        false, false, false,
@@ -23,6 +23,15 @@ ekf_filter_node_local:
                       false,  false,  true, # vroll vpitch vyaw
                       false, false, false] # ax ay az
         imu0_queue_size: 20
+
+        # Add ICP odometry as a new sensor input
+        odom1: /icp_odom
+        odom1_config: [true,  true,  false,
+                       false, false, true,
+                       true, true, false,
+                       false, false, true,
+                       false, false, false]
+
 
 ekf_filter_node_global:
     ros__parameters:

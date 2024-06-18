@@ -101,8 +101,8 @@ def generate_launch_description():
             # robot_state_publisher,
             robot_localization_node_local,
             robot_localization_node_global,
-            navsat_transform,
+            # navsat_transform,
             vectornav,
-            velodyne,
+            #velodyne,
             rviz,
             ])
