@@ -135,13 +135,13 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 19.999999999999982,
-        "phi": 59.99999999999997,
-        "thetaOffset": 44.99999999999999,
+        "distance": 37.01235612440916,
+        "phi": 66.12250629699629,
+        "thetaOffset": 5.969387682595102,
         "targetOffset": [
-          -0.048227452644863535,
-          0.04822745264486353,
-          3.7860779849614555e-18
+          2.707761647854304,
+          -11.469486052810273,
+          -2.4849404476551473e-16
         ],
         "target": [
           0,
@@ -159,10 +159,72 @@
         "far": 5000
       },
       "followMode": "follow-pose",
-      "scene": {},
+      "scene": {
+        "meshUpAxis": "z_up"
+      },
       "transforms": {},
-      "topics": {},
-      "layers": {},
+      "topics": {
+        "/scan": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "flat",
+          "colorMap": "turbo",
+          "flatColor": "#ff0000ff",
+          "pointSize": 2
+        },
+        "/robot_description": {
+          "visible": false
+        },
+        "/velodyne_points": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/map": {
+          "visible": true
+        }
+      },
+      "layers": {
+        "018d5ff4-3476-4159-bc15-38beae346ab0": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "018d5ff4-3476-4159-bc15-38beae346ab0",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "order": 1
+        },
+        "5e3c1e2f-fd6c-466d-a3be-04342aad1146": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "URDF",
+          "instanceId": "5e3c1e2f-fd6c-466d-a3be-04342aad1146",
+          "layerId": "foxglove.Urdf",
+          "sourceType": "topic",
+          "url": "",
+          "filePath": "",
+          "parameter": "",
+          "topic": "/robot_description",
+          "framePrefix": "",
+          "displayMode": "auto",
+          "fallbackColor": "#ffffff",
+          "order": 2
+        }
+      },
       "publish": {
         "type": "point",
         "poseTopic": "/move_base_simple/goal",
@@ -172,7 +234,21 @@
         "poseEstimateYDeviation": 0.5,
         "poseEstimateThetaDeviation": 0.26179939
       },
-      "imageMode": {}
+      "imageMode": {},
+      "followTf": "map"
+    },
+    "map!60yjuv": {
+      "center": {
+        "lat": 38.1614632751517,
+        "lon": -122.45463252067567
+      },
+      "customTileUrl": "",
+      "disabledTopics": [],
+      "followTopic": "/gps",
+      "layer": "map",
+      "topicColors": {},
+      "zoomLevel": 16,
+      "maxNativeZoom": 18
     },
     "Table!1xg0s4v": {
       "topicPath": ""
@@ -225,7 +301,7 @@
                   "first": "Battery Indicator.Battery display!2ungb0h",
                   "second": "Indicator!38j960d",
                   "direction": "column",
-                  "splitPercentage": 56.96969696969697
+                  "splitPercentage": 56.42909625275533
                 },
                 "second": {
                   "first": "CallService!qyzghd",
@@ -253,7 +329,11 @@
           "layout": {
             "first": "3D!wd5ayb",
             "second": {
-              "first": "Table!1xg0s4v",
+              "first": {
+                "first": "map!60yjuv",
+                "second": "Table!1xg0s4v",
+                "direction": "row"
+              },
               "second": "RosOut!14blizg",
               "direction": "column",
               "splitPercentage": 48.263254113345525
