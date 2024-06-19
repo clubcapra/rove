@@ -16,9 +16,9 @@ RUN groupadd --gid $USER_GID $USERNAME || true \
     && groupadd -g 107 input \
     && useradd -s /bin/bash --uid $USER_UID -g $USER_GID -G 107 -m $USERNAME \
     && apt-get update \
-    && apt-get install -y sudo tesseract-ocr \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
+    # && apt-get install -y sudo tesseract-ocr \
 
 # Give user serial device permission
 RUN usermod -a -G dialout $USERNAME
@@ -38,8 +38,8 @@ RUN apt-get update && apt-get install -y \
     curl
 
 # Install Gazebo
-RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+# RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+# RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 
 RUN apt update -y --fix-missing
 
@@ -54,17 +54,20 @@ COPY ./ /workspace/$USERNAME/
 # Source the ROS setup file
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
+
 COPY --chown=$USERNAME ./ /workspace/$USERNAME
 
 # Add needed packages
-RUN vcs import src < rove.repos
-
+# RUN vcs import src < rove.repos
+RUN cd src
+RUN git clone https://github.com/odriverobotics/ros_odrive.git
+RUN cd ..
 
 # Rosdep update
 RUN rosdep update
 
 # Install ROS dependencies
-RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
+RUN rosdep install --from-paths src --ignore-src --skip-keys="rove_control_board rove_navigation rove_rtabmap rove_slam rove_template rove_zed" --rosdistro humble -y
 
 # Install gzharmonic after rosdep install
-RUN sudo apt install -y ros-humble-ros-gzharmonic
+# RUN sudo apt install -y ros-humble-ros-gzharmonic
