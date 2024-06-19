@@ -86,6 +86,27 @@ ros2 launch rove_bringup rove_controller_bluetooth.launch.py
 ros2 launch rove_bringup vectornav.launch.py
 ```
 
+## Using the Robotiq gripper
+Launch the gripper controller:
+```bash
+ros2 launch robotiq_description robotiq_control.launch.py
+```
+
+Close the gripper (set to 1m to reduce command lenght):
+```bash
+ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand "{command:{position: 1, max_effort: 1.0}}"
+```
+
+Open the gripper:
+```bash
+ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand "{command:{position: 0, max_effort: 1.0}}"
+```
+
+View the gripper in RViz:
+```bash
+ros2 launch robotiq_description view_gripper.launch.py
+```
+
 ## Adding New Packages
 
 To add a package for Rove, create it using the ROS2 command ([Creating Your First ROS2 Package](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)). Name it starting with `rove_` to ensure Git tracking. For non-Rove specific packages, create a separate repository and add it to `rove.repos`.
