@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is working on ROS2 rove build
 on: [push]
 jobs:
   Build_rove:
-    runs-on: [linux, docker]
+    runs-on: ubuntu-latest
     permissions:
       packages: write
       contents: read
