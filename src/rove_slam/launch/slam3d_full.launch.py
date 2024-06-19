@@ -23,7 +23,7 @@ def generate_launch_description():
         'subscribe_depth':True,
         'subscribe_odom_info':False,
         'subscribe_scan_cloud': True,
-        'subscribe_rgbd':True,
+        'subscribe_rgb':True,
         'approx_sync': True,
         'publish_tf':True,
         'Odom/Strategy':'0',
@@ -81,7 +81,7 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'max_clouds': 10,
-            'fixed_frame_id':'',
+            'fixed_frame_id':'sensor_link',
             'use_sim_time': use_sim_time,
         }],
         remappings=[
@@ -121,5 +121,5 @@ def generate_launch_description():
         camera_sync,
         point_cloud_assembler_node,
         rtabmap_node,
-        #rtabmap_viz_node
+        rtabmap_viz_node
     ])

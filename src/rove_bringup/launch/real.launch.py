@@ -124,7 +124,7 @@ def generate_launch_description():
     zed = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_zed, 'launch', 'zed_mapping.launch.py'),
-        )
+        ),
     )
 
     return LaunchDescription([
