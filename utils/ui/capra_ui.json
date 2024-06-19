@@ -132,18 +132,17 @@
       ],
       "foxglovePanelTitle": "Estop status"
     },
-    "3D!wd5ayb": {
+    "Image!3b8t5ua": {
       "cameraState": {
+        "distance": 20,
         "perspective": true,
-        "distance": 37.01235612440916,
-        "phi": 66.12250629699629,
-        "thetaOffset": 5.969387682595102,
-        "targetOffset": [
-          2.707761647854304,
-          -11.469486052810273,
-          -2.4849404476551473e-16
-        ],
+        "phi": 60,
         "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
           0,
           0,
           0
@@ -154,23 +153,115 @@
           0,
           1
         ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
+        "calibrationTopic": "/zed/zed_node/depth/camera_info"
+      }
+    },
+    "Image!3593v6f": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
+        "calibrationTopic": "/zed/zed_node/depth/camera_info"
+      }
+    },
+    "3D!wd5ayb": {
+      "cameraState": {
+        "distance": 15.475618749968437,
+        "perspective": true,
+        "phi": 53.72454709424579,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          -1.0352265201029487,
+          0.690125189613747,
+          -6.717353809730597e-17
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 39.94897959183675,
         "fovy": 45,
         "near": 0.5,
         "far": 5000
       },
       "followMode": "follow-pose",
       "scene": {
-        "meshUpAxis": "z_up"
+        "meshUpAxis": "z_up",
+        "labelScaleFactor": 0
       },
       "transforms": {},
       "topics": {
         "/scan": {
-          "visible": true,
+          "visible": false,
           "colorField": "intensity",
           "colorMode": "flat",
           "colorMap": "turbo",
           "flatColor": "#ff0000ff",
-          "pointSize": 2
+          "pointSize": 1
         },
         "/robot_description": {
           "visible": false
@@ -183,6 +274,75 @@
         },
         "/map": {
           "visible": true
+        },
+        "/octomap_grid": {
+          "visible": true
+        },
+        "/octomap_ground": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/octomap_obstacles": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/cloud_map": {
+          "visible": true,
+          "colorField": "rgb",
+          "colorMode": "flat",
+          "colorMap": "turbo",
+          "stixelsEnabled": false,
+          "pointShape": "square",
+          "flatColor": "#0006ff82",
+          "pointSize": 1
+        },
+        "/cost_cloud": {
+          "visible": false
+        },
+        "/cloud_ground": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/labels": {
+          "visible": false
+        },
+        "/initialpose": {
+          "visible": false
+        },
+        "/marker": {
+          "visible": false
+        },
+        "/zed/zed_node/depth/camera_info": {
+          "visible": false
+        },
+        "/cloud_obstacles": {
+          "visible": false
+        },
+        "/camera/depth/color/points": {
+          "visible": false
+        },
+        "/mapPath": {
+          "visible": false
+        },
+        "/zed/zed_node/depth/depth_registered": {
+          "visible": false,
+          "frameLocked": true,
+          "cameraInfoTopic": "/zed/zed_node/depth/camera_info",
+          "distance": 1,
+          "planarProjectionFactor": 0,
+          "color": "#ffffff"
+        },
+        "/zed/zed_node/rgb/image_rect_color": {
+          "visible": false
+        },
+        "/base/scan": {
+          "visible": false
         }
       },
       "layers": {
@@ -235,12 +395,12 @@
         "poseEstimateThetaDeviation": 0.26179939
       },
       "imageMode": {},
-      "followTf": "map"
+      "followTf": "base_link"
     },
     "map!60yjuv": {
       "center": {
-        "lat": 38.1614632751517,
-        "lon": -122.45463252067567
+        "lat": 38.16148014673053,
+        "lon": -122.45464324951172
       },
       "customTileUrl": "",
       "disabledTopics": [],
@@ -262,7 +422,7 @@
       "activeTabIdx": 0,
       "tabs": [
         {
-          "title": "status",
+          "title": "Status",
           "layout": {
             "first": {
               "first": {
@@ -318,6 +478,14 @@
             "direction": "row",
             "splitPercentage": 33.881578947368425
           }
+        },
+        {
+          "title": "Camera",
+          "layout": {
+            "first": "Image!3b8t5ua",
+            "second": "Image!3593v6f",
+            "direction": "row"
+          }
         }
       ]
     },
@@ -325,7 +493,7 @@
       "activeTabIdx": 0,
       "tabs": [
         {
-          "title": "1",
+          "title": "Nav",
           "layout": {
             "first": "3D!wd5ayb",
             "second": {
