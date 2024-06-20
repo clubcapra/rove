@@ -24,7 +24,7 @@ def generate_launch_description():
             os.path.join(slam_pkg_path, "launch", "online_async_launch.py"),
         ),
         launch_arguments={
-            "use_sim_time": "true",
+            "use_sim_time": use_sim_time,
             "slam_params_file": os.path.join(
                 pkg_rove_slam, "config", "slam_config.yaml"
             )
@@ -34,7 +34,7 @@ def generate_launch_description():
 
     slam3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_slam, "launch", "slam3d_full.launch.py"),
+            os.path.join(pkg_rove_slam, "launch", "velodyne_3d.launch.py"),
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,
