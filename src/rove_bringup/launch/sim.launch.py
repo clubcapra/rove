@@ -31,6 +31,31 @@ def generate_launch_description():
         launch_arguments={'gz_args': "-v 4 -r " + world}.items(),
     )
 
+    walls_file_path = os.path.join(pkg_rove_description, 'worlds', 'walls.sdf')
+    spawn_walls = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-file', walls_file_path,
+                   '-name', 'walls',
+                   '-x', '0',
+                   '-y', '0',
+                   '-z', '0'],
+        output='screen',
+    )
+
+    actor_file_path = os.path.join(pkg_rove_description, 'worlds', 'actor.sdf')
+    spawn_actor = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-file', actor_file_path,
+                   '-name', 'actor',
+                   '-topic', 'actor_pose',
+                   '-x', '0',
+                   '-y', '0',
+                   '-z', '0.1'],
+        output='screen',
+    )
+
     # Spawn robot
     create = Node(
         package='ros_gz_sim',
@@ -82,6 +107,8 @@ def generate_launch_description():
     return LaunchDescription([
             gz_sim,
             bridge,
+            spawn_walls,
+            spawn_actor,
             robot_state_publisher,
             create,
             common,
