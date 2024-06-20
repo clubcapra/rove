@@ -11,14 +11,13 @@
     </material>
 
     <xacro:include filename="$(find rove_description)/urdf/gazebo.urdf.xacro" />
-    <xacro:include filename="$(find rove_description)/urdf/lidar.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/sensor.urdf.xacro" />
     
     <xacro:include filename="$(find rove_description)/urdf/flipper.urdf.xacro" />
     <xacro:include filename="$(find rove_description)/urdf/track.urdf.xacro" />
+    <xacro:include filename="$(find rove_description)/urdf/rove.ros2_control.urdf.xacro" />
     
-    <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" />
-
+    <!-- <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" /> -->
 
     <link name="base_link">
         <visual>
@@ -37,15 +36,20 @@
         <inertial>
             <origin xyz="0 0 0.5" rpy="0 0 0"/>
             <mass value="80"/>
-            <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+            <inertia ixx="1"  ixy="0"  ixz="0" iyy="1" iyz="0" izz="1" />
         </inertial>
     </link>
 
 
+    <!-- <xacro:rove_ros2_control/> -->
+     <!-- Put these at -1 to mock the motors if working without the motors -->
+    <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24"/>
+
+
     <!-- Insert ovis on top of rove -->
-    <xacro:property name="robot_root" value="base_link" />
+    <!-- <xacro:property name="robot_root" value="base_link" />
     <xacro:property name="ovis_robot_namespace" value="rove" />
     <xacro:property name="ovis_base_origin" value="-0.2 0 0.2" />
-    <xacro:ovis base_parent="${robot_root}" prefix="${ovis_robot_namespace}" joint_base_origin_xyz="${ovis_base_origin}" />
+    <xacro:ovis base_parent="${robot_root}" prefix="${ovis_robot_namespace}" joint_base_origin_xyz="${ovis_base_origin}" /> -->
 
 </robot>

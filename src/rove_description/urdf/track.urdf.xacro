@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="track">
     <!--Track xacro-->
     <xacro:macro name="track" params="suffix">
         <xacro:property name="track_j_x" value="0" />
@@ -17,6 +17,18 @@
             <origin xyz="${joint_origin}" rpy="0 0 0"/>
             <parent link="base_link"/>
             <child link="track_${suffix}"/>
+        </joint>
+
+        <joint name="track_f${suffix}_j" type="fixed">
+            <origin xyz="${joint_origin}" rpy="0 0 0 "/>
+            <parent link="track_${suffix}"/>
+            <child link="track_f${suffix}"/>
+        </joint>
+
+        <joint name="track_r${suffix}_j" type="fixed">
+            <origin xyz="${joint_origin}" rpy="0 0 0 "/>
+            <parent link="track_${suffix}"/>
+            <child link="track_r${suffix}"/>
         </joint>
 
         <link name="track_${suffix}">
@@ -49,9 +61,25 @@
             <inertial>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <mass value="1"/>
-                <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+                <inertia ixx="0"  ixy="0"  ixz="0" iyy="0" iyz="0" izz="0" />
             </inertial>
         </link>
+
+        <link name="track_f${suffix}">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0"/>
+                <inertia ixx="100"  ixy="0"  ixz="0" iyy="0" iyz="0" izz="100"/>
+            </inertial>
+        </link>
+        <link name="track_r${suffix}">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0"/>
+                <inertia ixx="100"  ixy="0"  ixz="0" iyy="0" iyz="0" izz="100"/>
+            </inertial>
+        </link>
+
         <gazebo>
             <plugin name='gz::sim::systems::TrackController' filename='gz-sim-track-controller-system'>
                     <link>track_${suffix}</link>
