@@ -14,6 +14,8 @@ def generate_launch_description():
     # Get the launch directory
     pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
+    pkg_robotiq_description = get_package_share_directory('robotiq_description')
+    pkg_rove_zed = get_package_share_directory('rove_zed')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
@@ -41,6 +43,12 @@ def generate_launch_description():
         launch_arguments={
             "use_sim_time": "false",
         }.items(),
+    )
+
+    gripper = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_robotiq_description, "launch", "robotiq_control.launch.py"),
+        )
     )
 
     ###### ROS2 control ######
@@ -120,11 +128,19 @@ def generate_launch_description():
         ),
     )
 
+    zed = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_zed, 'launch', 'zed_mapping.launch.py'),
+        )
+    )
+
     return LaunchDescription([
             control_node,
             common,
+            gripper,
             joint_state_broadcaster_spawner,
             *delayed_controller_nodes,
             vectornav,
             velodyne,
+            zed,
             ])

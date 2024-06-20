@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+    name="rove">
 
     <gazebo>
         <plugin
@@ -29,6 +30,8 @@
 
             <topic>cmd_vel</topic>
             <odom_topic>odom</odom_topic>
+            <frame_id>odom</frame_id>    
+            <child_frame_id>base_link</child_frame_id>
         </plugin>
 
         <plugin 
