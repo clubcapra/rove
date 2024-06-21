@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'autonomy_node = rove_behavior.autonomy_node:main',
+            'person_tracker_node = rove_behavior.person_tracker:main',
         ],
     },
 )

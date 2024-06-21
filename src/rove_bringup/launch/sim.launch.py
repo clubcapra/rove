@@ -57,7 +57,7 @@ def generate_launch_description():
     )
 
     # Spawn robot
-    create = Node(
+    spawn_rove = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=['-name', 'rove',
@@ -107,9 +107,9 @@ def generate_launch_description():
     return LaunchDescription([
             gz_sim,
             bridge,
-            spawn_walls,
-            spawn_actor,
+            #spawn_walls,
+            #spawn_actor,
             robot_state_publisher,
-            create,
+            spawn_rove,
             common,
             ])
