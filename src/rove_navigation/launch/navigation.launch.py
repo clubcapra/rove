@@ -2,14 +2,13 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-
+from launch_ros.actions import SetRemap
 
 def generate_launch_description():
-
     pkg_rove_navigation = get_package_share_directory('rove_navigation')
 
     navigation_launch_path = PathJoinSubstitution(
@@ -24,9 +23,14 @@ def generate_launch_description():
         launch_arguments={
             'use_sim_time': 'true',
             'params_file': nav2_config_path
-        }.items()
+        }.items(),
     )
-
+    
     return LaunchDescription([
-        nav
+        GroupAction(
+            actions=[
+                SetRemap(src='cmd_vel', dst='nav_vel'),
+                nav,
+            ]
+        )
     ])
