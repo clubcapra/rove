@@ -24,8 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'autonomy_node = rove_behavior.autonomy_node:main',
-            'person_tracker_node = rove_behavior.person_tracker:main',
+            'square_behavior = rove_behavior.square_behavior:main',
+            'green_person_tracker = rove_behavior.green_person_tracker:main',
         ],
     },
 )

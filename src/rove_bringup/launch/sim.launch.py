@@ -62,7 +62,7 @@ def generate_launch_description():
         executable='create',
         arguments=['-name', 'rove',
                    '-topic', 'robot_description',
-                   '-x', '0',
+                   '-x', '-2',
                    '-y', '0',
                    '-z', '0.1',
                    ],
@@ -80,6 +80,14 @@ def generate_launch_description():
             {'robot_description': robot_desc},
             {"use_sim_time": True, }
         ]
+    )
+
+    # fake human tracker
+    human_tracker = Node(
+            package='rove_behavior',
+            executable='green_person_tracker',
+            name='green_person_tracker',
+            output='screen',
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -107,9 +115,10 @@ def generate_launch_description():
     return LaunchDescription([
             gz_sim,
             bridge,
-            #spawn_walls,
-            #spawn_actor,
+            spawn_walls,
+            spawn_actor,
             robot_state_publisher,
             spawn_rove,
             common,
+            human_tracker,
             ])

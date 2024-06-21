@@ -116,8 +116,9 @@
 
 
         <include>
-            <pose>3.5 0 0 0 0 0</pose>
-            <uri> https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine Tree
+            <pose>3.5 0 0 0 0 3.14</pose>
+            <uri>
+                https://fuel.gazebosim.org/1.0/sebbyjp/models/Sofa
             </uri>
         </include>
 

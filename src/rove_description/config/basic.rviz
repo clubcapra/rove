@@ -52,6 +52,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         flipper_fl:
           Alpha: 1
           Show Axes: false
@@ -159,9 +164,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 208
+      Max Intensity: 0
       Min Color: 0; 0; 0
-      Min Intensity: 1
+      Min Intensity: 0
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -412,11 +417,27 @@ Visualization Manager:
         Map: true
         MapCloud: true
         Path: true
+        PointStamped: true
         RobotModel: true
         TF: true
         Value: true
         filtered position: true
       Zoom Factor: 1
+    - Alpha: 1
+      Class: rviz_default_plugins/PointStamped
+      Color: 204; 41; 204
+      Enabled: true
+      History Length: 1
+      Name: PointStamped
+      Radius: 0.20000000298023224
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /person_position
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -463,7 +484,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 6.484375
+      Distance: 12.128095626831055
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -478,10 +499,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6753999590873718
+      Pitch: 0.6703999042510986
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.813623309135437
+      Yaw: 2.9836294651031494
     Saved: ~
 Window Geometry:
   Camera:
