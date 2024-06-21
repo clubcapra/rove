@@ -1,0 +1,527 @@
+{
+  "configById": {
+    "Publish!1b7sy1a": {
+      "buttonText": "Front LED ON",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{}",
+      "foxglovePanelTitle": "Front LED ON"
+    },
+    "Indicator!360e2e8": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "True"
+        }
+      ]
+    },
+    "Publish!gkhilm": {
+      "buttonText": "Front LED OFF",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{}",
+      "foxglovePanelTitle": "Front LED OFF"
+    },
+    "Indicator!3iqk2un": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Mode"
+    },
+    "Publish!2vkw4zk": {
+      "buttonText": "Back LED ON",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{}",
+      "foxglovePanelTitle": "Back LED ON"
+    },
+    "Indicator!l0f2va": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Flipper"
+    },
+    "Publish!22modxz": {
+      "buttonText": "Back LED OFF",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{}",
+      "foxglovePanelTitle": "Back LED OFF"
+    },
+    "Indicator!1srygfi": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Bras"
+    },
+    "Battery Indicator.Battery display!2ungb0h": {
+      "batteryTopic": "",
+      "topic": {
+        "batteryTopic": ""
+      }
+    },
+    "Indicator!38j960d": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "True"
+        }
+      ]
+    },
+    "CallService!qyzghd": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "editingMode": false,
+      "foxglovePanelTitle": "ESTOP",
+      "buttonTooltip": "",
+      "buttonColor": "#ff0000",
+      "buttonText": "ESTOP"
+    },
+    "Indicator!21d1yds": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#a0a0a0",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#68e24a",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Estop status"
+    },
+    "Image!3b8t5ua": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
+        "calibrationTopic": "/zed/zed_node/depth/camera_info"
+      }
+    },
+    "Image!3593v6f": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
+        "calibrationTopic": "/zed/zed_node/depth/camera_info"
+      }
+    },
+    "3D!wd5ayb": {
+      "cameraState": {
+        "distance": 15.475618749968437,
+        "perspective": true,
+        "phi": 53.72454709424579,
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOffset": [
+          -1.0352265201029487,
+          0.690125189613747,
+          -6.717353809730597e-17
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "thetaOffset": 39.94897959183675,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "meshUpAxis": "z_up",
+        "labelScaleFactor": 0
+      },
+      "transforms": {},
+      "topics": {
+        "/scan": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "flat",
+          "colorMap": "turbo",
+          "flatColor": "#ff0000ff",
+          "pointSize": 1
+        },
+        "/robot_description": {
+          "visible": false
+        },
+        "/velodyne_points": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/map": {
+          "visible": true
+        },
+        "/octomap_grid": {
+          "visible": true
+        },
+        "/octomap_ground": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/octomap_obstacles": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/cloud_map": {
+          "visible": true,
+          "colorField": "rgb",
+          "colorMode": "flat",
+          "colorMap": "turbo",
+          "stixelsEnabled": false,
+          "pointShape": "square",
+          "flatColor": "#0006ff82",
+          "pointSize": 1
+        },
+        "/cost_cloud": {
+          "visible": false
+        },
+        "/cloud_ground": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo"
+        },
+        "/labels": {
+          "visible": false
+        },
+        "/initialpose": {
+          "visible": false
+        },
+        "/marker": {
+          "visible": false
+        },
+        "/zed/zed_node/depth/camera_info": {
+          "visible": false
+        },
+        "/cloud_obstacles": {
+          "visible": false
+        },
+        "/camera/depth/color/points": {
+          "visible": false
+        },
+        "/mapPath": {
+          "visible": false
+        },
+        "/zed/zed_node/depth/depth_registered": {
+          "visible": false,
+          "frameLocked": true,
+          "cameraInfoTopic": "/zed/zed_node/depth/camera_info",
+          "distance": 1,
+          "planarProjectionFactor": 0,
+          "color": "#ffffff"
+        },
+        "/zed/zed_node/rgb/image_rect_color": {
+          "visible": false
+        },
+        "/base/scan": {
+          "visible": false
+        }
+      },
+      "layers": {
+        "018d5ff4-3476-4159-bc15-38beae346ab0": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "018d5ff4-3476-4159-bc15-38beae346ab0",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "order": 1
+        },
+        "5e3c1e2f-fd6c-466d-a3be-04342aad1146": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "URDF",
+          "instanceId": "5e3c1e2f-fd6c-466d-a3be-04342aad1146",
+          "layerId": "foxglove.Urdf",
+          "sourceType": "topic",
+          "url": "",
+          "filePath": "",
+          "parameter": "",
+          "topic": "/robot_description",
+          "framePrefix": "",
+          "displayMode": "auto",
+          "fallbackColor": "#ffffff",
+          "order": 2
+        }
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {},
+      "followTf": "base_link"
+    },
+    "map!60yjuv": {
+      "center": {
+        "lat": 38.16148014673053,
+        "lon": -122.45464324951172
+      },
+      "customTileUrl": "",
+      "disabledTopics": [],
+      "followTopic": "/gps",
+      "layer": "map",
+      "topicColors": {},
+      "zoomLevel": 16,
+      "maxNativeZoom": 18
+    },
+    "Table!1xg0s4v": {
+      "topicPath": ""
+    },
+    "RosOut!14blizg": {
+      "searchTerms": [],
+      "minLogLevel": 1,
+      "nameFilter": {}
+    },
+    "Tab!2iobm2s": {
+      "activeTabIdx": 0,
+      "tabs": [
+        {
+          "title": "Status",
+          "layout": {
+            "first": {
+              "first": {
+                "first": "Publish!1b7sy1a",
+                "second": "Indicator!360e2e8",
+                "direction": "column",
+                "splitPercentage": 55.757575757575765
+              },
+              "second": {
+                "first": "Publish!gkhilm",
+                "second": "Indicator!3iqk2un",
+                "direction": "column",
+                "splitPercentage": 55.757575757575765
+              },
+              "direction": "row"
+            },
+            "second": {
+              "first": {
+                "first": {
+                  "first": "Publish!2vkw4zk",
+                  "second": "Indicator!l0f2va",
+                  "direction": "column",
+                  "splitPercentage": 56.36363636363636
+                },
+                "second": {
+                  "first": "Publish!22modxz",
+                  "second": "Indicator!1srygfi",
+                  "direction": "column",
+                  "splitPercentage": 56.36363636363636
+                },
+                "direction": "row",
+                "splitPercentage": 51.956429780033865
+              },
+              "second": {
+                "first": {
+                  "first": "Battery Indicator.Battery display!2ungb0h",
+                  "second": "Indicator!38j960d",
+                  "direction": "column",
+                  "splitPercentage": 56.42909625275533
+                },
+                "second": {
+                  "first": "CallService!qyzghd",
+                  "second": "Indicator!21d1yds",
+                  "direction": "column",
+                  "splitPercentage": 56.96969696969697
+                },
+                "direction": "row",
+                "splitPercentage": 59.009099648981575
+              },
+              "direction": "row",
+              "splitPercentage": 49.00497512437809
+            },
+            "direction": "row",
+            "splitPercentage": 33.881578947368425
+          }
+        },
+        {
+          "title": "Camera",
+          "layout": {
+            "first": "Image!3b8t5ua",
+            "second": "Image!3593v6f",
+            "direction": "row"
+          }
+        }
+      ]
+    },
+    "Tab!1dud6cr": {
+      "activeTabIdx": 0,
+      "tabs": [
+        {
+          "title": "Nav",
+          "layout": {
+            "first": "3D!wd5ayb",
+            "second": {
+              "first": {
+                "first": "map!60yjuv",
+                "second": "Table!1xg0s4v",
+                "direction": "row"
+              },
+              "second": "RosOut!14blizg",
+              "direction": "column",
+              "splitPercentage": 48.263254113345525
+            },
+            "direction": "row",
+            "splitPercentage": 50.911458333333336
+          }
+        }
+      ]
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "first": "Tab!2iobm2s",
+    "second": "Tab!1dud6cr",
+    "direction": "column",
+    "splitPercentage": 25.259067357512954
+  }
+}

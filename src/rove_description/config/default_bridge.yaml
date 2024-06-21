@@ -53,3 +53,24 @@
   ros_type_name: "sensor_msgs/msg/NavSatFix"
   gz_type_name: "ignition.msgs.NavSat"
   direction: GZ_TO_ROS
+
+# gz topic published by camera (rgb)
+- ros_topic_name: "/zed/zed_node/rgb/image_rect_color"
+  gz_topic_name: "/camera"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# gz topic published by camera (depth)
+- ros_topic_name: "/zed/zed_node/depth/depth_registered"
+  gz_topic_name: "/depth_camera"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# gz topic published by camera (info)
+- ros_topic_name: "/zed/zed_node/depth/camera_info"
+  gz_topic_name: "/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS

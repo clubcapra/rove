@@ -8,7 +8,7 @@
 
 ## Pour démarrer le mapping rtabmap avec la zed:
 ```bash
-ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zedm
+ros2 launch rove_zed zed_mapping.launch.py
 ros2 launch rtabmap_launch rtabmap.launch.py \
     rtabmap_args:="--delete_db_on_start" \
     database_path:="/media/SSD/stable/rove/src/rove_rtabmap/maps/map.db" \
@@ -32,4 +32,11 @@ ros2 launch rove_zed body_trck.launch.py
 ## Pour démarrer le lidar:
 ```bash
 ros2 launch rove_bringup test.launch.py
+```
+
+## Si le launch file de la zed ne fonctionne pas:
+
+Appeler zed_wrapper directement avec:
+```bash
+ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
 ```
