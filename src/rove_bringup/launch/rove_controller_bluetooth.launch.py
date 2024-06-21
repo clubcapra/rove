@@ -25,9 +25,6 @@ def generate_launch_description():
             parameters=[teleop_joy_params_file],
             remappings=[
                 ('/joy', '/joy'),
-                # Remap needs to happen here since the diff_drive_controller node
-                # is started via a spawner, thus remappings do not work on it
-                ('/cmd_vel', '/diff_drive_controller/cmd_vel_unstamped') 
             ],
         ),
         Node(
