@@ -9,12 +9,14 @@
   
   <build_depend>joy</build_depend>
   <build_depend>teleop_twist_joy</build_depend>
+  <build_depend>twist_mux</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>control_msgs</build_depend>
 
   <exec_depend>joy</exec_depend>
   <exec_depend>teleop_twist_joy</exec_depend>
+  <exec_depend>twist_mux</exec_depend>
   <exec_depend>control_msgs</exec_depend>
   <exec_depend>foxglove_bridge</exec_depend>
 
