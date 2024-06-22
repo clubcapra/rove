@@ -118,5 +118,5 @@ def generate_launch_description():
         icp_odometry_node,
         point_cloud_assembler_node,
         rtabmap_node,
-        rtabmap_viz_node
+        #rtabmap_viz_node
     ])

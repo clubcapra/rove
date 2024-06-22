@@ -55,5 +55,5 @@ def generate_launch_description():
     return LaunchDescription([
             slam,
             slam3d,
-            nav,
+            #nav,
             ])

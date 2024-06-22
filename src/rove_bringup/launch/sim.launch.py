@@ -84,7 +84,7 @@ def generate_launch_description():
 
     # fake human tracker
     human_tracker = Node(
-            package='rove_behavior',
+            package='rove_navigation',
             executable='green_person_tracker',
             name='green_person_tracker',
             output='screen',

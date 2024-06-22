@@ -7,6 +7,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
+from launch_ros.actions import Node
+
 
 def generate_launch_description():
 
@@ -18,15 +20,29 @@ def generate_launch_description():
 
     nav2_config_path = os.path.join(pkg_rove_navigation, 'config',
                                     'rove_nav_params.yaml')
+                                    
+    bt_xml_path = PathJoinSubstitution(
+        [pkg_rove_navigation, 'config', 'follow_dynamic_point.xml']
+    )
+
+    navigation_to_person_node = Node(
+            package="rove_navigation",
+            executable='navigate_to_person',
+            name='navigation_to_person',
+            output='screen',
+        )
+
 
     nav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(navigation_launch_path),
         launch_arguments={
             'use_sim_time': 'true',
-            'params_file': nav2_config_path
+            'params_file': nav2_config_path,
+            'bt_xml_filename': bt_xml_path,
         }.items()
     )
 
     return LaunchDescription([
-        nav
+        nav,
+        navigation_to_person_node,
     ])
