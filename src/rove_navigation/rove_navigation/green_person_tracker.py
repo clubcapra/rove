@@ -36,10 +36,10 @@ class Tracker(Node):
         self.get_logger().info("Node started!")
 
         # Camera intrinsic parameters
-        self.fx = 700  # Focal length in x axis
-        self.fy = 700  # Focal length in y axis
-        self.cx = 640  # Optical center x coordinate
-        self.cy = 360  # Optical center y coordinate
+        self.fx = 363  # Focal length in x axis
+        self.fy = 363  # Focal length in y axis
+        self.cx = 672  # Optical center x coordinate
+        self.cy = 188  # Optical center y coordinate
 
         # TF2 Buffer and Listener
         self.tf_buffer = Buffer()

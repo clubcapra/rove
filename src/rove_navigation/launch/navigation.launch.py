@@ -25,10 +25,10 @@ def generate_launch_description():
         [pkg_rove_navigation, 'config', 'follow_dynamic_point.xml']
     )
 
-    navigation_to_person_node = Node(
+    person_following_node = Node(
             package="rove_navigation",
-            executable='navigate_to_person',
-            name='navigation_to_person',
+            executable='person_following',
+            name='person_following',
             output='screen',
         )
 
@@ -43,5 +43,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         nav,
-        #navigation_to_person_node,
+        person_following_node,
     ])

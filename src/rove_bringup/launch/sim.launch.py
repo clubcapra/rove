@@ -8,6 +8,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
+from math import pi
 
 
 def generate_launch_description():
@@ -56,18 +57,22 @@ def generate_launch_description():
         output='screen',
     )
 
+    yaw = -pi / 2
+
     # Spawn robot
     spawn_rove = Node(
-        package='ros_gz_sim',
-        executable='create',
-        arguments=['-name', 'rove',
-                   '-topic', 'robot_description',
-                   '-x', '-2',
-                   '-y', '0',
-                   '-z', '0.1',
-                   ],
-        output='screen',
-    )
+    package='ros_gz_sim',
+    executable='create',
+    arguments=[
+        '-name', 'rove',
+        '-topic', 'robot_description',
+        '-x', '0',
+        '-y', '0',
+        '-z', '0.1',
+        '-Y', str(yaw),
+    ],
+    output='screen',
+)
 
     # Takes the description and joint angles as inputs and publishes
     # the 3D poses of the robot links
