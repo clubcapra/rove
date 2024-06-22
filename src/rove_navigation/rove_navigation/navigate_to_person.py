@@ -14,7 +14,12 @@ class NavigateToPersonNode(Node):
             '/person_position',
             self.navigate_to_person,
             10)
-        self.navigator = BasicNavigator()
+
+        self.goal_update_pub = self.create_publisher(
+            PoseStamped,
+            '/goal_update',
+            10)
+        
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
@@ -39,8 +44,9 @@ class NavigateToPersonNode(Node):
             # Log the navigation target for debugging
             self.get_logger().info(f'Navigating to transformed goal: {goal_pose.pose.position.x} {goal_pose.pose.position.y}...')
             
-            # Command the robot to navigate to the goal
-            self.navigator.goToPose(goal_pose)
+            # Publish the goal
+            self.goal_update_pub.publish(goal_pose)
+            
 
 def main(args=None):
     rclpy.init(args=args)

@@ -38,11 +38,10 @@ def generate_launch_description():
         launch_arguments={
             'use_sim_time': 'true',
             'params_file': nav2_config_path,
-            'bt_xml_filename': bt_xml_path,
         }.items()
     )
 
     return LaunchDescription([
         nav,
-        navigation_to_person_node,
+        #navigation_to_person_node,
     ])
