@@ -222,6 +222,24 @@
         "calibrationTopic": "/zed/zed_node/depth/camera_info"
       }
     },
+    "Publish!qnfojc": {
+      "buttonText": "Publish",
+      "buttonTooltip": "",
+      "advancedView": true,
+      "value": "{\n  \"data\": \"rove_bringup sim.launch.py\"\n}",
+      "foxglovePanelTitle": "Launch",
+      "topicName": "/manager/launch",
+      "datatype": "std_msgs/msg/String"
+    },
+    "Publish!2cg1exi": {
+      "buttonText": "Publish",
+      "buttonTooltip": "",
+      "advancedView": true,
+      "value": "{\n  \"data\": \"rove_bringup sim.launch.py\"\n}",
+      "foxglovePanelTitle": "Kill",
+      "topicName": "/manager/kill",
+      "datatype": "std_msgs/msg/String"
+    },
     "3D!wd5ayb": {
       "cameraState": {
         "distance": 15.475618749968437,
@@ -400,7 +418,7 @@
     "map!60yjuv": {
       "center": {
         "lat": 38.16148014673053,
-        "lon": -122.45464324951172
+        "lon": -122.45462179183961
       },
       "customTileUrl": "",
       "disabledTopics": [],
@@ -419,7 +437,7 @@
       "nameFilter": {}
     },
     "Tab!2iobm2s": {
-      "activeTabIdx": 0,
+      "activeTabIdx": 2,
       "tabs": [
         {
           "title": "Status",
@@ -484,6 +502,14 @@
           "layout": {
             "first": "Image!3b8t5ua",
             "second": "Image!3593v6f",
+            "direction": "row"
+          }
+        },
+        {
+          "title": "example",
+          "layout": {
+            "first": "Publish!qnfojc",
+            "second": "Publish!2cg1exi",
             "direction": "row"
           }
         }
