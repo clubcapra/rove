@@ -6,6 +6,11 @@ from action_msgs.msg import GoalStatus
 from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose
 
+import numpy as np
+from geometry_msgs.msg import PointStamped
+
+from rclpy.node import Node
+
 
 class GetLocationFromQueue(py_trees.behaviour.Behaviour):
     """Gets a location name from the queue"""

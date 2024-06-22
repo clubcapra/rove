@@ -6,6 +6,8 @@ from launch.actions import IncludeLaunchDescription, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
+
+from launch_ros.actions import Node
 from launch_ros.actions import SetRemap
 
 def generate_launch_description():
@@ -17,6 +19,18 @@ def generate_launch_description():
 
     nav2_config_path = os.path.join(pkg_rove_navigation, 'config',
                                     'rove_nav_params.yaml')
+                                    
+    bt_xml_path = PathJoinSubstitution(
+        [pkg_rove_navigation, 'config', 'follow_dynamic_point.xml']
+    )
+
+    person_following_node = Node(
+            package="rove_navigation",
+            executable='person_following',
+            name='person_following',
+            output='screen',
+        )
+
 
     nav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(navigation_launch_path),
@@ -27,6 +41,7 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
+        person_following_node,
         GroupAction(
             actions=[
                 SetRemap(src='cmd_vel', dst='nav_vel'),

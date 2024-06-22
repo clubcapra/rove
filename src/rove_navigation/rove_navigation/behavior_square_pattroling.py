@@ -20,7 +20,7 @@ import py_trees_ros
 from py_trees.common import OneShotPolicy
 from ament_index_python.packages import get_package_share_directory
 
-from rove_behavior.navigation import GoToPose, GetLocationFromQueue
+from rove_navigation.behavior.navigation import GoToPose, GetLocationFromQueue
 
 
 class AutonomyBehavior(Node):
@@ -54,6 +54,7 @@ class AutonomyBehavior(Node):
         for loc in self.loc_list:
             pose = self.locations[loc]
             seq.add_child(GoToPose(f"go_to_{loc}", pose, self))
+            self.get_logger().info(f"Added GoToPose node for {loc} with pose {pose}")
 
         return tree
 
