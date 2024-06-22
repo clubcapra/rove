@@ -6,6 +6,8 @@ from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
+from tf2_ros import Buffer, TransformListener
+from tf2_geometry_msgs import do_transform_point
 
 class Tracker(Node):
     def __init__(self):
@@ -38,6 +40,10 @@ class Tracker(Node):
         self.fy = 700  # Focal length in y axis
         self.cx = 640  # Optical center x coordinate
         self.cy = 360  # Optical center y coordinate
+
+        # TF2 Buffer and Listener
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
 
     def depth_callback(self, msg):
         try:
@@ -102,8 +108,15 @@ class Tracker(Node):
         point.point.x = x_cam
         point.point.y = y_cam
         point.point.z = z_cam
-        self.position_pub.publish(point)
-        self.get_logger().info(f"Person (green square) position: x={point.point.x}, y={point.point.y}, z={point.point.z}")
+
+        # Transform the point to the base_link frame
+        try:
+            transform = self.tf_buffer.lookup_transform('base_link', header.frame_id, rclpy.time.Time())
+            point_transformed = do_transform_point(point, transform)
+            self.position_pub.publish(point_transformed)
+            self.get_logger().info(f"Person (green square) position in base_link: x={point_transformed.point.x}, y={point_transformed.point.y}, z={point_transformed.point.z}")
+        except Exception as e:
+            self.get_logger().error(f"Failed to transform point: {str(e)}")
 
 def main(args=None):
     rclpy.init(args=args)
