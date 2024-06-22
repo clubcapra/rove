@@ -41,7 +41,7 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
-        person_following_node,
+        #person_following_node,
         GroupAction(
             actions=[
                 SetRemap(src='cmd_vel', dst='nav_vel'),
