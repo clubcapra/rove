@@ -28,6 +28,7 @@ setup(
             'green_person_tracker = rove_navigation.green_person_tracker:main',
             'behavior_square_pattroling = rove_navigation.behavior_square_pattroling:main',
             'person_following = rove_navigation.person_following:main',
+            'frontier_publisher = rove_navigation.frontier_publisher:main',
             'exploration = rove_navigation.exploration:main',
         ],
     },

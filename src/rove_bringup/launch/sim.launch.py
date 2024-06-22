@@ -61,18 +61,18 @@ def generate_launch_description():
 
     # Spawn robot
     spawn_rove = Node(
-    package='ros_gz_sim',
-    executable='create',
-    arguments=[
-        '-name', 'rove',
-        '-topic', 'robot_description',
-        '-x', '0',
-        '-y', '0',
-        '-z', '0.1',
-        '-Y', str(yaw),
-    ],
-    output='screen',
-)
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', 'rove',
+            '-topic', 'robot_description',
+            '-x', '0',
+            '-y', '0',
+            '-z', '0.1',
+            '-Y', str(yaw),
+        ],
+        output='screen',
+    )
 
     # Takes the description and joint angles as inputs and publishes
     # the 3D poses of the robot links
@@ -120,9 +120,9 @@ def generate_launch_description():
     return LaunchDescription([
             gz_sim,
             bridge,
+            robot_state_publisher,
             spawn_walls,
             spawn_actor,
-            robot_state_publisher,
             spawn_rove,
             common,
             human_tracker,
