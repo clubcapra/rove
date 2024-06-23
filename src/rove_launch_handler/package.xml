@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The rove_launch_handler package</description>
   <maintainer email="capra@ens.etsmtl.ca">Capra</maintainer>
-  <license>GPLv3</license>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_python</buildtool_depend>
@@ -21,6 +21,6 @@
   <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
-    <build_type>ament_python</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

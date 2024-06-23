@@ -5,7 +5,7 @@ from rclpy.node import Node
 import signal
 import subprocess
 import os
-from rove_launch_handler.srv import LaunchRequest, LaunchListRequest #TODO fix import, cmake does not generate the services files or need to create seperate package for interfaces
+from rove_launch_handler.srv import LaunchRequest, LaunchListRequest
 
 launchedFiles = dict()
 
