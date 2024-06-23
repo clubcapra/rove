@@ -30,6 +30,7 @@ setup(
             'person_following = rove_navigation.person_following:main',
             'frontier_publisher = rove_navigation.frontier_publisher:main',
             'exploration = rove_navigation.exploration:main',
+            'lost_connection = rove_navigation.lost_connection:main',
         ],
     },
 )
