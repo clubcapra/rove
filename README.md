@@ -4,9 +4,9 @@ Rove is a robot developed by the Capra team at ÉTS. Utilizing ROS2 Humble, Rove
 
 ## Work in a docker container (Preferred)
 
-Working in a dev container will allow you to have the same environnement as the CI and make sure that your code will work on another computer. It will also allow you to easily switch package version and test thing without breaking your computer.
+Working in a dev container will allow you to have the same environment as the CI and make sure that your code will work on another computer. It will also allow you to easily switch package version and test things without breaking your computer.
 
-### Windows installation
+### Windows docker installation
 
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. Install [Visual Studio Code](https://code.visualstudio.com/)
@@ -17,26 +17,31 @@ Working in a dev container will allow you to have the same environnement as the 
 7. Wait for the container to build
 8. Start Xserver with the ```-nowgl``` option (double click on the shortcut to open it if you use VcXsrv)
 
-### Linux installation
+### Linux docker installation
 
-Same as the windows installation, step 4 and 8 can be skiped.
+Same as the windows installation, step 3 and 8 can be skipped.
 
-Replace the DISPLAY environemnt variable in the .env file
+Replace the DISPLAY environment variable in the .env file
 ```bash
 echo DISPLAY=$DISPLAY
 ```
 
 To be able to use the controller node, the user need read/write permissions on the inputs.
-Exemple:
+Example:
 ```bash
 cat /dev/input/event0
 ```
 
 **Suggestion:** Configure docker to be able to run as non-root user https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 
-## Native installation (Ubuntu 22.04 LTS, other distros not supported)
-Pour installer vcs tool et ROS: https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html#id4
+## Native/WSL installation (Ubuntu 22.04 LTS, other distros not supported)
+
+To install ROS2 and vcs natively: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html 
+
+Note: At the step `sudo apt install ros-humble-desktop` do `sudo apt install ros-humble-desktop-full` instead.
+
 ```bash
+git clone https://github.com/gazebosim/ros_gz.git -b humble # Install gazebo locally
 git clone https://github.com/clubcapra/rove.git
 vcs import src < rove.repos
 pip install capra_micro_comm_py@git+https://github.com/clubcapra/capra_micro_comm_py.git@master python-can@git+https://github.com/IliTheButterfly/python-can.git@main
@@ -46,10 +51,21 @@ source install/setup.bash
 
 ## Running Rove in simulation
 
+IF YOU ARE RUNNING IN WSL: do this command
+```bash
+export LIBGL_ALWAYS_INDIRECT=0 export LIBGL_ALWAYS_SOFTWARE=1
+```
+Do these commands to run the gazebo simulation with physics enabled
 ```bash
 colcon build --symlink-install
 source install/setup.bash
-ros2 launch rove_description sim.launch.py
+ros2 launch rove_bringup sim.launch.py
+```
+OR Do these commands to only run the rviz simulation (with joints control)
+```bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch rove_description launch.py
 ```
 
 ## Running the controller with a usb cable
@@ -59,11 +75,37 @@ source install/setup.bash
 ros2 launch rove_bringup rove_controller_usb.launch.py
 ```
 
-## Running the controller with a usb cable
+## Running the controller with bluetooth
 
 ```bash
 source install/setup.bash
-ros2 launch rove_bringup rove_controller_bluethoot.launch.py
+ros2 launch rove_bringup rove_controller_bluetooth.launch.py
+```
+
+## Launch VectorNav node
+```bash
+ros2 launch rove_bringup vectornav.launch.py
+```
+
+## Using the Robotiq gripper
+Launch the gripper controller:
+```bash
+ros2 launch robotiq_description robotiq_control.launch.py
+```
+
+Close the gripper (set to 1m to reduce command lenght):
+```bash
+ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand "{command:{position: 1, max_effort: 1.0}}"
+```
+
+Open the gripper:
+```bash
+ros2 action send_goal /robotiq_gripper_controller/gripper_cmd control_msgs/action/GripperCommand "{command:{position: 0, max_effort: 1.0}}"
+```
+
+View the gripper in RViz:
+```bash
+ros2 launch robotiq_description view_gripper.launch.py
 ```
 
 ## Adding New Packages
@@ -99,10 +141,10 @@ This package serves as a comprehensive wrapper for SLAM operations, incorporatin
 
 ## Docker architecture
 
-It's possible to run the entire project into multiple docker containers. Each container can be run independantly and are built using the following structure :
+It's possible to run the entire project into multiple docker containers. Each container can be run independently and are built using the following structure :
 
 ![Docker structure](https://www.plantuml.com/plantuml/svg/VP71Ri8m38RlUOgezwvZq8vnc3XmsLDKJkgLGEj4JbfjU_gr0QgWJHoGVjl_xtouUn-0mz1tyc3r6Ldwm8CE0wCGmOGEPNOTVFJGeZoWGsgGj46V2S6e0r0xszgZvYTZ2zqDIeDZA5huGMLtH-3Uaj6P12zlHPfawulfjpiElUemRz2VWtNHFhNhQ_qWCSbSWSSbCXUfdyOB6uscCL0O3w3ZWgzjLLURUS5BVLbMA_rPhak4jNfhLXLiomq0gjNhymfK2TigFdB2u2tLbWs9Ux1n_WEZjXJ0479qJmtihEkHGhrC_iGOl5F8_9qx4sFip0Fx1I6V4HAa922IPsMUlzyTCz5njdoNcuZT_y55jg3A2NLsBbUNOb6nxSnTy8G-M98HEXhIGoOwdINvFL8pz9tu1G00 "Docker structure")
 
 # Documentation
 
-To update the UML diagram, create a new encoded link on the PlantUML website. Copy the existing UML, make your changes, and then update the markdown file with the new link.
+To update the UML diagram, create a new encoded link on the PlantUML website. Copy the existing UML, make your changes, and then update the Markdown file with the new link.

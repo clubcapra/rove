@@ -2,47 +2,75 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription
+
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
+from math import pi
 
 
 def generate_launch_description():
-    # Configure ROS nodes for launch
-
     # Get the launch directory
+    pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
-    pkg_rove_slam = get_package_share_directory('rove_slam')
-    slam_pkg_path = get_package_share_directory("slam_toolbox")
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, 'urdf', 'rove.urdf.xacro')
     robot_desc = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
 
+    # Get simulation file
+    world_file_name = 'worlds/base_world.world'
+    world = os.path.join(pkg_rove_description, world_file_name)
+
     # Setup to launch the simulator and Gazebo world
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
-        ),
-        launch_arguments={
-            'gz_args': "-r 'https://fuel.gazebosim.org/" +
-            "1.0/OpenRobotics/worlds/industrial-warehouse'"
-        }.items(),
+            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
+        launch_arguments={'gz_args': "-v 4 -r " + world}.items(),
     )
 
-    # Spawn robot
-    create = Node(
+    walls_file_path = os.path.join(pkg_rove_description, 'worlds', 'walls.sdf')
+    spawn_walls = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=['-name', 'rove',
-                   '-topic', 'robot_description',
+        arguments=['-file', walls_file_path,
+                   '-name', 'walls',
                    '-x', '0',
                    '-y', '0',
-                   '-z', '0.1',
-                   ],
+                   '-z', '0'],
+        output='screen',
+    )
+
+    actor_file_path = os.path.join(pkg_rove_description, 'worlds', 'actor.sdf')
+    spawn_actor = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-file', actor_file_path,
+                   '-name', 'actor',
+                   '-topic', 'actor_pose',
+                   '-x', '0',
+                   '-y', '0',
+                   '-z', '0.1'],
+        output='screen',
+    )
+
+    yaw = -pi / 2
+
+    # Spawn robot
+    spawn_rove = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', 'rove',
+            '-topic', 'robot_description',
+            '-x', '0',
+            '-y', '0',
+            '-z', '0.1',
+            '-Y', str(yaw),
+        ],
         output='screen',
     )
 
@@ -55,17 +83,16 @@ def generate_launch_description():
         output='both',
         parameters=[
             {'robot_description': robot_desc},
-            {'frame_prefix': "rove/"},
             {"use_sim_time": True, }
         ]
     )
 
-    # Visualize in RViz
-    rviz = Node(
-       package='rviz2',
-       executable='rviz2',
-       arguments=['-d', os.path.join(pkg_rove_description, 'config',
-                                     'basic.rviz')],
+    # fake human tracker
+    human_tracker = Node(
+            package='rove_navigation',
+            executable='green_person_tracker',
+            name='green_person_tracker',
+            output='screen',
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -74,42 +101,29 @@ def generate_launch_description():
         executable='parameter_bridge',
         parameters=[{
             'config_file': os.path.join(pkg_rove_description, 'config',
-                                        'amazon_bridge.yaml'),
+                                        'default_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
             "use_sim_time": True,
         }],
         output='screen'
     )
 
-    slam = IncludeLaunchDescription(
+    common = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(slam_pkg_path, "launch", "online_async_launch.py"),
+            os.path.join(pkg_rove_bringup, "launch", "common.launch.py"),
         ),
         launch_arguments={
             "use_sim_time": "true",
-            "slam_params_file": os.path.join(
-                pkg_rove_slam, "config", "slam_config.yaml"
-            )
         }.items(),
     )
 
-    robot_localization_node = Node(
-       package='robot_localization',
-       executable='ekf_node',
-       name='ekf_filter_node',
-       output='screen',
-       parameters=[os.path.join(pkg_rove_slam, 'config/ekf.yaml'),
-                   {'use_sim_time': True}]
-                   )
-
     return LaunchDescription([
-        gz_sim,
-        DeclareLaunchArgument('rviz', default_value='true',
-                              description='Open RViz.'),
-        bridge,
-        robot_state_publisher,
-        robot_localization_node,
-        rviz,
-        slam,
-        create,
-    ])
+            gz_sim,
+            bridge,
+            robot_state_publisher,
+            spawn_walls,
+            spawn_actor,
+            spawn_rove,
+            common,
+            human_tracker,
+            ])

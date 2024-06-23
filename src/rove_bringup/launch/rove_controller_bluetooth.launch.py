@@ -7,8 +7,8 @@ def generate_launch_description():
     dir = get_package_share_directory(package_name)
     # Get params files
     joy_params_file = dir + '/config/joy_params.yaml'
-    teleope_joy_params_file = dir + '/config/teleop_joy_params.yaml'
-    bluethoot_mapping_file = dir + '/config/bluethoot_mapping.yaml'
+    teleop_joy_params_file = dir + '/config/teleop_joy_params.yaml'
+    bluetooth_mapping_file = dir + '/config/bluetooth_mapping.yaml'
 
     return LaunchDescription([
         Node(
@@ -22,17 +22,17 @@ def generate_launch_description():
             package='teleop_twist_joy',
             executable='teleop_node',
             name='teleop_twist_joy_node',
-            parameters=[teleope_joy_params_file],
+            parameters=[teleop_joy_params_file],
             remappings=[
-                ('/joy', '/rove/joy'),
-                # ('/cmd_vel', '/model/rove/cmd_vel')
+                ('/joy', '/joy'),
+                ('/cmd_vel', '/joy_vel'),
             ],
         ),
         Node(
             package=package_name,
             executable='rove_controller_node',
             name='rove_controller_node',
-            parameters=[bluethoot_mapping_file],
+            parameters=[bluetooth_mapping_file],
             output='screen',
         ),
     ])

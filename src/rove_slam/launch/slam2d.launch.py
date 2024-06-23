@@ -9,7 +9,7 @@ def generate_launch_description():
     pkg_rove_slam = get_package_share_directory('rove_slam')
 
     config_file = os.path.join(pkg_rove_slam, 'config',
-                               'mapper_params_online_async.yaml')
+                               'slam_config.yaml')
 
     return LaunchDescription([
         Node(

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Delay delay_msec="2000">
+      <Nav2Client goal="-0.579;-1.341;0.0;1.0"/>
+    </Delay>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MoveRobot">
+    <Sequence name="SetGoal">
+      <Nav2Client goal="{target}"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="Nav2Client"
+            editable="true">
+      <input_port name="goal"/>
+    </Action>
+  </TreeNodesModel>
+
+</root>

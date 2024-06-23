@@ -8,8 +8,12 @@
   <license>TODO: License declaration</license>
 
 
-  <exec_depend>slam_toolbox</exec_depend>
-  <exec_depend>robot_localization</exec_depend>
+  <build_depend>slam_toolbox</build_depend>
+  <build_depend>robot_localization</build_depend>
+  <build_depend>rtabmap</build_depend>
+  <build_depend>rtabmap_odom</build_depend>
+  <build_depend>rtabmap_slam</build_depend>
+  <build_depend>rtabmap_viz</build_depend>
 
 
   <test_depend>ament_copyright</test_depend>

@@ -1,0 +1,13 @@
+# used tutorial: https://navigation.ros.org/tutorials/docs/navigation2_with_gps.html
+navsat_transform:
+  ros__parameters:
+    frequency: 30.0
+    delay: 3.0
+    magnetic_declination_radians: 0.0
+    yaw_offset: pi
+    zero_altitude: true
+    broadcast_utm_transform: true
+    publish_filtered_gps: true
+    use_odometry_yaw: true
+    wait_for_datum: false
+    broadcast_utm_transform_as_parent_frame: false
