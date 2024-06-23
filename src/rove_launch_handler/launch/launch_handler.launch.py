@@ -7,9 +7,9 @@ import os
 
 def generate_launch_description():
     rosbridge_launch_file = os.path.join(
-        get_package_share_directory('rosbridge_server'),
+        get_package_share_directory('foxglove_bridge'),
         'launch',
-        'rosbridge_websocket_launch.xml'
+        'foxglove_bridge_launch.xml'
     )
 
     return LaunchDescription([

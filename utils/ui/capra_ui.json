@@ -4,22 +4,31 @@
       "buttonText": "Front LED ON",
       "buttonTooltip": "",
       "advancedView": false,
-      "value": "{}",
-      "foxglovePanelTitle": "Front LED ON"
+      "value": "{\n  \"linear\": {\n    \"x\": 0,\n    \"y\": 0,\n    \"z\": 0\n  },\n  \"angular\": {\n    \"x\": 0,\n    \"y\": 0,\n    \"z\": 0\n  }\n}",
+      "foxglovePanelTitle": "Front LED ON",
+      "topicName": "/cmd_vel.linear.x",
+      "datatype": "geometry_msgs/msg/Twist"
     },
     "Indicator!360e2e8": {
-      "path": "",
+      "path": "/odom.twist.twist.linear.x",
       "style": "bulb",
-      "fallbackColor": "#a0a0a0",
-      "fallbackLabel": "False",
+      "fallbackColor": "#e0e2df",
+      "fallbackLabel": "Speed good",
       "rules": [
         {
-          "operator": "=",
-          "rawValue": "true",
+          "operator": "<=",
+          "rawValue": "1",
           "color": "#68e24a",
-          "label": "True"
+          "label": "Speed good"
+        },
+        {
+          "operator": ">",
+          "rawValue": "1",
+          "color": "#ede466",
+          "label": "Slower"
         }
-      ]
+      ],
+      "foxglovePanelTitle": "lidar state"
     },
     "Publish!gkhilm": {
       "buttonText": "Front LED OFF",
@@ -218,42 +227,26 @@
         "poseEstimateThetaDeviation": 0.26179939
       },
       "imageMode": {
-        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
+        "imageTopic": "/zed/zed_node/depth/depth_registered",
         "calibrationTopic": "/zed/zed_node/depth/camera_info"
       }
     },
-    "Publish!qnfojc": {
-      "buttonText": "Publish",
-      "buttonTooltip": "",
-      "advancedView": true,
-      "value": "{\n  \"data\": \"rove_bringup sim.launch.py\"\n}",
-      "foxglovePanelTitle": "Launch",
-      "topicName": "/manager/launch",
-      "datatype": "std_msgs/msg/String"
-    },
-    "Publish!2cg1exi": {
-      "buttonText": "Publish",
-      "buttonTooltip": "",
-      "advancedView": true,
-      "value": "{\n  \"data\": \"rove_bringup sim.launch.py\"\n}",
-      "foxglovePanelTitle": "Kill",
-      "topicName": "/manager/kill",
-      "datatype": "std_msgs/msg/String"
-    },
+    "Joystick Panel.Joystick!f5fjj6": {},
     "3D!wd5ayb": {
       "cameraState": {
-        "distance": 15.475618749968437,
-        "perspective": true,
-        "phi": 53.72454709424579,
+        "perspective": false,
+        "distance": 25.847108697940985,
+        "phi": 33.02243748196572,
+        "thetaOffset": -106.2487931391679,
+        "targetOffset": [
+          1.4574957054508668,
+          -1.872533894914948,
+          5.047356121098524e-16
+        ],
         "target": [
           0,
           0,
           0
-        ],
-        "targetOffset": [
-          -1.0352265201029487,
-          0.690125189613747,
-          -6.717353809730597e-17
         ],
         "targetOrientation": [
           0,
@@ -261,7 +254,6 @@
           0,
           1
         ],
-        "thetaOffset": 39.94897959183675,
         "fovy": 45,
         "near": 0.5,
         "far": 5000
@@ -415,29 +407,167 @@
       "imageMode": {},
       "followTf": "base_link"
     },
+    "3D!2euzghd": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 25.847108697995846,
+        "phi": 59.99999999999988,
+        "thetaOffset": 44.99999999999998,
+        "targetOffset": [
+          -0.6765570540972538,
+          1.1691389716638279,
+          -5.075832289577129e-17
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "followTf": "map",
+      "scene": {},
+      "transforms": {
+        "frame:map": {
+          "visible": true
+        }
+      },
+      "topics": {
+        "/marker": {
+          "visible": true
+        }
+      },
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {}
+    },
     "map!60yjuv": {
       "center": {
-        "lat": 38.16148014673053,
-        "lon": -122.45462179183961
+        "lat": 38.16148858251846,
+        "lon": -122.45468616485597
       },
       "customTileUrl": "",
       "disabledTopics": [],
       "followTopic": "/gps",
       "layer": "map",
       "topicColors": {},
-      "zoomLevel": 16,
+      "zoomLevel": 14,
       "maxNativeZoom": 18
     },
-    "Table!1xg0s4v": {
-      "topicPath": ""
+    "3D!ac8om2": {},
+    "CallService!2b4k70w": {
+      "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"sim.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "Simulation",
+      "buttonColor": "#ff0000"
     },
-    "RosOut!14blizg": {
-      "searchTerms": [],
-      "minLogLevel": 1,
-      "nameFilter": {}
+    "CallService!3utg1bx": {
+      "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"real.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "Real",
+      "buttonColor": "#ff0000"
+    },
+    "Blank Panel.Blank!4iybw25": {
+      "showLogo": false,
+      "foxglovePanelTitle": " "
+    },
+    "CallService!1z631qn": {
+      "requestPayload": "{\n \"package\" : \"rove_navigation\",\n \"file_name\" : \"navigation.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "navigation",
+      "buttonText": "navigation",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!2kij9dp": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "slam",
+      "buttonText": "slam3d",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!90e1se": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"velodyne_3d.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "slam",
+      "buttonText": "slam3d - lidar",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!6jl54y": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"icp_zed.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "slam3d - zed",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!43dz0yr": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "Scenario",
+      "buttonText": "Reconnoitring of structures",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!2qnnpsv": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "Scenario",
+      "buttonText": "Transport – Mule",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!6ywrf4": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "Scenario",
+      "buttonText": "Search & Rescue",
+      "buttonColor": "#ff0000"
     },
     "Tab!2iobm2s": {
-      "activeTabIdx": 2,
+      "activeTabIdx": 0,
       "tabs": [
         {
           "title": "Status",
@@ -447,7 +577,7 @@
                 "first": "Publish!1b7sy1a",
                 "second": "Indicator!360e2e8",
                 "direction": "column",
-                "splitPercentage": 55.757575757575765
+                "splitPercentage": 55.6420233463035
               },
               "second": {
                 "first": "Publish!gkhilm",
@@ -506,12 +636,8 @@
           }
         },
         {
-          "title": "example",
-          "layout": {
-            "first": "Publish!qnfojc",
-            "second": "Publish!2cg1exi",
-            "direction": "row"
-          }
+          "title": "Joy",
+          "layout": "Joystick Panel.Joystick!f5fjj6"
         }
       ]
     },
@@ -523,17 +649,61 @@
           "layout": {
             "first": "3D!wd5ayb",
             "second": {
-              "first": {
-                "first": "map!60yjuv",
-                "second": "Table!1xg0s4v",
-                "direction": "row"
-              },
-              "second": "RosOut!14blizg",
+              "first": "3D!2euzghd",
+              "second": "map!60yjuv",
               "direction": "column",
-              "splitPercentage": 48.263254113345525
+              "splitPercentage": 45.103857566765576
             },
             "direction": "row",
-            "splitPercentage": 50.911458333333336
+            "splitPercentage": 61.47652076855616
+          }
+        },
+        {
+          "title": "Arm",
+          "layout": "3D!ac8om2"
+        },
+        {
+          "title": "launch",
+          "layout": {
+            "first": {
+              "first": {
+                "first": "CallService!2b4k70w",
+                "second": "CallService!3utg1bx",
+                "direction": "column"
+              },
+              "second": {
+                "first": "Blank Panel.Blank!4iybw25",
+                "second": {
+                  "first": {
+                    "first": "CallService!1z631qn",
+                    "second": "CallService!2kij9dp",
+                    "direction": "column"
+                  },
+                  "second": {
+                    "first": "CallService!90e1se",
+                    "second": "CallService!6jl54y",
+                    "direction": "column"
+                  },
+                  "direction": "column"
+                },
+                "direction": "row",
+                "splitPercentage": 69.34679409175952
+              },
+              "direction": "row",
+              "splitPercentage": 22.561529751795238
+            },
+            "second": {
+              "first": {
+                "first": "CallService!43dz0yr",
+                "second": "CallService!2qnnpsv",
+                "direction": "column"
+              },
+              "second": "CallService!6ywrf4",
+              "direction": "column",
+              "splitPercentage": 64.83679525222553
+            },
+            "direction": "row",
+            "splitPercentage": 85.62162162162163
           }
         }
       ]
@@ -548,6 +718,6 @@
     "first": "Tab!2iobm2s",
     "second": "Tab!1dud6cr",
     "direction": "column",
-    "splitPercentage": 25.259067357512954
+    "splitPercentage": 30.22794846382557
   }
 }
