@@ -20,7 +20,7 @@ install(PROGRAMS
 )
 
 install(
-  DIRECTORY srv
+  DIRECTORY launch srv
   DESTINATION share/${PROJECT_NAME}
 )
 

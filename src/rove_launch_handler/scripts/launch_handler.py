@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import time
 import rclpy
 from rclpy.node import Node
@@ -7,56 +8,60 @@ import subprocess
 import os
 from rove_launch_handler.srv import LaunchRequest, LaunchListRequest
 
-launchedFiles = dict()
+launched_files = {}
 
 class LaunchFile: 
-    def __init__(self, package, fileName, pid):
+    def __init__(self, package, file_name, pid):
         self.package = package
-        self.fileName = fileName
+        self.file_name = file_name
         self.pid = pid
 
 class LaunchMsg:
     def __init__(self):
         self.message = ""
-        self.isLaunched = False
-        self.fileName = ""
+        self.is_launched = False
+        self.file_name = ""
 
-def launchFile(package, fileName):
-    command = "ros2 launch {0} {1}".format(package, fileName)
+def launch_file(package, file_name):
+    command = f"ros2 launch {package} {file_name}"
 
     p = subprocess.Popen(command, shell=True, preexec_fn=os.setsid)
 
-    launchMsg = LaunchMsg()
+    launch_msg = LaunchMsg()
     # Sleep to make sure the launch command has time to fail if there's an error
     time.sleep(1)
     state = p.poll()
-    launchMsg.fileName = fileName
+    launch_msg.file_name = file_name
     if state is None:
-        launchMsg.message = fileName + " was launched"
-        launchedFiles[fileName] = LaunchFile(package, fileName, p.pid)
-        launchMsg.isLaunched = True
+        launch_msg.message = f"{file_name} was launched"
+        launched_files[file_name] = LaunchFile(package, file_name, p.pid)
+        launch_msg.is_launched = True
     else:
-        launchMsg.message = fileName + " was not launched"
-        launchMsg.isLaunched = False
-    return launchMsg
+        launch_msg.message = f"{file_name} was not launched"
+        launch_msg.is_launched = False
+    return launch_msg
 
-def killLaunchFile(fileName):
-    launchMsg = LaunchMsg()
-    launchMsg.fileName = fileName
-    if fileName in launchedFiles:
-        pid = launchedFiles[fileName].pid
-        os.killpg(os.getpgid(pid), signal.SIGINT)
-        del launchedFiles[fileName]
-        launchMsg.message = fileName + " was killed"
-        launchMsg.isLaunched = False
+def kill_launch_file(file_name):
+    launch_msg = LaunchMsg()
+    launch_msg.file_name = file_name
+    if file_name in launched_files:
+        pid = launched_files[file_name].pid
+        try:
+            os.killpg(os.getpgid(pid), signal.SIGINT)
+            del launched_files[file_name]
+            launch_msg.message = f"{file_name} was killed"
+            launch_msg.is_launched = False
+        except ProcessLookupError as e:
+            launch_msg.message = f"Failed to kill {file_name}: {str(e)}"
+            launch_msg.is_launched = False
     else:
-        launchMsg.message = fileName + " was not launched"
-        launchMsg.isLaunched = False
-    return launchMsg
+        launch_msg.message = f"{file_name} was not launched"
+        launch_msg.is_launched = False
+    return launch_msg
 
-def killAll():
-    for launchFile in launchedFiles.values():
-        killLaunchFile(launchFile.fileName)
+def kill_all():
+    for file_name in list(launched_files.keys()):
+        kill_launch_file(file_name)
 
 class LaunchHandlerService(Node):
     def __init__(self):
@@ -67,31 +72,25 @@ class LaunchHandlerService(Node):
 
     def launch_callback(self, request, response):
         package = request.package
-        fileName = request.file_name
-        # Check if the launch file is already running
-        if fileName not in launchedFiles:
-            launchMsg = launchFile(package, fileName)
+        file_name = request.file_name
+        if file_name not in launched_files:
+            launch_msg = launch_file(package, file_name)
         else:
-            launchMsg = killLaunchFile(fileName)
-        response.message = launchMsg.message
-        response.is_launched = launchMsg.isLaunched
-        response.file_name = launchMsg.fileName
+            launch_msg = kill_launch_file(file_name)
+        response.message = launch_msg.message
+        response.is_launched = launch_msg.is_launched
+        response.file_name = launch_msg.file_name
         return response
 
     def get_launched_files(self, request, response):
-        # Get array of package names
-        packageNames = []
-        for launchedFile in launchedFiles.values(): 
-            packageNames.append(launchedFile.package)
-        
-        response.packages = packageNames
-        response.files = list(launchedFiles.keys())
+        response.packages = [lf.package for lf in launched_files.values()]
+        response.files = list(launched_files.keys())
         return response
 
 def main(args=None):
     rclpy.init(args=args)
     node = LaunchHandlerService()
-    rclpy.get_default_context().on_shutdown(killAll)
+    rclpy.get_default_context().on_shutdown(kill_all)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

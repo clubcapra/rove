@@ -1,0 +1,8 @@
+[Unit]
+Descript=Robot launch script
+
+[Service]
+ExecStart=/usr/bin/launch_script.sh
+
+[Install]
+WantedBy=multi-user.target
