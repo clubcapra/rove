@@ -22,7 +22,7 @@ def generate_launch_description():
             launch_description_source=launch_file_path,
             launch_arguments=[ # `ros2 launch rove_zed zed_body_trck.launch.py --show-arguments`
                 ['camera_model', camera_model],
-                ['camera_name', camera_model],
+                ['camera_name', 'zed'],
                 ['ros_params_override_path', config_override_path]
             ]
         )
