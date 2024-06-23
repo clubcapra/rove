@@ -31,6 +31,20 @@ def generate_launch_description():
             output='screen',
         )
 
+    frontier_publisher_node = Node(
+            package="rove_navigation",
+            executable='frontier_publisher',
+            name='frontier_publisher',
+            output='screen',
+        )
+
+    explorer_node = Node(
+        package='rove_navigation',
+        executable='exploration',
+        name='exploration',
+        output='screen',
+    )
+
 
     nav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(navigation_launch_path),
@@ -41,7 +55,8 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
-        person_following_node,
+        #person_following_node,
+        frontier_publisher_node,
         GroupAction(
             actions=[
                 SetRemap(src='cmd_vel', dst='nav_vel'),
