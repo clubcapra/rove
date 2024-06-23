@@ -24,6 +24,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'navigate_to_person = rove_navigation.navigate_to_person:main',
+            'green_person_tracker = rove_navigation.green_person_tracker:main',
+            'behavior_square_pattroling = rove_navigation.behavior_square_pattroling:main',
+            'person_following = rove_navigation.person_following:main',
         ],
     },
 )
