@@ -107,6 +107,24 @@ View the gripper in RViz:
 ros2 launch robotiq_description view_gripper.launch.py
 ```
 
+## Foxglove usage (user interface)
+
+You can find the json configuration file in utils/ui/capra_ui.json. You need to load it into foxglove. On the device that you want to be connected (a.k.a. the jetson), you need to run the following command : 
+
+
+You can make it as a service and start at boot : 
+
+```bash
+./utils/install.sh
+```
+
+Otherwise, to start use the user interface with a development laptop, you can run it by only launching the launchfile :
+
+```bash
+ros2 launch rove_launch_handler launch_handler.py
+```
+
+
 ## Adding New Packages
 
 To add a package for Rove, create it using the ROS2 command ([Creating Your First ROS2 Package](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)). Name it starting with `rove_` to ensure Git tracking. For non-Rove specific packages, create a separate repository and add it to `rove.repos`.
