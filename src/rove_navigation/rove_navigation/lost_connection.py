@@ -45,9 +45,9 @@ class LostNetworkFallback(Node):
         self.connection_thread.start()
     
     # gets called on a ros timer (main thread)
-    async def fallback_behavior(self):
+    def fallback_behavior(self):
         if self.state==self.OFFLINE and self.fallbackIndex < len(self.fallback_positions):
-            await self.navigate_to_fallback()
+            self.navigate_to_fallback()
     
     # Check connection to google.com TODO: check connection to UI user instead
     # Gets called on a different thread
@@ -71,7 +71,7 @@ class LostNetworkFallback(Node):
                         self.get_logger().warn(f'Connection Error!!! ping to server failed {self.nbFailedConns} '+
                                            'times in a row, activating fallback state, the robot will try to retrace its steps.')                    
 
-    async def navigate_to_fallback(self):
+    def navigate_to_fallback(self):
         # Prepare the goal message and send it
         goal_pose = PoseStamped()
         goal_pose.header = Header(frame_id='map')
@@ -84,7 +84,9 @@ class LostNetworkFallback(Node):
         
         goal_msg = NavigateToPose.Goal()
         goal_msg.pose = goal_pose
-        goal_handle = await self.action_client.send_goal(goal_msg) ## the future returned from this does NOT WORK >:(
+        future = self.action_client.send_goal_async(goal_msg) ## the future returned from this does NOT WORK >:(
+        goal_handle = future.result()
+        
         while not self.is_robot_close_to_goal():
             if self.state == self.ONLINE: 
                 # TODO: cancel current state of general state_handler, right now only cancels return to fallback
@@ -109,7 +111,7 @@ class LostNetworkFallback(Node):
         self.get_logger().info('fallback_positions[i]: '+str(fall))
         self.get_logger().info('self.current_position: '+str(self.current_position))
         self.get_logger().info('distance: '+str(np.linalg.norm(dist)))
-        return np.linalg.norm(dist) <= 0.3
+        return np.linalg.norm(dist) <= 0.2
         
     def odometry_callback(self, msg : Odometry):
         self.current_position = Point(x=msg.pose.pose.position.x, y=msg.pose.pose.position.y, z=msg.pose.pose.position.z)
