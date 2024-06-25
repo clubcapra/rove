@@ -1,29 +1,33 @@
-from asyncio import Future
+import time
 import socket
 from threading import Thread
+
+from sympy import Point
 import rclpy
+from rclpy.duration import Duration
 from rclpy.node import Node
-from rclpy.action import ActionClient
-from geometry_msgs.msg import PoseArray
-from geometry_msgs.msg import Point, PoseStamped
-from nav2_msgs.action import NavigateToPose
+from geometry_msgs.msg import PoseStamped
 import numpy as np
 from std_msgs.msg import Header
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry, Path
+from nav2_msgs.action import NavigateThroughPoses
+from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
 # Node to handle when the robot loses connection with internet, stores waypoints to fall back to to try to get back connection
 class LostNetworkFallback(Node):
     
     def __init__(self):        
-        self.DISTANCE_BETWEEN_FALLBACKS = 0.4 # meters
-        self.NB_MAX_FAILED_CONNS = 3
-        self.PING_RATE = 1 # seconds
+        self.DISTANCE_BETWEEN_FALLBACKS = 0.2 # meters
+        self.NB_MAX_FAILED_CONNS = 5
+        self.PING_RATE = 1.0 # seconds
+        self.PING_TIMEOUT = 2 # seconds
+        self.ADDRESS_TO_PING = '8.8.8.8'
+        self.PORT_TO_PING = 53
         
         self.ONLINE = 'ONLINE'
         self.OFFLINE = 'OFFLINE'
         
-        self.state = self.ONLINE
-        self.traveling_to_fallback = False
+        self.state = self.OFFLINE
         self.nbFailedConns = 0
         self.fallbackIndex = 0
                 
@@ -32,106 +36,116 @@ class LostNetworkFallback(Node):
         self.create_timer(self.PING_RATE, self.fallback_behavior)
         self.odometry_subscription = self.create_subscription(
             Odometry, '/odometry/local', self.odometry_callback, 10)
-        self.action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         
-        #list of potential fallback positions, ascending order
-        self.fallback_positions = [Point(x=0.0,y=0.0,z=0.0)]
-        self.current_position = Point(x=0.0,y=0.0,z=0.0)
-        
-        self.fallback_positions.pop()
-        self.current_position: Point
         # Thread to execute goal pose posting (because send_goal_async()'s callback was called before reaching actual goal pose)
         self.connection_thread = Thread(target=self.check_connection)
         self.connection_thread.start()
+        
+        # Navigator object for nav2
+        self.navigator = BasicNavigator()
+        
+        # list of potential fallback positions, ascending order
+        self.fallback_path = Path()
+        self.fallback_path.header = Header(frame_id='map')
+        
+        self.current_position = PoseStamped()
+        self.current_position.header.frame_id = 'map'
+        self.current_position.header.stamp = self.navigator.get_clock().now().to_msg()
+        self.current_position.pose.position.x = 0.0
+        self.current_position.pose.position.y = 0.0
+        self.current_position.pose.position.z = 0.0
+        self.current_position.pose.orientation.w = 1.0
+        self.fallback_path.poses.append(self.current_position)
     
-    # gets called on a ros timer (main thread)
-    def fallback_behavior(self):
-        if self.state==self.OFFLINE and self.fallbackIndex < len(self.fallback_positions):
-            self.navigate_to_fallback()
-    
+        self.ini_pos = False
+        self.poses_remaining = 0
+        
+
     # Check connection to google.com TODO: check connection to UI user instead
     # Gets called on a different thread
     def check_connection(self):
         while True:
+            start = time.time()
             try:
-                socket.setdefaulttimeout(1) # in seconds
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+                socket.setdefaulttimeout(self.PING_TIMEOUT)
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((self.ADDRESS_TO_PING, self.PORT_TO_PING))
                 # if this following code runs, the connection was established
                 self.nbFailedConns = 0
                 if self.state != self.ONLINE:
                     self.get_logger().info('Connection re-established to server! terminating fallback state')
-                    self.fallback_positions[self.fallbackIndex:]
-                    self.fallbackIndex = 0
                 self.state = self.ONLINE
-            except socket.error:
+            except socket.error as e:
                 self.nbFailedConns += 1
                 if self.nbFailedConns >= self.NB_MAX_FAILED_CONNS:
                     self.state = self.OFFLINE
                     if self.nbFailedConns == self.NB_MAX_FAILED_CONNS: 
                         self.get_logger().warn(f'Connection Error!!! ping to server failed {self.nbFailedConns} '+
-                                           'times in a row, activating fallback state, the robot will try to retrace its steps.')                    
+                                           'times in a row, activating fallback state, the robot will try to retrace its steps.')
+            delay = time.time() - start
+            if(delay < self.PING_RATE): time.sleep(delay)
+    
+    # gets called on a ros timer (main thread)
+    def fallback_behavior(self):
+        if self.state==self.OFFLINE and self.poses_remaining > 0:
+            self.get_logger().info('nb poses remaingin: '+ str(self.poses_remaining))
+            self.navigate_poses()              
 
-    def navigate_to_fallback(self):
-        # Prepare the goal message and send it
-        goal_pose = PoseStamped()
-        goal_pose.header = Header(frame_id='map')
-        
-        goal_pose.pose.position = self.fallback_positions[self.fallbackIndex]
-        goal_pose.pose.orientation.w = 1.0  # Assuming no orientation preference
+        # self.get_logger().warn(f'Navigating to fallback at ({self.fallback_path[self.fallbackIndex].__str__()})')
 
-        self.get_logger().warn(f'Navigating to fallback at ({self.fallback_positions[self.fallbackIndex].__str__()})')
-        self.action_client.wait_for_server()
-        
-        goal_msg = NavigateToPose.Goal()
-        goal_msg.pose = goal_pose
-        future = self.action_client.send_goal_async(goal_msg) ## the future returned from this does NOT WORK >:(
-        goal_handle = future.result()
-        
-        while not self.is_robot_close_to_goal():
-            if self.state == self.ONLINE: 
-                # TODO: cancel current state of general state_handler, right now only cancels return to fallback
-                self.action_client._cancel_goal_async(goal_handle) 
-                return # end fallback loop
+        # self.fallbackIndex+=1
+        # if self.fallbackIndex < len(self.fallback_path.poses):
+        #     self.get_logger().warn(f'Fallback {self.fallbackIndex} reached. Will attempt to reach next one if still offline.')
             
-        self.fallbackIndex+=1
-        if self.fallbackIndex < len(self.fallback_positions):
-            self.get_logger().warn(f'Fallback {self.fallbackIndex} reached. Will attempt to reach next one if still offline.')
+        # if self.fallbackIndex == len(self.fallback_path.poses):
+        #     self.get_logger().error(f'Last fallback reached, waiting and hoping for connection to come back :(')
+    
+    def navigate_poses(self):
+        self.navigator.goThroughPoses(self.fallback_path.poses)
+        i = 0
+        while not self.navigator.isTaskComplete():
+        
+            if self.state == self.ONLINE:
+                self.fallbackIndex = 0
+                self.navigator.cancelTask()
+                self.fallback_path[self.fallbackIndex:]
+                return
             
-        if self.fallbackIndex == len(self.fallback_positions):
-            self.get_logger().error(f'Last fallback reached, waiting and hoping for connection to come back :(')
-        
-        self.traveling_to_fallback = False
+            feedback:NavigateThroughPoses.Feedback = self.navigator.getFeedback()
+            self.poses_remaining = feedback.number_of_poses_remaining
+            if feedback and i % 5 == 0:
+                # navigation timeout
+                if Duration.from_msg(feedback.navigation_time) > Duration(seconds=600.0):
+                    self.navigator.cancelTask()
+            i+=1
             
-        
-    def is_robot_close_to_goal(self):
-        fall = self.fallback_positions[self.fallbackIndex]
-        dist = [self.current_position.x-fall.x,
-                self.current_position.y-fall.y,
-                self.current_position.z-fall.z]
-        self.get_logger().info('fallback_positions[i]: '+str(fall))
-        self.get_logger().info('self.current_position: '+str(self.current_position))
-        self.get_logger().info('distance: '+str(np.linalg.norm(dist)))
-        return np.linalg.norm(dist) <= 0.2
-        
+        # Do something depending on the return code
+        result = self.navigator.getResult()
+        if result == TaskResult.SUCCEEDED:
+            print('Goal succeeded!')
+        elif result == TaskResult.FAILED:
+            self.get_logger().error(f'Couldn\'t proceed through fallbacks, reason unknown')
+        else :
+            self.get_logger().warn(f'nav2 navigator task returned with unknown TaskResult')
+            
     def odometry_callback(self, msg : Odometry):
-        self.current_position = Point(x=msg.pose.pose.position.x, y=msg.pose.pose.position.y, z=msg.pose.pose.position.z)
-        # Sets the first position
-        if len(self.fallback_positions) == 0: 
-            self.fallback_positions = [self.current_position] 
-            self.get_logger().info(f'First fallback position initiated: {self.fallback_positions[0]}')            
-            
+        self.current_position = PoseStamped()
+        self.current_position.pose.position = msg.pose.pose.position
+        self.current_position.pose.orientation = msg.pose.pose.orientation
+        self.current_position.header.frame_id = 'map'
+        self.current_position.header.stamp = self.navigator.get_clock().now().to_msg()
+        
+        if not self.ini_pos:
+            self.navigator.setInitialPose(self.current_position)
+            self.ini_pos = True
         # If robot at self.DISTANCE_BETWEEN_FALLBACKS distance or more from last fallback, add new fallback point 
-        if(self.state == self.ONLINE):
-            if len(self.fallback_positions) == 0: 
-                self.fallback_positions.append(self.current_position)
-            else:
-                dist = [self.current_position.x - self.fallback_positions[0].x,
-                        self.current_position.y - self.fallback_positions[0].y,
-                        self.current_position.z - self.fallback_positions[0].z]
+        elif(self.state == self.ONLINE):
+            dist = [self.current_position.pose.position.x - self.fallback_path.poses[0].pose.position.x,
+                    self.current_position.pose.position.y - self.fallback_path.poses[0].pose.position.y,
+                    self.current_position.pose.position.z - self.fallback_path.poses[0].pose.position.z]
 
-                if(np.linalg.norm(dist) >= self.DISTANCE_BETWEEN_FALLBACKS):
-                    self.fallback_positions.insert(0, self.current_position)
-                    self.get_logger().info(f'New fallback position added: {self.fallback_positions[0].__str__()} total fallback points: {len(self.fallback_positions)}')            
+            if(np.linalg.norm(dist) >= self.DISTANCE_BETWEEN_FALLBACKS):
+                self.fallback_path.poses.insert(0, self.current_position)
+                self.get_logger().info(f'New fallback position added: {self.fallback_path.poses[0].__str__()} total fallback points: {len(self.fallback_path.poses)}')            
 
 def main(args=None):
     rclpy.init(args=args)
