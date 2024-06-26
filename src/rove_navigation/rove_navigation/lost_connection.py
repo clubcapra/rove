@@ -87,7 +87,7 @@ class LostNetworkFallback(Node):
     # gets called on a ros timer (main thread)
     def fallback_behavior(self):
         if self.state==self.OFFLINE and self.poses_remaining > 0:
-            self.get_logger().info('nb poses remaingin: '+ str(self.poses_remaining))
+            self.get_logger().info('nb poses remaining: '+ str(self.poses_remaining))
             self.navigate_poses()              
 
         # self.get_logger().warn(f'Navigating to fallback at ({self.fallback_path[self.fallbackIndex].__str__()})')

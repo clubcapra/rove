@@ -22,6 +22,7 @@ setup(
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
+    package_dir={'': 'src'},
     entry_points={
         'console_scripts': [
             'navigate_to_person = rove_navigation.navigate_to_person:main',
@@ -31,6 +32,7 @@ setup(
             'frontier_publisher = rove_navigation.frontier_publisher:main',
             'exploration = rove_navigation.exploration:main',
             'lost_connection = rove_navigation.lost_connection:main',
+            'mule_behavior = rove_navigation.mule_behavior:main',
         ],
     },
 )
