@@ -12,7 +12,7 @@ class NavigateToPersonNode(Node):
         super().__init__('navigate_to_person')
         self.subscription = self.create_subscription(
             PointStamped,
-            '/person_position',
+            '/tracking/point',
             self.navigate_to_person,
             10)
         
