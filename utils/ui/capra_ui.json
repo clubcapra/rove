@@ -1,5 +1,33 @@
 {
   "configById": {
+    "Gauge!3mhnam3": {
+      "path": "/diff_drive_controller/cmd_vel_unstamped.linear.x",
+      "minValue": 0,
+      "maxValue": 2,
+      "colorMap": "red-yellow-green",
+      "colorMode": "colormap",
+      "gradient": [
+        "#0000ff",
+        "#ff00ff"
+      ],
+      "reverse": false,
+      "foxglovePanelTitle": "Speed"
+    },
+    "Indicator!3iqk2un": {
+      "path": "",
+      "style": "bulb",
+      "fallbackColor": "#0045f5",
+      "fallbackLabel": "Track",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#61cc47",
+          "label": "Arm"
+        }
+      ],
+      "foxglovePanelTitle": "Mode"
+    },
     "Publish!1b7sy1a": {
       "buttonText": "Front LED ON",
       "buttonTooltip": "",
@@ -9,27 +37,6 @@
       "topicName": "/cmd_vel.linear.x",
       "datatype": "geometry_msgs/msg/Twist"
     },
-    "Indicator!360e2e8": {
-      "path": "/odom.twist.twist.linear.x",
-      "style": "bulb",
-      "fallbackColor": "#e0e2df",
-      "fallbackLabel": "Speed good",
-      "rules": [
-        {
-          "operator": "<=",
-          "rawValue": "1",
-          "color": "#68e24a",
-          "label": "Speed good"
-        },
-        {
-          "operator": ">",
-          "rawValue": "1",
-          "color": "#ede466",
-          "label": "Slower"
-        }
-      ],
-      "foxglovePanelTitle": "lidar state"
-    },
     "Publish!gkhilm": {
       "buttonText": "Front LED OFF",
       "buttonTooltip": "",
@@ -37,27 +44,19 @@
       "value": "{}",
       "foxglovePanelTitle": "Front LED OFF"
     },
-    "Indicator!3iqk2un": {
-      "path": "",
-      "style": "bulb",
-      "fallbackColor": "#a0a0a0",
-      "fallbackLabel": "False",
-      "rules": [
-        {
-          "operator": "=",
-          "rawValue": "true",
-          "color": "#68e24a",
-          "label": "True"
-        }
-      ],
-      "foxglovePanelTitle": "Mode"
-    },
     "Publish!2vkw4zk": {
       "buttonText": "Back LED ON",
       "buttonTooltip": "",
       "advancedView": false,
       "value": "{}",
       "foxglovePanelTitle": "Back LED ON"
+    },
+    "Publish!22modxz": {
+      "buttonText": "Back LED OFF",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{}",
+      "foxglovePanelTitle": "Back LED OFF"
     },
     "Indicator!l0f2va": {
       "path": "",
@@ -73,13 +72,6 @@
         }
       ],
       "foxglovePanelTitle": "Flipper"
-    },
-    "Publish!22modxz": {
-      "buttonText": "Back LED OFF",
-      "buttonTooltip": "",
-      "advancedView": false,
-      "value": "{}",
-      "foxglovePanelTitle": "Back LED OFF"
     },
     "Indicator!1srygfi": {
       "path": "",
@@ -100,7 +92,8 @@
       "batteryTopic": "",
       "topic": {
         "batteryTopic": ""
-      }
+      },
+      "foxglovePanelTitle": "Battery Level"
     },
     "Indicator!38j960d": {
       "path": "",
@@ -115,31 +108,6 @@
           "label": "True"
         }
       ]
-    },
-    "CallService!qyzghd": {
-      "requestPayload": "{}",
-      "layout": "vertical",
-      "timeoutSeconds": 10,
-      "editingMode": false,
-      "foxglovePanelTitle": "ESTOP",
-      "buttonTooltip": "",
-      "buttonColor": "#ff0000",
-      "buttonText": "ESTOP"
-    },
-    "Indicator!21d1yds": {
-      "path": "",
-      "style": "bulb",
-      "fallbackColor": "#a0a0a0",
-      "fallbackLabel": "False",
-      "rules": [
-        {
-          "operator": "=",
-          "rawValue": "true",
-          "color": "#68e24a",
-          "label": "True"
-        }
-      ],
-      "foxglovePanelTitle": "Estop status"
     },
     "Image!3b8t5ua": {
       "cameraState": {
@@ -231,17 +199,30 @@
         "calibrationTopic": "/zed/zed_node/depth/camera_info"
       }
     },
-    "Joystick Panel.Joystick!f5fjj6": {},
+    "Joystick Panel.Joystick!4cyq4bd": {
+      "foxglovePanelTitle": "Gamepad",
+      "publishMode": true
+    },
+    "Joystick Panel.Joystick!31gwyzo": {
+      "foxglovePanelTitle": "Keyboard"
+    },
+    "virtual-joystick.Virtual Joystick!9rfrv4": {
+      "publishRate": 5,
+      "maxLinearSpeed": 1,
+      "maxAngularSpeed": 1,
+      "topic": "/joy_vel",
+      "messageSchema": "geometry_msgs/msg/Twist"
+    },
     "3D!wd5ayb": {
       "cameraState": {
-        "perspective": false,
-        "distance": 25.847108697940985,
-        "phi": 33.02243748196572,
-        "thetaOffset": -106.2487931391679,
+        "perspective": true,
+        "distance": 6.811232525735655,
+        "phi": 31.3629151304689,
+        "thetaOffset": 17.304701743153707,
         "targetOffset": [
-          1.4574957054508668,
-          -1.872533894914948,
-          5.047356121098524e-16
+          -0.5219563017849245,
+          -0.17697123429486802,
+          6.817176424810392e-16
         ],
         "target": [
           0,
@@ -263,7 +244,62 @@
         "meshUpAxis": "z_up",
         "labelScaleFactor": 0
       },
-      "transforms": {},
+      "transforms": {
+        "frame:odom": {
+          "visible": false
+        },
+        "frame:base_link": {
+          "visible": false
+        },
+        "frame:map": {
+          "visible": false
+        },
+        "frame:flipper_fl": {
+          "visible": false
+        },
+        "frame:flipper_fr": {
+          "visible": false
+        },
+        "frame:flipper_rl": {
+          "visible": false
+        },
+        "frame:flipper_rr": {
+          "visible": false
+        },
+        "frame:sensor_link": {
+          "visible": false
+        },
+        "frame:camera_link": {
+          "visible": false
+        },
+        "frame:track_l": {
+          "visible": false
+        },
+        "frame:track_fl": {
+          "visible": false
+        },
+        "frame:track_r": {
+          "visible": false
+        },
+        "frame:track_fr": {
+          "visible": false
+        },
+        "frame:track_rl": {
+          "visible": false
+        },
+        "frame:track_rr": {
+          "visible": false
+        },
+        "frame:velodyne_link": {
+          "visible": false
+        },
+        "frame:velodyne_laser": {
+          "visible": false
+        },
+        "frame:zed_camera_link": {
+          "visible": false
+        }
+      },
       "topics": {
         "/scan": {
           "visible": false,
@@ -353,6 +389,22 @@
         },
         "/base/scan": {
           "visible": false
+        },
+        "/global_path": {
+          "visible": false
+        },
+        "/plan": {
+          "visible": false,
+          "lineWidth": 0.24
+        },
+        "/local_plan": {
+          "visible": false
+        },
+        "/local_path": {
+          "visible": false
+        },
+        "/received_global_plan": {
+          "visible": true
         }
       },
       "layers": {
@@ -396,8 +448,8 @@
         }
       },
       "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
+        "type": "pose",
+        "poseTopic": "/goal_pose",
         "pointTopic": "/clicked_point",
         "poseEstimateTopic": "/initialpose",
         "poseEstimateXDeviation": 0.5,
@@ -405,18 +457,41 @@
         "poseEstimateThetaDeviation": 0.26179939
       },
       "imageMode": {},
-      "followTf": "base_link"
+      "followTf": "map"
     },
-    "3D!2euzghd": {
+    "Publish!2onj1sc": {
+      "buttonText": "ESTOP",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{\n  \"data\": false\n}",
+      "topicName": "/estop",
+      "datatype": "std_msgs/msg/Bool",
+      "buttonColor": "#f90000",
+      "foxglovePanelTitle": "estop"
+    },
+    "map!60yjuv": {
+      "center": {
+        "lat": 38.161016176890456,
+        "lon": -122.45567321777345
+      },
+      "customTileUrl": "",
+      "disabledTopics": [],
+      "followTopic": "/gps",
+      "layer": "map",
+      "topicColors": {},
+      "zoomLevel": 10,
+      "maxNativeZoom": 18
+    },
+    "3D!ac8om2": {
       "cameraState": {
         "perspective": true,
-        "distance": 25.847108697995846,
-        "phi": 59.99999999999988,
-        "thetaOffset": 44.99999999999998,
+        "distance": 6.147137354499581,
+        "phi": 32.42241754677333,
+        "thetaOffset": 42.76397535505056,
         "targetOffset": [
-          -0.6765570540972538,
-          1.1691389716638279,
-          -5.075832289577129e-17
+          -0.14852471988960536,
+          -0.20361223586685062,
+          7.604074847577668e-18
         ],
         "target": [
           0,
@@ -434,19 +509,87 @@
         "far": 5000
       },
       "followMode": "follow-pose",
-      "followTf": "map",
       "scene": {},
       "transforms": {
         "frame:map": {
-          "visible": true
+          "visible": false
+        },
+        "frame:odom": {
+          "visible": false
+        },
+        "frame:sensor_link": {
+          "visible": false
+        },
+        "frame:camera_link": {
+          "visible": false
+        },
+        "frame:base_link": {
+          "visible": false
+        },
+        "frame:track_l": {
+          "visible": false
+        },
+        "frame:track_fl": {
+          "visible": false
+        },
+        "frame:track_r": {
+          "visible": false
+        },
+        "frame:track_fr": {
+          "visible": false
+        },
+        "frame:track_rl": {
+          "visible": false
+        },
+        "frame:track_rr": {
+          "visible": false
+        },
+        "frame:velodyne_link": {
+          "visible": false
+        },
+        "frame:velodyne_laser": {
+          "visible": false
+        },
+        "frame:zed_camera_link": {
+          "visible": false
+        },
+        "frame:flipper_fl": {
+          "visible": false
+        },
+        "frame:flipper_fr": {
+          "visible": false
+        },
+        "frame:flipper_rl": {
+          "visible": false
+        },
+        "frame:flipper_rr": {
+          "visible": false
         }
       },
-      "topics": {
-        "/marker": {
-          "visible": true
+      "topics": {},
+      "layers": {
+        "grid": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "ffebde8e-3ad9-4faf-b77b-fe3c45a445eb",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
         }
       },
-      "layers": {},
       "publish": {
         "type": "point",
         "poseTopic": "/move_base_simple/goal",
@@ -458,20 +601,6 @@
       },
       "imageMode": {}
     },
-    "map!60yjuv": {
-      "center": {
-        "lat": 38.16148858251846,
-        "lon": -122.45468616485597
-      },
-      "customTileUrl": "",
-      "disabledTopics": [],
-      "followTopic": "/gps",
-      "layer": "map",
-      "topicColors": {},
-      "zoomLevel": 14,
-      "maxNativeZoom": 18
-    },
-    "3D!ac8om2": {},
     "CallService!2b4k70w": {
       "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"sim.launch.py\"\n}",
       "layout": "vertical",
@@ -574,57 +703,45 @@
           "layout": {
             "first": {
               "first": {
-                "first": "Publish!1b7sy1a",
-                "second": "Indicator!360e2e8",
-                "direction": "column",
-                "splitPercentage": 55.6420233463035
-              },
-              "second": {
-                "first": "Publish!gkhilm",
+                "first": "Gauge!3mhnam3",
                 "second": "Indicator!3iqk2un",
                 "direction": "column",
-                "splitPercentage": 55.757575757575765
+                "splitPercentage": 48.589341692789965
               },
-              "direction": "row"
+              "second": {
+                "first": "Publish!1b7sy1a",
+                "second": "Publish!gkhilm",
+                "direction": "column"
+              },
+              "direction": "row",
+              "splitPercentage": 65.39306574571636
             },
             "second": {
               "first": {
                 "first": {
                   "first": "Publish!2vkw4zk",
-                  "second": "Indicator!l0f2va",
-                  "direction": "column",
-                  "splitPercentage": 56.36363636363636
+                  "second": "Publish!22modxz",
+                  "direction": "column"
                 },
                 "second": {
-                  "first": "Publish!22modxz",
+                  "first": "Indicator!l0f2va",
                   "second": "Indicator!1srygfi",
-                  "direction": "column",
-                  "splitPercentage": 56.36363636363636
+                  "direction": "column"
                 },
                 "direction": "row",
-                "splitPercentage": 51.956429780033865
+                "splitPercentage": 46.42574229279043
               },
               "second": {
-                "first": {
-                  "first": "Battery Indicator.Battery display!2ungb0h",
-                  "second": "Indicator!38j960d",
-                  "direction": "column",
-                  "splitPercentage": 56.42909625275533
-                },
-                "second": {
-                  "first": "CallService!qyzghd",
-                  "second": "Indicator!21d1yds",
-                  "direction": "column",
-                  "splitPercentage": 56.96969696969697
-                },
-                "direction": "row",
-                "splitPercentage": 59.009099648981575
+                "first": "Battery Indicator.Battery display!2ungb0h",
+                "second": "Indicator!38j960d",
+                "direction": "column",
+                "splitPercentage": 56.42909625275533
               },
               "direction": "row",
-              "splitPercentage": 49.00497512437809
+              "splitPercentage": 69.21645622777145
             },
             "direction": "row",
-            "splitPercentage": 33.881578947368425
+            "splitPercentage": 45.17799352750809
           }
         },
         {
@@ -634,10 +751,23 @@
             "second": "Image!3593v6f",
             "direction": "row"
           }
+        }
+      ]
+    },
+    "Tab!1w9p6uc": {
+      "activeTabIdx": 0,
+      "tabs": [
+        {
+          "title": "Gamepad",
+          "layout": "Joystick Panel.Joystick!4cyq4bd"
         },
         {
-          "title": "Joy",
-          "layout": "Joystick Panel.Joystick!f5fjj6"
+          "title": "Keyboard",
+          "layout": "Joystick Panel.Joystick!31gwyzo"
+        },
+        {
+          "title": "Joystick",
+          "layout": "virtual-joystick.Virtual Joystick!9rfrv4"
         }
       ]
     },
@@ -649,10 +779,10 @@
           "layout": {
             "first": "3D!wd5ayb",
             "second": {
-              "first": "3D!2euzghd",
+              "first": "Publish!2onj1sc",
               "second": "map!60yjuv",
               "direction": "column",
-              "splitPercentage": 45.103857566765576
+              "splitPercentage": 16.765578635014837
             },
             "direction": "row",
             "splitPercentage": 61.47652076855616
@@ -715,9 +845,14 @@
     "speed": 1
   },
   "layout": {
-    "first": "Tab!2iobm2s",
+    "first": {
+      "first": "Tab!2iobm2s",
+      "second": "Tab!1w9p6uc",
+      "direction": "row",
+      "splitPercentage": 81.00522193211488
+    },
     "second": "Tab!1dud6cr",
     "direction": "column",
-    "splitPercentage": 30.22794846382557
+    "splitPercentage": 30.723488602576808
   }
 }
