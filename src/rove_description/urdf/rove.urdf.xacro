@@ -23,6 +23,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
+                <mesh filename="https://raw.githubusercontent.com/clubcapra/rove/main/src/rove_description/meshes/base.stl"/>
+            </geometry>
+            <material name="frame_color"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
                 <mesh filename="file://$(find rove_description)/meshes/base.stl"/>
             </geometry>
             <material name="frame_color"/>
@@ -40,11 +47,10 @@
         </inertial>
     </link>
 
-
     <!-- <xacro:rove_ros2_control/> -->
      <!-- Put these at -1 to mock the motors if working without the motors -->
+    <!-- <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24"/> -->
     <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24"/>
-    <!-- <xacro:odrive_control fl_id="-1" rl_id="-1" fr_id="-1" rr_id="-1"/> -->
 
 
     <!-- Insert ovis on top of rove -->
