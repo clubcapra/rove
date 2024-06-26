@@ -27,6 +27,15 @@ class MuleBehavior(Node):
             String,
             '/mule_state',
             10)
+        self.goal_update_pub = self.create_publisher(
+            PoseStamped,
+            '/goal_pose',
+            10)
+        self.subscription_person_position = self.create_subscription(
+            String,
+            '/navigate_to_pose/_action/status',
+            self.state_listener,
+            10)
         self.odom_subscriber = self.create_subscription(
             Odometry,
             '/odometry/local',
@@ -43,7 +52,6 @@ class MuleBehavior(Node):
         
         self.state = ''
         self.change_state(consts.START)
-        self.navigate_to_goal_point() # returns only when goal reached/cancelled/failed
                 
         self.get_logger().info('Initiating MuleBehavior node')
         
@@ -87,7 +95,7 @@ class MuleBehavior(Node):
                 case consts.FIGURE_BUCKET:
                     if self.state != consts.REWIND and self.state != consts.PROCESSED_REWIND:
                         self.endpoint = self.currentPos
-                        returnState = consts.REWIND
+                        returnState = consts.REACH_A
                     
                 case _:
                     self.get_logger().error(f'Unimplemented pose returned: {msg.data}')     
@@ -97,44 +105,54 @@ class MuleBehavior(Node):
     # runs on a thread continuously
     def rewind_behavior(self):
         while self.state != consts.END:
-            if self.state == consts.REWIND:
-                self.get_logger().info(f'Rewind phase engaged, point B noted at coordonates {self.endpoint.pose.position}')
-                self.change_state(consts.PROCESSED_REWIND)
+            if self.state == consts.REACH_A:
+                self.get_logger().info(f'Going to point A coordonates {self.startpoint.pose.position}')
                 self.goal_point = self.startPoint
-            while self.state == consts.PROCESSED_REWIND:
-                self.navigate_to_goal_point() # returns only when goal reached/cancelled/failed
-                result = self.navigator.getResult()
-                goal = 'A'
-                nextgoal = 'B'
-                if self.goal_point == self.startPoint:
-                    goal = 'B'
-                    nextgoal = 'A'
-                if result == TaskResult.SUCCEEDED:
-                    self.get_logger().info(f'Goal {goal} reached! Initiating nav towards point {nextgoal}')
-                    self.goal_point = self.startPoint if self.goal_point == self.endpoint else self.endpoint
-                elif result == TaskResult.FAILED:
-                    self.get_logger().error(f'Failed to reach {goal}! Initiating nav towards point {nextgoal}')
-                    self.goal_point = self.startPoint if self.goal_point == self.endpoint else self.endpoint
-                elif result == TaskResult.CANCELED:
-                    self.get_logger().error(f'Rewinding to point {goal} was cancelled! Initiating nav towards point {nextgoal}')
-                else :
-                    self.get_logger().warn(f'nav2 navigator task returned with unknown TaskResult')
+                self.navigate_to_goal_point()
+                self.change_state('REWIND')
+            if self.state == consts.REACH_B:
+                self.get_logger().info(f'Going to point B coordonates {self.endpoint.pose.position}')
+                self.goal_point = self.endpoint
+                self.navigate_to_goal_point()
+                self.change_state('REWIND')
+                
+                # goal = 'A'
+                # nextgoal = 'B'
+                # if self.goal_point == self.startPoint:
+                #     goal = 'B'
+                #     nextgoal = 'A'
+                # if result == TaskResult.SUCCEEDED:
+                #     self.get_logger().info(f'Goal {goal} reached! Initiating nav towards point {nextgoal}')
+                #     self.goal_point = self.startPoint if self.goal_point == self.endpoint else self.endpoint
+                # elif result == TaskResult.FAILED:
+                #     self.get_logger().error(f'Failed to reach {goal}! Initiating nav towards point {nextgoal}')
+                #     self.goal_point = self.startPoint if self.goal_point == self.endpoint else self.endpoint
+                # elif result == TaskResult.CANCELED:
+                #     self.get_logger().error(f'Rewinding to point {goal} was cancelled! Initiating nav towards point {nextgoal}')
+                # else :
+                #     self.get_logger().warn(f'nav2 navigator task returned with unknown TaskResult')
     
-    # Tells navigator to go to current goal Point and processes feedback
     def navigate_to_goal_point(self):
-        i = 0
-        self.navigator.goToPose(self.goal_point)
-        while not self.navigator.isTaskComplete():
-            if self.state != consts.PROCESSED_REWIND:
-                self.navigator.cancelTask()
+        # Log the navigation target for debugging
+        self.get_logger().info(f'Navigating to goal : {self.goal_point}')
+        # Publish the goal
+        self.goal_update_pub.publish(self.goal_point)
+        
+    # # Tells navigator to go to current goal Point and processes feedback
+    # def navigate_to_goal_point(self):
+    #     i = 0
+    #     self.navigator.goToPose(self.goal_point)
+    #     while not self.navigator.isTaskComplete():
+    #         if self.state != consts.PROCESSED_REWIND:
+    #             self.navigator.cancelTask()
 
-            feedback:NavigateThroughPoses.Feedback = self.navigator.getFeedback()
-            self.poses_remaining = feedback.number_of_poses_remaining
-            if feedback and i % 5 == 0:
-                # navigation timeout
-                if Duration.from_msg(feedback.navigation_time) > 1.5 * Duration(seconds=feedback.estimated_time_remaining):
-                    self.navigator.cancelTask()
-            i+=1
+    #         feedback:NavigateThroughPoses.Feedback = self.navigator.getFeedback()
+    #         self.poses_remaining = feedback.number_of_poses_remaining
+    #         if feedback and i % 5 == 0:
+    #             # navigation timeout
+    #             if Duration.from_msg(feedback.navigation_time) > 1.5 * Duration(seconds=feedback.estimated_time_remaining):
+    #                 self.navigator.cancelTask()
+    #         i+=1
 
 def main(args=None):
     rclpy.init(args=args)
