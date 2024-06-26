@@ -201,10 +201,29 @@
     },
     "Joystick Panel.Joystick!4cyq4bd": {
       "foxglovePanelTitle": "Gamepad",
-      "publishMode": true
+      "publishMode": true,
+      "subJoyTopic": "/joy",
+      "pubJoyTopic": "/joy",
+      "publishFrameId": "",
+      "dataSource": "gamepad",
+      "displayMode": "custom",
+      "debugGamepad": false,
+      "layoutName": "steamdeck",
+      "mapping_name": "TODO",
+      "gamepadId": 0
     },
     "Joystick Panel.Joystick!31gwyzo": {
-      "foxglovePanelTitle": "Keyboard"
+      "foxglovePanelTitle": "Keyboard",
+      "subJoyTopic": "/joy",
+      "pubJoyTopic": "/joy",
+      "publishMode": false,
+      "publishFrameId": "",
+      "dataSource": "sub-joy-topic",
+      "displayMode": "auto",
+      "debugGamepad": false,
+      "layoutName": "steamdeck",
+      "mapping_name": "TODO",
+      "gamepadId": 0
     },
     "virtual-joystick.Virtual Joystick!9rfrv4": {
       "publishRate": 5,
@@ -216,9 +235,9 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 6.811232525735655,
-        "phi": 31.3629151304689,
-        "thetaOffset": 17.304701743153707,
+        "distance": 6.811232525735649,
+        "phi": 31.92629541215902,
+        "thetaOffset": 17.30470174315372,
         "targetOffset": [
           -0.5219563017849245,
           -0.17697123429486802,
@@ -849,7 +868,7 @@
       "first": "Tab!2iobm2s",
       "second": "Tab!1w9p6uc",
       "direction": "row",
-      "splitPercentage": 81.00522193211488
+      "splitPercentage": 84.48648648648648
     },
     "second": "Tab!1dud6cr",
     "direction": "column",
