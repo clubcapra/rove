@@ -1,0 +1,6 @@
+string package
+string file_name
+---
+string message
+bool is_launched
+string file_name

@@ -1,0 +1,13 @@
+[Unit]
+Descript=Robot launch script
+After=network.target
+
+[Service]
+Environment="ROS_LOG_DIR=/var/log/ros2; ROS_DOMAIN_ID=96"
+ExecStart=/bin/bash -c 'source /home/simon/Workspace/capra/rove/install/setup.bash; ros2 launch rove_launch_handler launch_handler.launch.py;'
+RemainAfterExit=no
+Restart=on-failure
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target

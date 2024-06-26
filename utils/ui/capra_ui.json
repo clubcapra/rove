@@ -1,25 +1,41 @@
 {
   "configById": {
-    "Publish!1b7sy1a": {
-      "buttonText": "Front LED ON",
-      "buttonTooltip": "",
-      "advancedView": false,
-      "value": "{}",
-      "foxglovePanelTitle": "Front LED ON"
+    "Gauge!3mhnam3": {
+      "path": "/diff_drive_controller/cmd_vel_unstamped.linear.x",
+      "minValue": 0,
+      "maxValue": 2,
+      "colorMap": "red-yellow-green",
+      "colorMode": "colormap",
+      "gradient": [
+        "#0000ff",
+        "#ff00ff"
+      ],
+      "reverse": false,
+      "foxglovePanelTitle": "Speed"
     },
-    "Indicator!360e2e8": {
+    "Indicator!3iqk2un": {
       "path": "",
       "style": "bulb",
-      "fallbackColor": "#a0a0a0",
-      "fallbackLabel": "False",
+      "fallbackColor": "#0045f5",
+      "fallbackLabel": "Track",
       "rules": [
         {
           "operator": "=",
           "rawValue": "true",
-          "color": "#68e24a",
-          "label": "True"
+          "color": "#61cc47",
+          "label": "Arm"
         }
-      ]
+      ],
+      "foxglovePanelTitle": "Mode"
+    },
+    "Publish!1b7sy1a": {
+      "buttonText": "Front LED ON",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{\n  \"linear\": {\n    \"x\": 0,\n    \"y\": 0,\n    \"z\": 0\n  },\n  \"angular\": {\n    \"x\": 0,\n    \"y\": 0,\n    \"z\": 0\n  }\n}",
+      "foxglovePanelTitle": "Front LED ON",
+      "topicName": "/cmd_vel.linear.x",
+      "datatype": "geometry_msgs/msg/Twist"
     },
     "Publish!gkhilm": {
       "buttonText": "Front LED OFF",
@@ -28,27 +44,19 @@
       "value": "{}",
       "foxglovePanelTitle": "Front LED OFF"
     },
-    "Indicator!3iqk2un": {
-      "path": "",
-      "style": "bulb",
-      "fallbackColor": "#a0a0a0",
-      "fallbackLabel": "False",
-      "rules": [
-        {
-          "operator": "=",
-          "rawValue": "true",
-          "color": "#68e24a",
-          "label": "True"
-        }
-      ],
-      "foxglovePanelTitle": "Mode"
-    },
     "Publish!2vkw4zk": {
       "buttonText": "Back LED ON",
       "buttonTooltip": "",
       "advancedView": false,
       "value": "{}",
       "foxglovePanelTitle": "Back LED ON"
+    },
+    "Publish!22modxz": {
+      "buttonText": "Back LED OFF",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{}",
+      "foxglovePanelTitle": "Back LED OFF"
     },
     "Indicator!l0f2va": {
       "path": "",
@@ -64,13 +72,6 @@
         }
       ],
       "foxglovePanelTitle": "Flipper"
-    },
-    "Publish!22modxz": {
-      "buttonText": "Back LED OFF",
-      "buttonTooltip": "",
-      "advancedView": false,
-      "value": "{}",
-      "foxglovePanelTitle": "Back LED OFF"
     },
     "Indicator!1srygfi": {
       "path": "",
@@ -91,7 +92,8 @@
       "batteryTopic": "",
       "topic": {
         "batteryTopic": ""
-      }
+      },
+      "foxglovePanelTitle": "Battery Level"
     },
     "Indicator!38j960d": {
       "path": "",
@@ -106,31 +108,6 @@
           "label": "True"
         }
       ]
-    },
-    "CallService!qyzghd": {
-      "requestPayload": "{}",
-      "layout": "vertical",
-      "timeoutSeconds": 10,
-      "editingMode": false,
-      "foxglovePanelTitle": "ESTOP",
-      "buttonTooltip": "",
-      "buttonColor": "#ff0000",
-      "buttonText": "ESTOP"
-    },
-    "Indicator!21d1yds": {
-      "path": "",
-      "style": "bulb",
-      "fallbackColor": "#a0a0a0",
-      "fallbackLabel": "False",
-      "rules": [
-        {
-          "operator": "=",
-          "rawValue": "true",
-          "color": "#68e24a",
-          "label": "True"
-        }
-      ],
-      "foxglovePanelTitle": "Estop status"
     },
     "Image!3b8t5ua": {
       "cameraState": {
@@ -218,24 +195,58 @@
         "poseEstimateThetaDeviation": 0.26179939
       },
       "imageMode": {
-        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
+        "imageTopic": "/zed/zed_node/depth/depth_registered",
         "calibrationTopic": "/zed/zed_node/depth/camera_info"
       }
     },
+    "Joystick Panel.Joystick!4cyq4bd": {
+      "foxglovePanelTitle": "Gamepad",
+      "publishMode": true,
+      "subJoyTopic": "/joy",
+      "pubJoyTopic": "/joy",
+      "publishFrameId": "",
+      "dataSource": "gamepad",
+      "displayMode": "custom",
+      "debugGamepad": false,
+      "layoutName": "steamdeck",
+      "mapping_name": "TODO",
+      "gamepadId": 0
+    },
+    "Joystick Panel.Joystick!31gwyzo": {
+      "foxglovePanelTitle": "Keyboard",
+      "subJoyTopic": "/joy",
+      "pubJoyTopic": "/joy",
+      "publishMode": false,
+      "publishFrameId": "",
+      "dataSource": "sub-joy-topic",
+      "displayMode": "auto",
+      "debugGamepad": false,
+      "layoutName": "steamdeck",
+      "mapping_name": "TODO",
+      "gamepadId": 0
+    },
+    "virtual-joystick.Virtual Joystick!9rfrv4": {
+      "publishRate": 5,
+      "maxLinearSpeed": 1,
+      "maxAngularSpeed": 1,
+      "topic": "/joy_vel",
+      "messageSchema": "geometry_msgs/msg/Twist"
+    },
     "3D!wd5ayb": {
       "cameraState": {
-        "distance": 15.475618749968437,
         "perspective": true,
-        "phi": 53.72454709424579,
+        "distance": 6.811232525735649,
+        "phi": 31.92629541215902,
+        "thetaOffset": 17.30470174315372,
+        "targetOffset": [
+          -0.5219563017849245,
+          -0.17697123429486802,
+          6.817176424810392e-16
+        ],
         "target": [
           0,
           0,
           0
-        ],
-        "targetOffset": [
-          -1.0352265201029487,
-          0.690125189613747,
-          -6.717353809730597e-17
         ],
         "targetOrientation": [
           0,
@@ -243,7 +254,6 @@
           0,
           1
         ],
-        "thetaOffset": 39.94897959183675,
         "fovy": 45,
         "near": 0.5,
         "far": 5000
@@ -253,7 +263,62 @@
         "meshUpAxis": "z_up",
         "labelScaleFactor": 0
       },
-      "transforms": {},
+      "transforms": {
+        "frame:odom": {
+          "visible": false
+        },
+        "frame:base_link": {
+          "visible": false
+        },
+        "frame:map": {
+          "visible": false
+        },
+        "frame:flipper_fl": {
+          "visible": false
+        },
+        "frame:flipper_fr": {
+          "visible": false
+        },
+        "frame:flipper_rl": {
+          "visible": false
+        },
+        "frame:flipper_rr": {
+          "visible": false
+        },
+        "frame:sensor_link": {
+          "visible": false
+        },
+        "frame:camera_link": {
+          "visible": false
+        },
+        "frame:track_l": {
+          "visible": false
+        },
+        "frame:track_fl": {
+          "visible": false
+        },
+        "frame:track_r": {
+          "visible": false
+        },
+        "frame:track_fr": {
+          "visible": false
+        },
+        "frame:track_rl": {
+          "visible": false
+        },
+        "frame:track_rr": {
+          "visible": false
+        },
+        "frame:velodyne_link": {
+          "visible": false
+        },
+        "frame:velodyne_laser": {
+          "visible": false
+        },
+        "frame:zed_camera_link": {
+          "visible": false
+        }
+      },
       "topics": {
         "/scan": {
           "visible": false,
@@ -343,6 +408,22 @@
         },
         "/base/scan": {
           "visible": false
+        },
+        "/global_path": {
+          "visible": false
+        },
+        "/plan": {
+          "visible": false,
+          "lineWidth": 0.24
+        },
+        "/local_plan": {
+          "visible": false
+        },
+        "/local_path": {
+          "visible": false
+        },
+        "/received_global_plan": {
+          "visible": true
         }
       },
       "layers": {
@@ -386,6 +467,149 @@
         }
       },
       "publish": {
+        "type": "pose",
+        "poseTopic": "/goal_pose",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {},
+      "followTf": "map"
+    },
+    "Publish!2onj1sc": {
+      "buttonText": "ESTOP",
+      "buttonTooltip": "",
+      "advancedView": false,
+      "value": "{\n  \"data\": false\n}",
+      "topicName": "/estop",
+      "datatype": "std_msgs/msg/Bool",
+      "buttonColor": "#f90000",
+      "foxglovePanelTitle": "estop"
+    },
+    "map!60yjuv": {
+      "center": {
+        "lat": 38.161016176890456,
+        "lon": -122.45567321777345
+      },
+      "customTileUrl": "",
+      "disabledTopics": [],
+      "followTopic": "/gps",
+      "layer": "map",
+      "topicColors": {},
+      "zoomLevel": 10,
+      "maxNativeZoom": 18
+    },
+    "3D!ac8om2": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 6.147137354499581,
+        "phi": 32.42241754677333,
+        "thetaOffset": 42.76397535505056,
+        "targetOffset": [
+          -0.14852471988960536,
+          -0.20361223586685062,
+          7.604074847577668e-18
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {
+        "frame:map": {
+          "visible": false
+        },
+        "frame:odom": {
+          "visible": false
+        },
+        "frame:sensor_link": {
+          "visible": false
+        },
+        "frame:camera_link": {
+          "visible": false
+        },
+        "frame:base_link": {
+          "visible": false
+        },
+        "frame:track_l": {
+          "visible": false
+        },
+        "frame:track_fl": {
+          "visible": false
+        },
+        "frame:track_r": {
+          "visible": false
+        },
+        "frame:track_fr": {
+          "visible": false
+        },
+        "frame:track_rl": {
+          "visible": false
+        },
+        "frame:track_rr": {
+          "visible": false
+        },
+        "frame:velodyne_link": {
+          "visible": false
+        },
+        "frame:velodyne_laser": {
+          "visible": false
+        },
+        "frame:zed_camera_link": {
+          "visible": false
+        },
+        "frame:flipper_fl": {
+          "visible": false
+        },
+        "frame:flipper_fr": {
+          "visible": false
+        },
+        "frame:flipper_rl": {
+          "visible": false
+        },
+        "frame:flipper_rr": {
+          "visible": false
+        }
+      },
+      "topics": {},
+      "layers": {
+        "grid": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "ffebde8e-3ad9-4faf-b77b-fe3c45a445eb",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "publish": {
         "type": "point",
         "poseTopic": "/move_base_simple/goal",
         "pointTopic": "/clicked_point",
@@ -394,29 +618,101 @@
         "poseEstimateYDeviation": 0.5,
         "poseEstimateThetaDeviation": 0.26179939
       },
-      "imageMode": {},
-      "followTf": "base_link"
+      "imageMode": {}
     },
-    "map!60yjuv": {
-      "center": {
-        "lat": 38.16148014673053,
-        "lon": -122.45464324951172
-      },
-      "customTileUrl": "",
-      "disabledTopics": [],
-      "followTopic": "/gps",
-      "layer": "map",
-      "topicColors": {},
-      "zoomLevel": 16,
-      "maxNativeZoom": 18
+    "CallService!2b4k70w": {
+      "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"sim.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "Simulation",
+      "buttonColor": "#ff0000"
     },
-    "Table!1xg0s4v": {
-      "topicPath": ""
+    "CallService!3utg1bx": {
+      "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"real.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "Real",
+      "buttonColor": "#ff0000"
     },
-    "RosOut!14blizg": {
-      "searchTerms": [],
-      "minLogLevel": 1,
-      "nameFilter": {}
+    "Blank Panel.Blank!4iybw25": {
+      "showLogo": false,
+      "foxglovePanelTitle": " "
+    },
+    "CallService!1z631qn": {
+      "requestPayload": "{\n \"package\" : \"rove_navigation\",\n \"file_name\" : \"navigation.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "navigation",
+      "buttonText": "navigation",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!2kij9dp": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "slam",
+      "buttonText": "slam3d",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!90e1se": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"velodyne_3d.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "slam",
+      "buttonText": "slam3d - lidar",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!6jl54y": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"icp_zed.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "slam3d - zed",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!43dz0yr": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "Scenario",
+      "buttonText": "Reconnoitring of structures",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!2qnnpsv": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "Scenario",
+      "buttonText": "Transport – Mule",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!6ywrf4": {
+      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/launchHandler/launchFile",
+      "editingMode": false,
+      "foxglovePanelTitle": "Scenario",
+      "buttonText": "Search & Rescue",
+      "buttonColor": "#ff0000"
     },
     "Tab!2iobm2s": {
       "activeTabIdx": 0,
@@ -426,57 +722,45 @@
           "layout": {
             "first": {
               "first": {
-                "first": "Publish!1b7sy1a",
-                "second": "Indicator!360e2e8",
-                "direction": "column",
-                "splitPercentage": 55.757575757575765
-              },
-              "second": {
-                "first": "Publish!gkhilm",
+                "first": "Gauge!3mhnam3",
                 "second": "Indicator!3iqk2un",
                 "direction": "column",
-                "splitPercentage": 55.757575757575765
+                "splitPercentage": 48.589341692789965
               },
-              "direction": "row"
+              "second": {
+                "first": "Publish!1b7sy1a",
+                "second": "Publish!gkhilm",
+                "direction": "column"
+              },
+              "direction": "row",
+              "splitPercentage": 65.39306574571636
             },
             "second": {
               "first": {
                 "first": {
                   "first": "Publish!2vkw4zk",
-                  "second": "Indicator!l0f2va",
-                  "direction": "column",
-                  "splitPercentage": 56.36363636363636
+                  "second": "Publish!22modxz",
+                  "direction": "column"
                 },
                 "second": {
-                  "first": "Publish!22modxz",
+                  "first": "Indicator!l0f2va",
                   "second": "Indicator!1srygfi",
-                  "direction": "column",
-                  "splitPercentage": 56.36363636363636
+                  "direction": "column"
                 },
                 "direction": "row",
-                "splitPercentage": 51.956429780033865
+                "splitPercentage": 46.42574229279043
               },
               "second": {
-                "first": {
-                  "first": "Battery Indicator.Battery display!2ungb0h",
-                  "second": "Indicator!38j960d",
-                  "direction": "column",
-                  "splitPercentage": 56.42909625275533
-                },
-                "second": {
-                  "first": "CallService!qyzghd",
-                  "second": "Indicator!21d1yds",
-                  "direction": "column",
-                  "splitPercentage": 56.96969696969697
-                },
-                "direction": "row",
-                "splitPercentage": 59.009099648981575
+                "first": "Battery Indicator.Battery display!2ungb0h",
+                "second": "Indicator!38j960d",
+                "direction": "column",
+                "splitPercentage": 56.42909625275533
               },
               "direction": "row",
-              "splitPercentage": 49.00497512437809
+              "splitPercentage": 69.21645622777145
             },
             "direction": "row",
-            "splitPercentage": 33.881578947368425
+            "splitPercentage": 45.17799352750809
           }
         },
         {
@@ -489,6 +773,23 @@
         }
       ]
     },
+    "Tab!1w9p6uc": {
+      "activeTabIdx": 0,
+      "tabs": [
+        {
+          "title": "Gamepad",
+          "layout": "Joystick Panel.Joystick!4cyq4bd"
+        },
+        {
+          "title": "Keyboard",
+          "layout": "Joystick Panel.Joystick!31gwyzo"
+        },
+        {
+          "title": "Joystick",
+          "layout": "virtual-joystick.Virtual Joystick!9rfrv4"
+        }
+      ]
+    },
     "Tab!1dud6cr": {
       "activeTabIdx": 0,
       "tabs": [
@@ -497,17 +798,61 @@
           "layout": {
             "first": "3D!wd5ayb",
             "second": {
-              "first": {
-                "first": "map!60yjuv",
-                "second": "Table!1xg0s4v",
-                "direction": "row"
-              },
-              "second": "RosOut!14blizg",
+              "first": "Publish!2onj1sc",
+              "second": "map!60yjuv",
               "direction": "column",
-              "splitPercentage": 48.263254113345525
+              "splitPercentage": 16.765578635014837
             },
             "direction": "row",
-            "splitPercentage": 50.911458333333336
+            "splitPercentage": 61.47652076855616
+          }
+        },
+        {
+          "title": "Arm",
+          "layout": "3D!ac8om2"
+        },
+        {
+          "title": "launch",
+          "layout": {
+            "first": {
+              "first": {
+                "first": "CallService!2b4k70w",
+                "second": "CallService!3utg1bx",
+                "direction": "column"
+              },
+              "second": {
+                "first": "Blank Panel.Blank!4iybw25",
+                "second": {
+                  "first": {
+                    "first": "CallService!1z631qn",
+                    "second": "CallService!2kij9dp",
+                    "direction": "column"
+                  },
+                  "second": {
+                    "first": "CallService!90e1se",
+                    "second": "CallService!6jl54y",
+                    "direction": "column"
+                  },
+                  "direction": "column"
+                },
+                "direction": "row",
+                "splitPercentage": 69.34679409175952
+              },
+              "direction": "row",
+              "splitPercentage": 22.561529751795238
+            },
+            "second": {
+              "first": {
+                "first": "CallService!43dz0yr",
+                "second": "CallService!2qnnpsv",
+                "direction": "column"
+              },
+              "second": "CallService!6ywrf4",
+              "direction": "column",
+              "splitPercentage": 64.83679525222553
+            },
+            "direction": "row",
+            "splitPercentage": 85.62162162162163
           }
         }
       ]
@@ -519,9 +864,14 @@
     "speed": 1
   },
   "layout": {
-    "first": "Tab!2iobm2s",
+    "first": {
+      "first": "Tab!2iobm2s",
+      "second": "Tab!1w9p6uc",
+      "direction": "row",
+      "splitPercentage": 84.48648648648648
+    },
     "second": "Tab!1dud6cr",
     "direction": "column",
-    "splitPercentage": 25.259067357512954
+    "splitPercentage": 30.723488602576808
   }
 }
