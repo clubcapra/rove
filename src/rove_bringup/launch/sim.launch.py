@@ -50,14 +50,11 @@ def generate_launch_description():
         executable='create',
         arguments=['-file', actor_file_path,
                    '-name', 'actor',
-                   '-topic', 'actor_pose',
                    '-x', '0',
                    '-y', '0',
                    '-z', '0.1'],
         output='screen',
     )
-
-    yaw = -pi / 2
 
     # Spawn robot
     spawn_rove = Node(
@@ -69,7 +66,6 @@ def generate_launch_description():
             '-x', '0',
             '-y', '0',
             '-z', '0.1',
-            '-Y', str(yaw),
         ],
         output='screen',
     )
