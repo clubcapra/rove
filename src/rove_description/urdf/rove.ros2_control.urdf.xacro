@@ -7,6 +7,8 @@
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
+            <state_interface name="voltage"/>
+            <state_interface name="current"/>
         </joint>
     </xacro:macro>
 
@@ -16,6 +18,8 @@
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
+            <state_interface name="voltage"/>
+            <state_interface name="current"/>
         </joint>
     </xacro:macro>
 
