@@ -23,6 +23,29 @@
         </joint>
     </xacro:macro>
 
+    <xacro:macro name="flipper_motor_control" params="suffix nodeid">
+        <joint name="flipper_${suffix}_j">
+            <param name="node_id">${nodeid}</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+            <state_interface name="voltage"/>
+            <state_interface name="current"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="flipper_fake_motor_control" params="suffix">
+        <joint name="flipper_${suffix}_j">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+            <state_interface name="voltage"/>
+            <state_interface name="current"/>
+        </joint>
+    </xacro:macro>
+
     <xacro:macro name="rove_odrive_motor" params="suffix id">
         <xacro:unless value="${(id == -1)}">
             <xacro:track_motor_control suffix="${suffix}" nodeid="${id}"/>
@@ -35,7 +58,19 @@
         </xacro:if>
     </xacro:macro>
 
-    <xacro:macro name="odrive_control" params="fl_id:=21 rl_id:=22 fr_id:=23 rr_id:=24">
+    <xacro:macro name="rove_odrive_flipper" params="suffix id">
+        <xacro:unless value="${(id == -1)}">
+            <xacro:flipper_motor_control suffix="${suffix}" nodeid="${id}"/>
+        </xacro:unless>
+    </xacro:macro>
+
+    <xacro:macro name="rove_fake_odrive_flipper" params="suffix id">
+        <xacro:if value="${(id == -1)}">
+            <xacro:flipper_fake_motor_control suffix="${suffix}"/>
+        </xacro:if>
+    </xacro:macro>
+
+    <xacro:macro name="odrive_control" params="fl_id:=21 rl_id:=22 fr_id:=23 rr_id:=24 ffl_id:=11 frl_id:=12 ffr_id:=13 frr_id:=14">
         <ros2_control name="odrive_control" type="system">
             <hardware>
                 <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
@@ -45,6 +80,11 @@
             <xacro:rove_odrive_motor suffix="rl" id="${rl_id}"/>
             <xacro:rove_odrive_motor suffix="fr" id="${fr_id}"/>
             <xacro:rove_odrive_motor suffix="rr" id="${rr_id}"/>
+
+            <xacro:rove_odrive_motor suffix="fl" id="${ffl_id}"/>
+            <xacro:rove_odrive_motor suffix="rl" id="${frl_id}"/>
+            <xacro:rove_odrive_motor suffix="fr" id="${ffr_id}"/>
+            <xacro:rove_odrive_motor suffix="rr" id="${frr_id}"/>
         </ros2_control>
         
         <ros2_control name="fake_odrive_control" type="system">
@@ -55,6 +95,11 @@
             <xacro:rove_fake_odrive_motor suffix="rl" id="${rl_id}"/>
             <xacro:rove_fake_odrive_motor suffix="fr" id="${fr_id}"/>
             <xacro:rove_fake_odrive_motor suffix="rr" id="${rr_id}"/>
+
+            <xacro:rove_fake_odrive_flipper suffix="fl" id="${ffl_id}"/>
+            <xacro:rove_fake_odrive_flipper suffix="rl" id="${frl_id}"/>
+            <xacro:rove_fake_odrive_flipper suffix="fr" id="${ffr_id}"/>
+            <xacro:rove_fake_odrive_flipper suffix="rr" id="${frr_id}"/>
         </ros2_control>
     </xacro:macro>
 

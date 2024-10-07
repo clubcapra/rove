@@ -11,10 +11,19 @@ using GripperCommand = control_msgs::action::GripperCommand;
 using GoalHandleGripperCommand = rclcpp_action::ClientGoalHandle<GripperCommand>;
 
 enum ControllerMode{
-    FLIPPER_MODE = 0,
-    ARM_MODE = 1,
+    TRACKS_MODE = 0,
+    FLIPPER_MODE,
+    ARM_MODE,
+    CONTROLLER_MODE_COUNT,
 };
 
+enum FlipperMode{
+    NO_FLIPPERS =       0b000,
+    FRONT_FLIPPERS =    0b010,
+    REAR_FLIPPERS =     0b001,
+    ALL_FLIPPERS =      0b011,
+    INDEPENDANT_FLAG =  0b100,
+};
 
 class RoveController : public rclcpp::Node {
 public:
@@ -50,6 +59,7 @@ public:
         // cmd_vel_sub_ = create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 1, std::bind(&RoveController::cmdvelCallback, this, std::placeholders::_1));
 
         joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 1);
+        flipper_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>("/rove/commands", 0);
 
         // auto x = create_wall_timer(
         //     std::chrono::milliseconds(1000/20), std::bind(&RoveController::cmdvelTimerCallback, this, std::placeholders::_1)
@@ -77,12 +87,14 @@ public:
 private:
     int A, B, X, Y, LB, RB, VIEW, MENU, XBOX, LS, RS, SHARE, LS_X, LS_Y, LT, RS_X, RS_Y, RT, D_PAD_X, D_PAD_Y;
 
-    int selected_mode = FLIPPER_MODE;
+    int selected_mode = TRACKS_MODE;
+    int flipper_mode = ALL_FLIPPERS;
+    int flipper_y = 0;
 
     rclcpp_action::Client<GripperCommand>::SharedPtr gripper_action_client_;
 
     void nextMode(){
-        selected_mode = (selected_mode + 1) % 2; // Number of modes
+        selected_mode = (selected_mode + 1) % CONTROLLER_MODE_COUNT; // Number of modes
         RCLCPP_INFO(get_logger(), "profil %i", selected_mode);
     }
 
@@ -123,12 +135,67 @@ private:
 
     }
 
-    void flipper_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-        log("Flipper...");
+    void tracks_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        // log("Flipper...");
         teleop_msg_.axes[0] = joy_msg->axes[LS_X];
         teleop_msg_.axes[1] = joy_msg->axes[LS_Y];
         teleop_msg_.buttons[0] = joy_msg->buttons[A];
         joy_pub_->publish(teleop_msg_);
+    }
+
+    void flipper_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
+        flipper_y = std::max(-2, std::min(2, flipper_y - dpad_down(joy_msg, D_PAD_Y, -1) + dpad_down(joy_msg, D_PAD_Y, 1)));
+
+        if (buttton_down(joy_msg, X))
+        {
+            flipper_y = 0;
+        }
+        auto msg = std_msgs::msg::Float64MultiArray();
+        msg.data.resize(4, 0);
+
+        flipper_mode = 0;
+
+        if (flipper_y == 0) flipper_mode = ALL_FLIPPERS;
+        if (abs(flipper_y) == 2) flipper_mode |= INDEPENDANT_FLAG;
+        if (flipper_mode > 0) flipper_mode |= FRONT_FLIPPERS;
+        if (flipper_mode < 0) flipper_mode |= REAR_FLIPPERS;
+
+        switch (flipper_mode)
+        {
+        case ALL_FLIPPERS:
+            msg.data[0] = joy_msg->axes[LS_Y];
+            msg.data[1] = joy_msg->axes[LS_Y];
+            msg.data[2] = joy_msg->axes[LS_Y];
+            msg.data[3] = joy_msg->axes[LS_Y];
+            break;
+        case FRONT_FLIPPERS:
+            msg.data[0] = joy_msg->axes[LS_Y];
+            msg.data[1] = joy_msg->axes[LS_Y];
+            msg.data[2] = 0;
+            msg.data[3] = 0;
+            break;
+        case FRONT_FLIPPERS | INDEPENDANT_FLAG:
+            msg.data[0] = joy_msg->axes[LS_Y];
+            msg.data[1] = joy_msg->axes[RS_Y];
+            msg.data[2] = 0;
+            msg.data[3] = 0;
+            break;
+        case REAR_FLIPPERS:
+            msg.data[0] = 0;
+            msg.data[1] = 0;
+            msg.data[2] = joy_msg->axes[LS_Y];
+            msg.data[3] = joy_msg->axes[LS_Y];
+            break;
+        case REAR_FLIPPERS | INDEPENDANT_FLAG:
+            msg.data[0] = 0;
+            msg.data[1] = 0;
+            msg.data[2] = joy_msg->axes[LS_Y];
+            msg.data[3] = joy_msg->axes[RS_Y];
+            break;
+        
+        default:
+            break;
+        }
     }
 
     bool buttton_down(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
@@ -139,6 +206,13 @@ private:
     }
     bool button_pressed(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
         return previous_msg_.buttons[index] == curr_msg->buttons[index] && curr_msg->buttons[index] == 1;
+    }
+
+    bool dpad_down(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index, int value){
+        return previous_msg_.axes[index] != curr_msg->axes[index] && curr_msg->axes[index] == value;
+    }
+    bool dpad_up(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index, int value){
+        return previous_msg_.axes[index] != curr_msg->axes[index] && curr_msg->axes[index] != value;
     }
 
     void log(const char *text){
@@ -157,7 +231,7 @@ private:
                 arm_action(joy_msg);
                 break;
             case FLIPPER_MODE:
-                flipper_action(joy_msg);
+                tracks_action(joy_msg);
                 break;
         }
 
@@ -177,6 +251,7 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
     // rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr flipper_pub_;
     sensor_msgs::msg::Joy previous_msg_; 
     sensor_msgs::msg::Joy teleop_msg_;
     // geometry_msgs::msg::Twist cmd_vel_msg_;

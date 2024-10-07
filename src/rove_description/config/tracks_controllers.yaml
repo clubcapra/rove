@@ -17,11 +17,22 @@ controller_manager:
     # forward_controller:
     #   type: forward_command_controller/ForwardCommandController 
 
+    flipper_controller:
+      type: position_controllers/JointGroupPositionController
+
 # forward_controller:
 #   ros__parameters:
 #     joints:
 #       - track_fl_j
 #     interface_name: velocity
+
+flipper_controller:
+  ros__parameters:
+    joints:
+      - flipper_rr_j
+      - flipper_fr_j
+      - flipper_fl_j
+      - flipper_rl_j
 
 diff_drive_controller:
   ros__parameters:
