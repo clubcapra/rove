@@ -51,7 +51,7 @@
      <!-- Put these at -1 to mock the motors if working without the motors -->
     <!-- <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24"/> -->
     <!-- TODO Fix rr Odrive, it keeps crashing the rest of the drives. IT has been disabled for now. -->
-    <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24"/>
+    <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="-1"/>
 
 
     <!-- Insert ovis on top of rove -->

@@ -141,8 +141,8 @@ def generate_launch_description():
             control_node,
             #TimerAction(period=20.0, actions=[
                 #gripper,
-                #vectornav,
-                #velodyne,
+            # vectornav,
+            velodyne,
                 #zed,
             #]),
             ])
