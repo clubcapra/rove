@@ -94,7 +94,7 @@ def generate_launch_description():
         launch_arguments={
             'use_sim_time': use_sim_time,
             "deskewing": "true",
-            "use_slam3d": "false",
+            "use_slam3d": "true",
         }.items(),
     )
     
@@ -111,7 +111,7 @@ def generate_launch_description():
             robot_state_publisher,
             robot_localization_node_local,
             # robot_localization_node_global,
-            navsat_transform,
+            # navsat_transform,
             twist_mux,
             #rviz,
             teleop,

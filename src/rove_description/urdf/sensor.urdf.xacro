@@ -5,19 +5,19 @@
     <joint name="sensor_joint" type="fixed">
         <parent link="base_link" />
         <child link="sensor_link" />
-        <origin xyz="0.1 0 0.4" rpy="0 0 0" />
+        <origin xyz="-0.1 0 0.4" rpy="0 0 0" />
     </joint>
 
     <joint name="zed_camera_joint" type="fixed">
         <parent link="sensor_link" />
         <child link="zed_camera_link" />
-        <origin xyz="0.1 0 0" rpy="0 0 0" />
+        <origin xyz="-0.1 0 0" rpy="0 0 0" />
     </joint>
 
     <joint name="camera_joint" type="fixed">
         <parent link="sensor_link" />
         <child link="camera_link" />
-        <origin xyz="0.1 0 0" rpy="-1.57 0 -1.57" />
+        <origin xyz="-0.1 0 0" rpy="-1.57 0 -1.57" />
     </joint>
 
     <link name="camera_link">
@@ -78,7 +78,7 @@
         </collision>
     </link>
     <xacro:velodyne_lidar name="velodyne" parent_link="base_link">
-        <origin xyz="0.0 0.0 0.4" rpy="0 3.141592 0" />
+        <origin xyz="0.0 0.0 0.4" rpy="0 0 3.1416" />
     </xacro:velodyne_lidar>
     
     <gazebo reference="sensor_link">
