@@ -40,6 +40,8 @@ To install ROS2 and vcs natively: https://docs.ros.org/en/humble/Installation/Ub
 
 Note: At the step `sudo apt install ros-humble-desktop` do `sudo apt install ros-humble-desktop-full` instead.
 
+Before installing the robot software, you need to install the simulator : https://gazebosim.org/docs/harmonic/install_ubuntu/#binary-installation-on-ubuntu
+
 ```bash
 git clone https://github.com/clubcapra/rove.git
 cd rove
