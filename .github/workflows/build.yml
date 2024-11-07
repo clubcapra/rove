@@ -17,5 +17,5 @@ jobs:
         docker compose build --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g)
     - name: Build rove
       run: |
-        docker compose run devcontainer bash -c "colcon build --packages-ignore zed_components zed_wrapper"
+        docker compose run devcontainer bash -c "colcon build"
 

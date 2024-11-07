@@ -42,6 +42,7 @@ Note: At the step `sudo apt install ros-humble-desktop` do `sudo apt install ros
 
 ```bash
 git clone https://github.com/clubcapra/rove.git
+cd rove
 vcs import src < rove.repos
 sudo rosdep init
 rosdep update
@@ -67,10 +68,9 @@ IF YOU ARE RUNNING IN WSL: do this command
 export LIBGL_ALWAYS_INDIRECT=0 export LIBGL_ALWAYS_SOFTWARE=1
 ```
 
-Do these commands to run the gazebo simulation with physics enabled :
+Do this command to run the gazebo simulation with physics enabled :
+
 ```bash
-colcon build --symlink-install
-source install/setup.bash
 ros2 launch rove_bringup sim.launch.py
 ```
 
