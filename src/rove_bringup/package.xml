@@ -7,6 +7,8 @@
   <maintainer email="capra@ens.etsmtl.ca">Capra</maintainer>
   <license>GPLv3</license>
 
+
+  <build_depend>ros_gzharmonic</build_depend>
   <build_depend>joy</build_depend>
   <build_depend>teleop_twist_joy</build_depend>
   <build_depend>twist_mux</build_depend>
