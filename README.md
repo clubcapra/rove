@@ -40,13 +40,28 @@ To install ROS2 and vcs natively: https://docs.ros.org/en/humble/Installation/Ub
 
 Note: At the step `sudo apt install ros-humble-desktop` do `sudo apt install ros-humble-desktop-full` instead.
 
+Before installing the robot software, you need to install the simulator : https://gazebosim.org/docs/harmonic/install_ubuntu/#binary-installation-on-ubuntu
+
 ```bash
-git clone https://github.com/gazebosim/ros_gz.git -b humble # Install gazebo locally
 git clone https://github.com/clubcapra/rove.git
+cd rove
 vcs import src < rove.repos
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 source install/setup.bash
 ```
+
+If you intend to control the robot you might need to add the hardware package to the build (If you aren't sure, you probably don't need it):
+
+```bash
+vcs import src < rove_hw.repos
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+```
+
 
 ## Running Rove in simulation
 
@@ -54,17 +69,11 @@ IF YOU ARE RUNNING IN WSL: do this command
 ```bash
 export LIBGL_ALWAYS_INDIRECT=0 export LIBGL_ALWAYS_SOFTWARE=1
 ```
-Do these commands to run the gazebo simulation with physics enabled
+
+Do this command to run the gazebo simulation with physics enabled :
+
 ```bash
-colcon build --symlink-install
-source install/setup.bash
 ros2 launch rove_bringup sim.launch.py
-```
-OR Do these commands to only run the rviz simulation (with joints control)
-```bash
-colcon build --symlink-install
-source install/setup.bash
-ros2 launch rove_description launch.py
 ```
 
 ## Running the controller with a usb cable
