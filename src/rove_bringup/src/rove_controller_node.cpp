@@ -49,7 +49,8 @@ public:
         );
         // cmd_vel_sub_ = create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 1, std::bind(&RoveController::cmdvelCallback, this, std::placeholders::_1));
 
-        joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 1);
+        joy_pub_rove_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 1);
+        joy_pub_ovis_ = create_publisher<sensor_msgs::msg::Joy>("/ovis/joy", 1);
 
         // auto x = create_wall_timer(
         //     std::chrono::milliseconds(1000/20), std::bind(&RoveController::cmdvelTimerCallback, this, std::placeholders::_1)
@@ -108,19 +109,21 @@ private:
     }
 
     void arm_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-        log("Arm");
-        if(button_pressed(joy_msg, B)){
-            log("Arm B pressed");
-        }
+        // log("Arm");
+        // if(button_pressed(joy_msg, B)){
+        //     log("Arm B pressed");
+        // }
 
-        if(buttton_up(joy_msg, X)){
-            log("Arm X up");
-        }
+        // if(buttton_up(joy_msg, X)){
+        //     log("Arm X up");
+        // }
 
-        if(buttton_down(joy_msg, X)){
-            log("Arm X down");
-        }
+        // if(buttton_down(joy_msg, X)){
+        //     log("Arm X down");
+        // }
 
+        joy_pub_ovis_->publish(*joy_msg);
+        
     }
 
     void flipper_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
@@ -128,7 +131,7 @@ private:
         teleop_msg_.axes[0] = joy_msg->axes[LS_X];
         teleop_msg_.axes[1] = joy_msg->axes[LS_Y];
         teleop_msg_.buttons[0] = joy_msg->buttons[A];
-        joy_pub_->publish(teleop_msg_);
+        joy_pub_rove_->publish(teleop_msg_);
     }
 
     bool buttton_down(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
@@ -176,7 +179,8 @@ private:
 
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
     // rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
-    rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_rove_;
+    rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_ovis_;
     sensor_msgs::msg::Joy previous_msg_; 
     sensor_msgs::msg::Joy teleop_msg_;
     // geometry_msgs::msg::Twist cmd_vel_msg_;
