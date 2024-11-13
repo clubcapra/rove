@@ -6,4 +6,8 @@ repositories:
   ovis_ros2:
     type: git
     url: https://github.com/clubcapra/ovis_ros2
-    version: new-env-with-arm
+    version: fix-gazebo-joy
+  gz_ros2_control:
+    type: git
+    url: https://github.com/clubcapra/gz_ros2_control.git
+    version: iron
