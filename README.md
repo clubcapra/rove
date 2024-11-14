@@ -46,6 +46,7 @@ Before installing the robot software, you need to install the simulator : https:
 git clone https://github.com/clubcapra/rove.git
 cd rove
 vcs import src < rove.repos
+echo "export GZ_VERSION=harmonic" >> ~/.bashrc && source ~/.bashrc
 sudo rosdep init
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y

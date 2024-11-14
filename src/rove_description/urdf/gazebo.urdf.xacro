@@ -41,5 +41,13 @@
         </plugin>
 
         <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+
+        <gazebo reference="friction_plate_base">
+            <material>Gazebo/Grey</material>
+            <mu1>100.0</mu1>
+            <mu2>100.0</mu2>
+            <kp>1000000.0</kp>
+            <kd>1.0</kd>
+        </gazebo>
     </gazebo>
 </robot>
