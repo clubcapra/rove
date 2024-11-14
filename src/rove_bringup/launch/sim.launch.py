@@ -65,7 +65,7 @@ def generate_launch_description():
             "-y",
             "0",
             "-z",
-            "0.1",
+            "0.06",
         ],
         output="screen",
     )
@@ -145,7 +145,7 @@ def generate_launch_description():
         launch_arguments={
             "with_rove": "true",
             "with_joy": "false",
-            "ovis_base_origin": "0.22 0 0.4 0 0 3.14",
+            "ovis_base_origin": "0.22 0 0.34 0 0 3.14",
         }.items(),
     )
 

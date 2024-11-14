@@ -133,11 +133,11 @@ private:
   {
     // Create a modified joy message with inverted axes
     sensor_msgs::msg::Joy modified_joy = *joy_msg;
-    
+
     // Invert the relevant axes (Y axes are typically the ones that need inversion)
     modified_joy.axes[LS_Y] = -joy_msg->axes[LS_Y];
     modified_joy.axes[RS_Y] = -joy_msg->axes[RS_Y];
-    
+
     joy_pub_ovis_->publish(modified_joy);
   }
 
