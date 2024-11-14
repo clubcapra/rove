@@ -137,20 +137,6 @@ def generate_launch_description():
         }.items(),
     )
 
-    static_tf_ovis = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=[
-            "0.25",
-            "0",
-            "0.25",
-            "0",
-            "0",
-            "3.14",
-            "base_link",
-            "ovis_base_link",
-        ],
-    )
 
     ovis = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -159,9 +145,11 @@ def generate_launch_description():
         launch_arguments={
             "with_rove": "true",
             "with_joy": "false",
-            "ovis_base_origin": "0.25 0 0.25 0 0 3.14",
+            "ovis_base_origin": "0.22 0 0.4 0 0 3.14",
         }.items(),
     )
+
+
 
     return LaunchDescription(
         [
@@ -174,6 +162,5 @@ def generate_launch_description():
             common,
             # human_tracker,
             ovis,
-            static_tf_ovis,
         ]
     )
