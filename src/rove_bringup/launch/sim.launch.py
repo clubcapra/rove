@@ -16,10 +16,6 @@ def generate_launch_description():
     pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
     pkg_ovis = get_package_share_directory("ovis_bringup")
 
-    # Get the URDF file
-    urdf_path = os.path.join(pkg_rove_description, "urdf", "rove.urdf.xacro")
-    robot_desc = ParameterValue(Command(["xacro ", urdf_path]), value_type=str)
-
     # Get simulation file
     world_file_name = "worlds/base_world.world"
     world = os.path.join(pkg_rove_description, world_file_name)
@@ -89,21 +85,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    # Takes the description and joint angles as inputs and publishes
-    # the 3D poses of the robot links
-    robot_state_publisher = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        name="robot_state_publisher",
-        output="both",
-        parameters=[
-            {"robot_description": robot_desc},
-            {
-                "use_sim_time": True,
-            },
-        ],
-    )
-
     # fake human tracker
     human_tracker = Node(
         package="rove_navigation",
@@ -155,7 +136,6 @@ def generate_launch_description():
         [
             gz_sim,
             bridge,
-            robot_state_publisher,
             spawn_walls,
             spawn_actor,
             spawn_rove,
