@@ -11,3 +11,7 @@ repositories:
     type: git
     url: https://github.com/clubcapra/gz_ros2_control.git
     version: iron
+  aws_robomaker_small_house_world:
+    type: git
+    url: https://github.com/clubcapra/aws-robomaker-small-house-world.git
+    version: capra-fix
