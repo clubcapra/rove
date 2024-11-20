@@ -16,12 +16,24 @@
 
 
         <plugin name="gz::sim::systems::TrackedVehicle" filename="gz-sim-tracked-vehicle-system">
-            <left_track><link>track_l</link></left_track>
-            <left_track><link>flipper_fl</link></left_track>
-            <left_track><link>flipper_rl</link></left_track>
-            <right_track><link>track_r</link></right_track>
-            <right_track><link>flipper_fr</link></right_track>
-            <right_track><link>flipper_rr</link></right_track>
+            <left_track>
+                <link>track_l</link>
+            </left_track>
+            <left_track>
+                <link>flipper_fl</link>
+            </left_track>
+            <left_track>
+                <link>flipper_rl</link>
+            </left_track>
+            <right_track>
+                <link>track_r</link>
+            </right_track>
+            <right_track>
+                <link>flipper_fr</link>
+            </right_track>
+            <right_track>
+                <link>flipper_rr</link>
+            </right_track>
 
             <!-- TODO PUT ACTUAL VALUES -->
             <tracks_separation>0.63</tracks_separation>
@@ -30,17 +42,12 @@
 
             <topic>cmd_vel</topic>
             <odom_topic>odom</odom_topic>
-            <frame_id>odom</frame_id>    
+            <frame_id>odom</frame_id>
             <child_frame_id>base_link</child_frame_id>
         </plugin>
 
-        <plugin 
-            filename="gz-sim-sensors-system"
-            name="gz::sim::systems::Sensors">
-            <render_engine>ogre2</render_engine>
-        </plugin>
 
-        <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+        <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat" />
 
         <gazebo reference="friction_plate_base">
             <material>Gazebo/Grey</material>
