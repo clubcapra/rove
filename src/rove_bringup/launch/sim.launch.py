@@ -151,7 +151,7 @@ def generate_launch_description():
         launch_arguments={
             "with_rove": "true",
             "with_joy": "false",
-            "ovis_base_origin": "0.24 0 0.38 0 0 3.14",
+            "ovis_base_origin": "0.22 0 0.38 0 0 3.14",
         }.items(),
     )
 
@@ -167,6 +167,6 @@ def generate_launch_description():
             spawn_rove,
             common,
             # human_tracker,
-            ovis,
+            # ovis,
         ]
     )
