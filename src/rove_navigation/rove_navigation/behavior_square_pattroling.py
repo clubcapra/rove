@@ -41,7 +41,6 @@ class AutonomyBehavior(Node):
         # Create and setup the behavior tree
         self.tree = self.create_naive_tree()
 
-    
     def create_naive_tree(self):
         """Create behavior tree with explicit nodes for each location."""
         seq = py_trees.composites.Sequence(name="navigation", memory=True)
@@ -70,6 +69,7 @@ def main(args=None):
     behavior = AutonomyBehavior()
     behavior.execute()
     rclpy.shutdown()
+
 
 if __name__ == "__main__":
     main()

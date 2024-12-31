@@ -22,6 +22,12 @@ def generate_launch_description():
         description='Set to "true" to use the small house world.',
     )
 
+    declare_with_ovis_arg = DeclareLaunchArgument(
+        "with_ovis",
+        default_value="false",
+        description='Set to "true" to use Ovis.',
+    )
+
     # Get the launch directory
     pkg_rove_bringup = get_package_share_directory("rove_bringup")
     pkg_rove_description = get_package_share_directory("rove_description")
@@ -153,12 +159,14 @@ def generate_launch_description():
             "with_joy": "false",
             "ovis_base_origin": "0.22 0 0.38 0 0 3.14",
         }.items(),
+        condition=IfCondition(LaunchConfiguration("with_ovis")),
     )
 
     return LaunchDescription(
         [
             SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", model_path),
             declare_small_house_arg,
+            declare_with_ovis_arg,
             gz_sim,
             gz_sim_house,
             bridge,
@@ -167,6 +175,6 @@ def generate_launch_description():
             spawn_rove,
             common,
             # human_tracker,
-            # ovis,
+            ovis,
         ]
     )

@@ -10,17 +10,20 @@ from rove_launch_handler.srv import LaunchRequest, LaunchListRequest
 
 launched_files = {}
 
-class LaunchFile: 
+
+class LaunchFile:
     def __init__(self, package, file_name, pid):
         self.package = package
         self.file_name = file_name
         self.pid = pid
+
 
 class LaunchMsg:
     def __init__(self):
         self.message = ""
         self.is_launched = False
         self.file_name = ""
+
 
 def launch_file(package, file_name):
     command = f"ros2 launch {package} {file_name}"
@@ -41,6 +44,7 @@ def launch_file(package, file_name):
         launch_msg.is_launched = False
     return launch_msg
 
+
 def kill_launch_file(file_name):
     launch_msg = LaunchMsg()
     launch_msg.file_name = file_name
@@ -59,15 +63,23 @@ def kill_launch_file(file_name):
         launch_msg.is_launched = False
     return launch_msg
 
+
 def kill_all():
     for file_name in list(launched_files.keys()):
         kill_launch_file(file_name)
 
+
 class LaunchHandlerService(Node):
     def __init__(self):
-        super().__init__('launch_handler_service')
-        self.srv_launch = self.create_service(LaunchRequest, 'launchHandler/launchFile', self.launch_callback)
-        self.srv_list = self.create_service(LaunchListRequest, 'launchHandler/getAllLaunchedFiles', self.get_launched_files)
+        super().__init__("launch_handler_service")
+        self.srv_launch = self.create_service(
+            LaunchRequest, "launchHandler/launchFile", self.launch_callback
+        )
+        self.srv_list = self.create_service(
+            LaunchListRequest,
+            "launchHandler/getAllLaunchedFiles",
+            self.get_launched_files,
+        )
         self.get_logger().info("LaunchHandlerService node has been started.")
 
     def launch_callback(self, request, response):
@@ -87,6 +99,7 @@ class LaunchHandlerService(Node):
         response.files = list(launched_files.keys())
         return response
 
+
 def main(args=None):
     rclpy.init(args=args)
     node = LaunchHandlerService()
@@ -95,5 +108,6 @@ def main(args=None):
     node.destroy_node()
     rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
