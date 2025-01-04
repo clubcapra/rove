@@ -22,6 +22,7 @@ Rove is a robot developed by the Capra team at ÉTS, designed for advanced appli
     - [Each time you push to the repository, you need to ensure that black formatting is applied to all new files.](#each-time-you-push-to-the-repository-you-need-to-ensure-that-black-formatting-is-applied-to-all-new-files)
     - [Adding New Packages](#adding-new-packages)
     - [Updating Packages](#updating-packages)
+    - [Package Documentation](#package-documentation)
   - [Architecture](#architecture)
     - [Package Structure](#package-structure)
     - [Docker Architecture](#docker-architecture)
@@ -194,3 +195,11 @@ black .
 ### Docker Architecture
 ![Docker structure](https://www.plantuml.com/plantuml/svg/VP71Ri8m38RlUOgezwvZq8vnc3XmsLDKJkgLGEj4JbfjU_gr0QgWJHoGVjl_xtouUn-0mz1tyc3r6Ldwm8CE0wCGmOGEPNOTVFJGeZoWGsgGj46V2S6e0r0xszgZvYTZ2zqDIeDZA5huGMLtH-3Uaj6P12zlHPfawulfjpiElUemRz2VWtNHFhNhQ_qWCSbSWSSbCXUfdyOB6uscCL0O3w3ZWgzjLLURUS5BVLbMA_rPhak4jNfhLXLiomq0gjNhymfK2TigFdB2u2tLbWs9Ux1n_WEZjXJ0479qJmtihEkHGhrC_iGOl5F8_9qx4sFip0Fx1I6V4HAa922IPsMUlzyTCz5njdoNcuZT_y55jg3A2NLsBbUNOb6nxSnTy8G-M98HEXhIGoOwdINvFL8pz9tu1G00)
 
+## Package Documentation
+- [Rove Bringup](src/rove_bringup/README.md)
+- [Rove Description](src/rove_description/README.md)
+- [Rove Launch Handler](src/rove_launch_handler/README.md)
+- [Rove Navigation](src/rove_navigation/README.md)
+- [Rove SLAM](src/rove_slam/README.md)
+- [Rove Template](src/rove_template/README.md)
+- [Rove Zed](src/rove_zed/README.md)

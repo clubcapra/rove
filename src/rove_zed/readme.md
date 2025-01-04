@@ -40,3 +40,38 @@ Appeler zed_wrapper directement avec:
 ```bash
 ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i
 ```
+---
+
+
+# Rove Zed 
+
+This package contains configurations and launch files for the Zed camera.
+
+## Launch Files
+
+- **zed_body_trck.launch.py**: Launches the body tracking with the Zed camera, enabling the robot to track and follow human bodies.
+- **zed_mapping.launch.py**: Launches the mapping with the Zed camera, creating a 3D map of the environment.
+
+## Nodes
+
+- **zed_camera**: Handles the Zed camera operations, including capturing images and depth data.
+
+## Usage
+
+To start the mapping with RTABMAP and the Zed camera, use the following commands:
+
+```bash
+ros2 launch rove_zed zed_mapping.launch.py
+ros2 launch rtabmap_launch rtabmap.launch.py \
+    rtabmap_args:="--delete_db_on_start" \
+    database_path:="/media/SSD/stable/rove/src/rove_rtabmap/maps/map.db" \
+    rgb_topic:=/zed/zed_node/rgb/image_rect_color \
+    depth_topic:=/zed/zed_node/depth/depth_registered \
+    camera_info_topic:=/zed/zed_node/depth/camera_info \
+    odom_topic:=/zed/zed_node/odom \
+    imu_topic:=/zed/zed_node/imu/data \
+    visual_odometry:=false \
+    frame_id:=zed_camera_link \
+    approx_sync:=false \
+    rgbd_sync:=true \
+    approx_rgbd_sync:=false
