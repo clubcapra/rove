@@ -3,8 +3,8 @@
 <package format="3">
   <name>rove_radiation</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="janice@todo.todo">janice</maintainer>
+  <description>Radiation mapping for rove</description>
+  <maintainer email="capra@ens.etsmtl.ca">rove</maintainer>
   <license>TODO: License declaration</license>
 
   <test_depend>ament_copyright</test_depend>
