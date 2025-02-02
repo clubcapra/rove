@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'radiation_publisher = rove_radiation.radiation_publisher:main',
+            'radiation_position_tracker = rove_radiation.radiation_position_tracker:main',
         ],
     },
 )

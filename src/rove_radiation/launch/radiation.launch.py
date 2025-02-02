@@ -13,6 +13,12 @@ def generate_launch_description():
             executable='radiation_publisher',
             name='radiation_publisher',
             output='screen'
+        ),
+        Node(
+            package='rove_radiation',
+            executable='radiation_position_tracker',
+            name='radiation_position_tracker',
+            output='screen'
         )
     ])
 
