@@ -17,9 +17,11 @@ async def main():
     """connect to odrive"""
     try:
         drv = ODriveCAN(axis_id=AXIS_ID, interface=INTERFACE)
+        await drv.set_vel_gains()
 
         # set up callback (optional)
         drv.feedback_callback = feedback_callback_fcn
+        
 
         # start
         await drv.start()
