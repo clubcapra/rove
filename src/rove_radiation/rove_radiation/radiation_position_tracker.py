@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
 from geometry_msgs.msg import PoseWithCovarianceStamped, Point
+from nav_msgs.msg import OccupancyGrid
 
 
 class RadiationPositionTracker(Node):
@@ -10,11 +11,14 @@ class RadiationPositionTracker(Node):
         
         self.radiation_subscription = self.create_subscription(Float32, '/dose_rate', self.radiation_callback, 10)
         self.odom_subscription = self.create_subscription(PoseWithCovarianceStamped, '/localization_pose', self.localization_pose_callback, 10)
+        self.map_subscription  = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
 
         self.radiation_position_publisher = self.create_publisher(Float32, '/dose_rate', 10)
+        self.radiation_map_publisher = self.create_publisher(OccupancyGrid, '/radiation_map', 10)
 
         self.current_position = Point(x=0.0, y=0.0, z=0.0)
-        self.current_radiation 
+        self.current_radiation = None
+        self.map = None
         
     def radiation_callback(self, msg):
         self.get_logger().info(f'radiation detected: {msg.data}')
@@ -31,6 +35,34 @@ class RadiationPositionTracker(Node):
         self.current_position.z = msg.pose.pose.position.z
         self.get_logger().info(f'current robot position: x : {self.current_position.x}, y : {self.current_position.y}, z : {self.current_position.z}')
     
+    def map_callback(self, msg):
+        self.map = msg
+        self.get_logger().info(f'Map width x height : {msg.info.width} x {msg.info.height}, Map resolution : {msg.info.resolution}')
+        self.update_publish_map()
+
+    def update_publish_map(self):
+        if self.map is None or self.current_radiation is None:
+            return None
+        
+        map_origin = self.map.info.origin.position
+        map_resolution = self.map.info.resolution
+        map_width = self.map.info.width
+
+        grid_x = int((self.current_position.x - map_origin.x)/map_resolution)
+        grid_y = int((self.current_position.y - map_origin.y)/map_resolution)
+        grid_index = grid_y * map_width + grid_x
+
+        if 0 <= grid_index < len(self.map.data):
+            updated_map = OccupancyGrid()
+            updated_map.header.stamp = self.get_clock().now().to_msg() # to synchronize with rviz... (in case)
+            updated_map.header.frame_id = "map"
+            updated_map.info = self.map.info
+            updated_map.data = list(self.map.data)  
+            updated_map.data[grid_index] = int(self.current_radiation)
+
+            self.radiation_map_publisher.publish(updated_map)
+            self.get_logger().info("Publishing updated radiation map")
+
     
 def main(args=None):
     rclpy.init(args=args)
