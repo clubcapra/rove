@@ -51,37 +51,38 @@ class RadiationPositionTracker(Node):
         self.update_publish_map()
 
     def update_publish_map(self):
-        if self.map is None or self.current_radiation is None:
+        """ if self.map is None or self.current_radiation is None:
             self.get_logger().info("Waiting for map and radiation data...")
             if self.map is not None:
                 self.get_logger().info(f"Map data size: {len(self.map.data)}")
             self.get_logger().info(f"Radiation: {self.current_radiation}, Position: {self.current_position.x}, {self.current_position.y}")
             return None
+         """
         
-        map_origin = self.map.info.origin.position
-        map_resolution = self.map.info.resolution
-        map_width = self.map.info.width
+        if self.map is not None and self.current_radiation is not None :
+            map_origin = self.map.info.origin.position
+            map_resolution = self.map.info.resolution
+            map_width = self.map.info.width
 
-        grid_x = int((self.current_position.x - map_origin.x)/map_resolution)
-        grid_y = int((self.current_position.y - map_origin.y)/map_resolution)
-        grid_index = grid_y * map_width + grid_x
+            grid_x = int((self.current_position.x - map_origin.x)/map_resolution)
+            grid_y = int((self.current_position.y - map_origin.y)/map_resolution)
+            grid_index = grid_y * map_width + grid_x
 
-        self.get_logger().info(f"Map origin: {map_origin.x}, {map_origin.y}")
-        self.get_logger().info(f"Calculated grid_x: {grid_x}, grid_y: {grid_y}, grid_index: {grid_index}")
+            self.get_logger().info(f"Map origin: {map_origin.x}, {map_origin.y}")
+            self.get_logger().info(f"Calculated grid_x: {grid_x}, grid_y: {grid_y}, grid_index: {grid_index}")
 
 
-        if 0 <= grid_index < len(self.map.data):
-            updated_map = OccupancyGrid()
-            updated_map.header.stamp = self.get_clock().now().to_msg() # to synchronize with rviz... (in case)
-            updated_map.header.frame_id = "map"
-            updated_map.info = self.map.info
-            updated_map.data = list(self.map.data)  
-            updated_map.data[grid_index] = int(self.current_radiation)
+            if 0 <= grid_index < len(self.map.data):
+                updated_map = OccupancyGrid()
+                updated_map.header.stamp = self.get_clock().now().to_msg() # to synchronize with rviz... (in case)
+                updated_map.header.frame_id = "map"
+                updated_map.info = self.map.info
+                updated_map.data = list(self.map.data)  
+                updated_map.data[grid_index] = int(self.current_radiation)
 
-            self.radiation_map_publisher.publish(updated_map)
-            self.get_logger().info(f"Updating map at grid_index {grid_index} with radiation value {self.current_radiation}")
-            self.get_logger().info(f"Publishing updated radiation map at position: {self.current_position}")
-            self.get_logger().info("Publishing updated radiation map")
+                self.radiation_map_publisher.publish(updated_map)
+                self.get_logger().info(f"Updating map at grid_index {grid_index} with radiation value {self.current_radiation}")
+                #self.get_logger().info(f"Publishing updated radiation map at position: {self.current_position}")
 
         
     
