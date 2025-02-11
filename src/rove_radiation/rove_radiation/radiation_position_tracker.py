@@ -40,12 +40,14 @@ class RadiationPositionTracker(Node):
     
     def map_callback(self, msg):
         self.map = msg
-        if self.map and self.map.data:
+        self.get_logger().info(f"Type of map data: {type(self.map.data)}, Example value: {self.map.data[0]}")
+
+        """ if self.map and self.map.data:
             self.get_logger().info(f'Map width x height: {msg.info.width} x {msg.info.height}, Map resolution: {msg.info.resolution}')
             self.get_logger().info(f"Map origin: x: {msg.info.origin.position.x}, y: {msg.info.origin.position.y}")
             self.get_logger().info(f"Map data size: {len(self.map.data)}")
         else:
-            self.get_logger().error("Received invalid map data!")
+            self.get_logger().error("Received invalid map data!") """
 
         #self.get_logger().info(f'Map width x height : {msg.info.width} x {msg.info.height}, Map resolution : {msg.info.resolution}')
         self.update_publish_map()
@@ -78,10 +80,11 @@ class RadiationPositionTracker(Node):
                 updated_map.header.frame_id = "map"
                 updated_map.info = self.map.info
                 updated_map.data = list(self.map.data)  
-                updated_map.data[grid_index] = int(self.current_radiation)
+                updated_map.data[grid_index] = round(self.current_radiation * 100)
 
                 self.radiation_map_publisher.publish(updated_map)
                 self.get_logger().info(f"Updating map at grid_index {grid_index} with radiation value {self.current_radiation}")
+                self.get_logger().info(f"Value at grid index {grid_index}: {updated_map.data[grid_index]}")
                 #self.get_logger().info(f"Publishing updated radiation map at position: {self.current_position}")
 
         
