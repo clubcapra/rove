@@ -53,6 +53,8 @@ class RadiationPositionTracker(Node):
         self.update_publish_map()
 
     def update_publish_map(self):
+        #self.get_logger().info("update_publish_map() called")
+
         """ if self.map is None or self.current_radiation is None:
             self.get_logger().info("Waiting for map and radiation data...")
             if self.map is not None:
@@ -75,16 +77,31 @@ class RadiationPositionTracker(Node):
 
 
             if 0 <= grid_index < len(self.map.data):
-                updated_map = OccupancyGrid()
-                updated_map.header.stamp = self.get_clock().now().to_msg() # to synchronize with rviz... (in case)
-                updated_map.header.frame_id = "map"
-                updated_map.info = self.map.info
-                updated_map.data = list(self.map.data)  
-                updated_map.data[grid_index] = round(self.current_radiation * 100)
+                self.map.header.stamp = self.get_clock().now().to_msg()
+                self.map.data = list(self.map.data) 
+                self.map.data[grid_index] = int(round(self.current_radiation * 100))
+                self.radiation_map_publisher.publish(self.map)
 
-                self.radiation_map_publisher.publish(updated_map)
-                self.get_logger().info(f"Updating map at grid_index {grid_index} with radiation value {self.current_radiation}")
-                self.get_logger().info(f"Value at grid index {grid_index}: {updated_map.data[grid_index]}")
+ 
+                # self.get_logger().info(f"grid_x: {grid_x}, grid_y: {grid_y}, grid_index: {grid_index}, map_size: {len(self.map.data)}")
+                # updated_map = OccupancyGrid()
+                # updated_map.header.stamp = self.get_clock().now().to_msg() # to synchronize with rviz... (in case)
+                # updated_map.header.frame_id = "map"
+                # updated_map.info = self.map.info
+                # updated_map.data = list(self.map.data)  
+                #self.get_logger().info(f"Initial memory address of updated_map.data: {id(updated_map.data)}")
+                # updated_map.data[grid_index] = int(round(self.current_radiation * 100))
+                # self.get_logger().info(f"After update: Value at grid_index {grid_index}: {updated_map.data[grid_index]}")
+                # #updated_map.data[grid_index] = round(self.current_radiation * 100)
+                # self.get_logger().info(f"Before publishing: Value at grid_index {grid_index}: {updated_map.data[grid_index]}")
+
+                # self.get_logger().info(f"Final map data before publishing (sample): {list(updated_map.data[122450:122460])}")
+                # updated_map.data = list(updated_map.data)  # Convertir en liste pour éviter les problèmes de références
+                # #self.get_logger().info(f"Final memory address of updated_map.data: {id(updated_map.data)}")
+
+                # self.radiation_map_publisher.publish(updated_map)
+                # self.get_logger().info(f"Updating map at grid_index {grid_index} with radiation value {self.current_radiation}")
+                # self.get_logger().info(f"Value at grid index {grid_index}: {updated_map.data[grid_index]}")
                 #self.get_logger().info(f"Publishing updated radiation map at position: {self.current_position}")
 
         
