@@ -39,8 +39,15 @@ class RadiationPositionTracker(Node):
         #self.get_logger().info(f'current robot position: x : {self.current_position.x}, y : {self.current_position.y}, z : {self.current_position.z}')
     
     def map_callback(self, msg):
-        self.map = msg
-        self.get_logger().info(f"Type of map data: {type(self.map.data)}, Example value: {self.map.data[0]}")
+        if self.map is None: 
+            self.map = OccupancyGrid()
+            self.map.header = msg.header
+            self.map.info = msg.info
+            self.map.data = [-1] * (msg.info.width * msg.info.height)
+            self.map.data = list(msg.data)
+
+
+        #self.get_logger().info(f"Type of map data: {type(self.map.data)}, Example value: {self.map.data[0]}")
 
         """ if self.map and self.map.data:
             self.get_logger().info(f'Map width x height: {msg.info.width} x {msg.info.height}, Map resolution: {msg.info.resolution}')
@@ -72,7 +79,7 @@ class RadiationPositionTracker(Node):
             grid_y = int((self.current_position.y - map_origin.y)/map_resolution)
             grid_index = grid_y * map_width + grid_x
 
-            self.get_logger().info(f"Map origin: {map_origin.x}, {map_origin.y}")
+            #self.get_logger().info(f"Map origin: {map_origin.x}, {map_origin.y}")
             self.get_logger().info(f"Calculated grid_x: {grid_x}, grid_y: {grid_y}, grid_index: {grid_index}")
 
 
@@ -80,6 +87,7 @@ class RadiationPositionTracker(Node):
                 self.map.header.stamp = self.get_clock().now().to_msg()
                 self.map.data = list(self.map.data) 
                 self.map.data[grid_index] = int(round(self.current_radiation * 100))
+                self.get_logger().info(f"Value at grid_index {grid_index}: {self.map.data[grid_index]}")
                 self.radiation_map_publisher.publish(self.map)
 
  
