@@ -6,7 +6,7 @@ class RadiationPublisher(Node):
     def __init__(self):
         super().__init__('radiation_publisher')
         self.publisher = self.create_publisher(Float32, '/dose_rate', 10)
-        timer_period = 1
+        timer_period = 0.5
         self.timer = self.create_timer(timer_period, self.publish_radiation_data)
         #self.get_logger().info('Radiation publisher node has started.')
     
