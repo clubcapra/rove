@@ -89,9 +89,9 @@
       "foxglovePanelTitle": "Bras"
     },
     "Battery Indicator.Battery display!2ungb0h": {
-      "batteryTopic": "",
+      "batteryTopic": "/RoboGuard/battery",
       "topic": {
-        "batteryTopic": ""
+        "batteryTopic": "/RoboGuard/battery"
       },
       "foxglovePanelTitle": "Battery Level"
     },
