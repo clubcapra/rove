@@ -32,6 +32,8 @@ class RadiationPositionTracker(Node):
         self.map_size = 10  #taille de la carte locale (10x10 cellules) (carte locale = champ de vision de la carte de radioactivité du robot...)
         self.resolution = 0.1  # 10 cm par cellule
         self.radiation_map_local = np.zeros((self.map_size, self.map_size), dtype=np.float32)
+        self.radius = 3
+        self.decay_factor = 0.5
 
         self.current_position = Point(x=0.0, y=0.0, z=0.0)
         self.current_radiation = None
@@ -67,8 +69,16 @@ class RadiationPositionTracker(Node):
         #converti la radiation en intensité (ex. sensor detcte 0.7 alors 70... car probleme quand pas un int donc *100 résout ca)
         intensity = min(100, self.current_radiation * 100)
 
-        #self.get_logger().info(f"Max radiation in map before update: {np.max(self.radiation_map_local):.5f}")
-        
+        for width in range(-3, 3+1):
+            for height in range(-3, 3+1):
+                coord_x = center_x + width
+                coord_y = center_y + height
+
+                if 0 <= coord_x <= self.map_size and 0 <= coord_y <= self.map_size:
+                    distance = math.sqrt(width **2 + height **2)
+                    if distance <= self.radius:
+                        attenuation = math.exp(-self.decay_factor * distance)
+                        self.radiation_map_local[coord_x, coord_y] = intensity * attenuation
         #ajouter radiation détecté à la position centrale
         self.radiation_map_local[center_y, center_x] = intensity
         

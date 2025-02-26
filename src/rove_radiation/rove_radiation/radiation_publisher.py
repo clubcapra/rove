@@ -12,6 +12,8 @@ class RadiationPublisher(Node):
         self.source_y = 0.0105071
         self.source2_x = -6.288366
         self.source2_y = -0.0121495
+        self.source3_x = -4.92
+        self.source3_y = -2.01
 
         self.max_radiation = 0.87  #valeur maximum que la radiation peut avoir... donc cest la valeur de radiation quand on est pile poil sur le x et y de la radiation
         self.decay_factor = 1.0   #Plus la valeur est garnde plus ca descend vite quand on seloinge
@@ -20,7 +22,7 @@ class RadiationPublisher(Node):
         self.radiation_publisher = self.create_publisher(Float32, '/dose_rate', 10)
         #self.get_logger().info('Radiation publisher node has started.')
 
-        self.marker_publisher = self.create_publisher(Marker, "/radiation_sources", 10)
+        #self.marker_publisher = self.create_publisher(Marker, "/radiation_sources", 10)
         self.publish_radiation_markers()
     
     def odom_callback(self, msg):
@@ -30,14 +32,17 @@ class RadiationPublisher(Node):
         #Calcul pour calculer distance entre robot et source de radiation (distance euclidienne)
         distance = math.sqrt((robot_x - self.source_x) ** 2 + (robot_y - self.source_y) ** 2)
         distance2 = math.sqrt((robot_x - self.source2_x) ** 2 + (robot_y - self.source2_y) ** 2)
+        distance3 = math.sqrt((robot_x - self.source3_x) ** 2 + (robot_y - self.source3_y) ** 2)
 
         #formule de decroissance exponetielle selon distance
         radiation_value = self.max_radiation * math.exp(-self.decay_factor * distance)
         radiation_value2 = self.max_radiation * math.exp(-self.decay_factor * distance2)
+        radiation_value3 = self.max_radiation * math.exp(-self.decay_factor * distance3)
+
 
         # Publier la valeur de radiation
         msg_radiation = Float32()
-        msg_radiation.data = radiation_value + radiation_value2
+        msg_radiation.data = radiation_value + radiation_value2 + radiation_value3
         self.radiation_publisher.publish(msg_radiation)
 
     def publish_radiation_markers(self):
@@ -64,7 +69,7 @@ class RadiationPublisher(Node):
             marker.color.g = 0.0
             marker.color.b = 0.0
 
-            self.marker_publisher.publish(marker)
+            #self.marker_publisher.publish(marker)
 
     def publish_radiation_data(self):
         pass
