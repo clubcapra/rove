@@ -16,7 +16,7 @@ class RadiationPublisher(Node):
         self.source3_y = -2.01
 
         self.max_radiation = 0.87  #valeur maximum que la radiation peut avoir... donc cest la valeur de radiation quand on est pile poil sur le x et y de la radiation
-        self.decay_factor = 1.0   #Plus la valeur est garnde plus ca descend vite quand on seloinge
+        self.decay_factor = 1   #Plus la valeur est garnde plus ca descend vite quand on seloinge
 
         self.odom_subscription = self.create_subscription(Odometry, '/odometry/local', self.odom_callback, 10)
         self.radiation_publisher = self.create_publisher(Float32, '/dose_rate', 10)
