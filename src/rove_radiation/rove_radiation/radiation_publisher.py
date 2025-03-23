@@ -10,6 +10,10 @@ class RadiationPublisher(Node):
         super().__init__('radiation_publisher')
         self.source_x = 4.7071488
         self.source_y = 0.0105071
+        """ self.source_x = 1.796319
+        self.source_y = -4.083129e-05
+        self.source_z = 1 """
+
         self.source2_x = -6.288366
         self.source2_y = -0.0121495
         self.source3_x = -4.92
@@ -42,6 +46,7 @@ class RadiationPublisher(Node):
 
         # Publier la valeur de radiation
         msg_radiation = Float32()
+        #msg_radiation.data = radiation_value
         msg_radiation.data = radiation_value + radiation_value2 + radiation_value3
         self.radiation_publisher.publish(msg_radiation)
 
