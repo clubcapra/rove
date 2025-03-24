@@ -6,10 +6,10 @@
       frame_id: "camera"
       pixel_format: "mjpeg2rgb"  # see usb_cam/supported_formats for list of supported formats
       av_device_format: "yuvj420p"
-      image_width: 2880
-      image_height: 1440
+      image_width: 1920
+      image_height: 1080
       camera_name: "Insta360_X4"
-      camera_info_url: "package://rove_bringup/config/insta360_x4_camera_info.yaml"
+      camera_info_url: "package://rove_bringup/config/insta360_x4_camera_info_split.yaml"
       brightness: -1
       contrast: -1
       saturation: -1
