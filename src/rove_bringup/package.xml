@@ -20,7 +20,6 @@
   <exec_depend>teleop_twist_joy</exec_depend>
   <exec_depend>twist_mux</exec_depend>
   <exec_depend>control_msgs</exec_depend>
-  <exec_depend>usb_cam</exec_depend>
   <exec_depend>foxglove_bridge</exec_depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
