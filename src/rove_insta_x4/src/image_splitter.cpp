@@ -16,8 +16,6 @@ public:
         angle_subscription_ = this->create_subscription<std_msgs::msg::Int32>(
             "/requested_angle", qos, std::bind(&ImageSplitter::angle_callback, this, std::placeholders::_1));
 
-        publisher_back_ = this->create_publisher<sensor_msgs::msg::CompressedImage>("/back_image/compressed", qos);
-        publisher_front_ = this->create_publisher<sensor_msgs::msg::CompressedImage>("/front_image/compressed", qos);
         publisher_requested_ = this->create_publisher<sensor_msgs::msg::CompressedImage>("/requested_image/compressed", qos);
     }
 
@@ -43,11 +41,7 @@ private:
         }
         
         cv::Mat requested_image = treat_image(img, requested_angle_);
-        cv::Mat front_image = treat_image(img, 0);
-        cv::Mat back_image = treat_image(img, 180);
 
-        publisher_back_->publish(create_msg(msg, back_image));
-        publisher_front_->publish(create_msg(msg, front_image));
         publisher_requested_->publish(create_msg(msg, requested_image));
     }
 
@@ -83,12 +77,8 @@ private:
         return msg; 
     }
 
-    
-
     rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr subscription_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr angle_subscription_;
-    rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr publisher_back_;
-    rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr publisher_front_;
     rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr publisher_requested_;
 };
 
