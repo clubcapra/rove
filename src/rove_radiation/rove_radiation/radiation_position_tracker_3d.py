@@ -5,6 +5,8 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32
 from geometry_msgs.msg import Point
 import struct
+import math
+import numpy as np
 
 
 
@@ -13,26 +15,97 @@ class RadiationPositionTracker3D(Node):
     def __init__(self):
         super().__init__('radiation_position_tracker_3d')
 
-        self.radiation_subscription = self.create_subscription(Float32, '/dose_rate', self.radiation_callback, 10)
+        self.radiation_subscription = self.create_subscription(Float32, '/dose_rate', self.real_radiation_callback, 10)
         self.odom_subscription = self.create_subscription(Odometry, '/odometry/local', self.localization_pose_callback, 10)
         self.point_cloud_publisher = self.create_publisher(PointCloud2, '/radiation_point_cloud', 10)
         self.radiation_map = {} #pr stocker valeurs de radiation
         self.current_position = None
+        #self.radius = 10  # Rayon de diffusion
+        self.decay_factor = 0.05  # facteur de décroissance exponentiel
+
+        self.map_size = 40
+        self.radiation_map_local = np.zeros((self.map_size, self.map_size, self.map_size), dtype=np.float32)
+        self.resolution = 0.05
+        self.radius = self.map_size
+        self.current_position = Point(x=0.0, y=0.0, z=0.0)
+        self.current_radiation = None
+
+        self.create_timer(0.5, self.update_publish_map)
+
+
+    def real_radiation_callback(self, msg):
+        self.current_radiation = msg.data
 
     def localization_pose_callback(self, msg):
-        self.current_position = (msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z)
+        self.current_position.x = msg.pose.pose.position.x
+        self.current_position.y = msg.pose.pose.position.y
+        self.current_position.z = msg.pose.pose.position.z
+    
+    def update_publish_map(self):
+        if self.current_radiation is None:
+            return
+        
+        self.update_local_radiation_map()
+        self.publish_point_cloud()
+
+    def update_local_radiation_map(self):
+        center_x = self.map_size // 2
+        center_y = self.map_size // 2
+        center_z = self.map_size // 2
+
+        intensity = min(100, self.current_radiation * 100)
+
+        for width in range(-self.radius, self.radius+1):
+            for height in range(-self.radius, self.radius+1):
+                for depth in range(-self.radius, self.radius+1):
+                    coord_x = center_x + width
+                    coord_y = center_y + height
+                    coord_z = center_y + depth
+
+                    if 0 <= coord_x < self.map_size and 0 < coord_z < self.map_size and 0 < coord_y < self.map_size: 
+                        distance = math.sqrt(width **2 + height **2 + depth**2)
+                        if distance <= self.radius:
+                            attenuation = math.exp(-self.decay_factor * (distance//4))
+                            self.radiation_map_local[coord_x, coord_y, coord_z] = intensity * attenuation
+        self.radiation_map_local[center_x, center_y, center_z] = intensity
+
     
 
     def radiation_callback(self, msg):
-        if self.current_position is not None:
+        """ if self.current_position is not None:
             self.radiation_map[self.current_position] = msg.data
-            self.publish_point_cloud()
+            self.publish_point_cloud() """
             #self.get_logger().info(f'position  = {self.current_position} , radiation = {msg.data}')
+        if self.current_position is not None:
+            x0, y0, z0 = self.current_position
+            intensity = min(100, msg.data * 100)  # Échelle similaire à la carte 2D
+            
+            # Mise à jour avec diffusion exponentielle
+            for dx in range(-int(self.radius), int(self.radius) + 1):
+                for dy in range(-int(self.radius), int(self.radius) + 1):
+                    for dz in range(-int(self.radius), int(self.radius) + 1):
+                        distance = math.sqrt(dx**2 + dy**2 + dz**2)
+                        if distance <= self.radius:
+                            attenuation = math.exp(-self.decay_factor * distance)
+                            point = (x0 + dx, y0 + dy, z0 + dz)
+                            self.radiation_map[point] = max(self.radiation_map.get(point, 0), intensity * attenuation)
+            
+        self.publish_point_cloud()
+
 
     def publish_point_cloud(self):
         rad_pos = []
-        for(x,y,z), radiation in self.radiation_map.items():
-            rad_pos.append(struct.pack('ffff', x, y, z, radiation)) #stocke sous forme de Float32
+        for x in range(0,self.map_size, 5):
+            for y in range(0, self.map_size, 5):
+                for z in range(0, self.map_size, 5):
+                    intensity = self.radiation_map_local[x, y, z]
+                    real_x = (x - self.map_size // 2) * self.resolution + self.current_position.x
+                    real_y = (y - self.map_size // 2) * self.resolution + self.current_position.y
+                    real_z = (z - self.map_size // 2) * self.resolution + self.current_position.z
+                    rad_pos.append(struct.pack('ffff', real_x, real_y, real_z, intensity))        
+        
+        # for(x,y,z), radiation in self.radiation_map.items():
+        #     rad_pos.append(struct.pack('ffff', x, y, z, radiation)) #stocke sous forme de Float32
         
         point_cloud_msg = PointCloud2()
         point_cloud_msg.header.stamp = self.get_clock().now().to_msg()
