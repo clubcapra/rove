@@ -7,7 +7,7 @@ from geometry_msgs.msg import Point
 import struct
 import math
 import numpy as np
-
+import cv2
 
 
 
@@ -67,30 +67,31 @@ class RadiationPositionTracker3D(Node):
                         if distance <= self.radius:
                             attenuation = math.exp(-self.decay_factor * (distance//4))
                             self.radiation_map_local[coord_x, coord_y, coord_z] = intensity * attenuation
+                            #self.get_logger().info(f'Update local radiation map : intensity  = {intensity} , position x = {coord_x}, position y = {coord_y}, position z = {coord_z}')
         self.radiation_map_local[center_x, center_y, center_z] = intensity
 
     
 
-    def radiation_callback(self, msg):
-        """ if self.current_position is not None:
-            self.radiation_map[self.current_position] = msg.data
-            self.publish_point_cloud() """
-            #self.get_logger().info(f'position  = {self.current_position} , radiation = {msg.data}')
-        if self.current_position is not None:
-            x0, y0, z0 = self.current_position
-            intensity = min(100, msg.data * 100)  # Échelle similaire à la carte 2D
+    # def radiation_callback(self, msg):
+    #     """ if self.current_position is not None:
+    #         self.radiation_map[self.current_position] = msg.data
+    #         self.publish_point_cloud() """
+    #         #self.get_logger().info(f'position  = {self.current_position} , radiation = {msg.data}')
+    #     if self.current_position is not None:
+    #         x0, y0, z0 = self.current_position
+    #         intensity = min(100, msg.data * 100)  # Échelle similaire à la carte 2D
             
-            # Mise à jour avec diffusion exponentielle
-            for dx in range(-int(self.radius), int(self.radius) + 1):
-                for dy in range(-int(self.radius), int(self.radius) + 1):
-                    for dz in range(-int(self.radius), int(self.radius) + 1):
-                        distance = math.sqrt(dx**2 + dy**2 + dz**2)
-                        if distance <= self.radius:
-                            attenuation = math.exp(-self.decay_factor * distance)
-                            point = (x0 + dx, y0 + dy, z0 + dz)
-                            self.radiation_map[point] = max(self.radiation_map.get(point, 0), intensity * attenuation)
+    #         # Mise à jour avec diffusion exponentielle
+    #         for dx in range(-int(self.radius), int(self.radius) + 1):
+    #             for dy in range(-int(self.radius), int(self.radius) + 1):
+    #                 for dz in range(-int(self.radius), int(self.radius) + 1):
+    #                     distance = math.sqrt(dx**2 + dy**2 + dz**2)
+    #                     if distance <= self.radius:
+    #                         attenuation = math.exp(-self.decay_factor * distance)
+    #                         point = (x0 + dx, y0 + dy, z0 + dz)
+    #                         self.radiation_map[point] = max(self.radiation_map.get(point, 0), intensity * attenuation)
             
-        self.publish_point_cloud()
+    #     self.publish_point_cloud()
 
 
     def publish_point_cloud(self):
@@ -99,10 +100,23 @@ class RadiationPositionTracker3D(Node):
             for y in range(0, self.map_size, 5):
                 for z in range(0, self.map_size, 5):
                     intensity = self.radiation_map_local[x, y, z]
+                    #self.get_logger().info(f'Publish poitn cloud : intensity  = {intensity} , position x = {x}, position y = {y}, position z = {z}')
                     real_x = (x - self.map_size // 2) * self.resolution + self.current_position.x
                     real_y = (y - self.map_size // 2) * self.resolution + self.current_position.y
                     real_z = (z - self.map_size // 2) * self.resolution + self.current_position.z
-                    rad_pos.append(struct.pack('ffff', real_x, real_y, real_z, intensity))        
+
+                    # Obtenir r,g,et b en float [0-1]
+                    r, g, b = self.jet_colormap(intensity)
+
+                    # Convertir en entiers [0-255]
+                    r_int = int(r * 255)
+                    g_int = int(g * 255)
+                    b_int = int(b * 255)
+
+                    # va pack RGB en un float32 (car c requis par rviz)
+                    rgb = struct.unpack('f', struct.pack('I', (r_int << 16) | (g_int << 8) | b_int))[0]
+
+                    rad_pos.append(struct.pack('ffff', real_x, real_y, real_z, rgb))        
         
         # for(x,y,z), radiation in self.radiation_map.items():
         #     rad_pos.append(struct.pack('ffff', x, y, z, radiation)) #stocke sous forme de Float32
@@ -110,7 +124,7 @@ class RadiationPositionTracker3D(Node):
         point_cloud_msg = PointCloud2()
         point_cloud_msg.header.stamp = self.get_clock().now().to_msg()
         point_cloud_msg.header.frame_id = "map"
-        point_cloud_msg.height = 1 # 1 car cest un nuage de pts organisé en ligne (pas en matrice)
+        point_cloud_msg.height = 1 # 1 car c un nuage de pts organisé en ligne (pas en matrice)
         point_cloud_msg.width = len(rad_pos) # le nb tottal de pts
         point_cloud_msg.is_dense = False 
         point_cloud_msg.is_bigendian = False
@@ -120,11 +134,23 @@ class RadiationPositionTracker3D(Node):
             PointField(name='x', offset=0, datatype=7, count=1), #coord en x (float32)
             PointField(name='y', offset=4, datatype=7, count=1), #coord en y (float32)
             PointField(name='z', offset=8, datatype=7, count=1), #coord en z (float32)
-            PointField(name='intensity', offset=12, datatype=7, count=1), #valeur de radiation (float32)
+            PointField(name='rgb', offset=12, datatype=7, count=1),
         ]
         point_cloud_msg.data = b''.join(rad_pos) # ajouter les pts encodé dans le msg
 
         self.point_cloud_publisher.publish(point_cloud_msg)
+
+    def jet_colormap(self, value, vmin=0, vmax=100):
+        """
+        Convertit une valeur d'intensité en une couleur JET.
+        value : Intensité (entre vmin et vmax).
+        """
+        #Normlaiser entre 0 et 255 (pour OpenCV )
+        normalized = np.clip((value - vmin) / (vmax - vmin), 0, 1) * 255
+        colormap = cv2.applyColorMap(np.uint8([[normalized]]), cv2.COLORMAP_JET)
+        b, g, r = colormap[0, 0]  #OpenCV donne en BGR, faut donc inverser
+
+        return r / 255.0, g / 255.0, b / 255.0  #Normaliser entre 0 et 1
 
 
 

@@ -26,7 +26,6 @@ setup(
         'console_scripts': [
             'radiation_publisher = rove_radiation.radiation_publisher:main',
             'radiation_position_tracker = rove_radiation.radiation_position_tracker:main',
-            'radiation_position_tracker_3d = rove_radiation.radiation_position_tracker_3d:main',
         ],
     },
 )
