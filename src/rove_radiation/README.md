@@ -31,7 +31,7 @@ Run this if you modified any files in the rove_radiation package.
 ros2 launch rove_radiation radiation.launch.py max_intensity:=10.0
 ```
 
-You can change the value of max_intensity (must be a double) to set the maximum radiation intensity you'd like to detect. This will affect the scaling of the heatmap and visual markers.
+You can change the value of max_intensity (must be a double) to set the maximum radiation intensity you'd like to detect. 
 
 ## Dependencies
 
