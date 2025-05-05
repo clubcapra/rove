@@ -22,6 +22,10 @@ ros2 launch rove_bringup sim.launch.py
 ```
 
 ### 2. (Optional) Build after making code changes
+```bash
+
+colcon build --packages-select rove_radiation
+```
 
 Run this if you modified any files in the rove_radiation package.
 
