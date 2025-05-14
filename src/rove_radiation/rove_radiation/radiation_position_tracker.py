@@ -21,10 +21,10 @@ class RadiationPositionTracker(Node):
         self.map_subscription = self.create_subscription(OccupancyGrid,'/map',self.map_callback,map_qos)
         
         #self.map_subscription  = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
-        self.get_logger().info("Subscribed to /map")
+        #self.get_logger().info("Subscribed to /map")
         self.marker_publisher = self.create_publisher(Marker, '/radiation_marker', 10)
 
-        self.declare_parameter("max_intensity", 20.0)
+        self.declare_parameter("max_intensity", 100.0)
         self.max_intensity = self.get_parameter("max_intensity").get_parameter_value().double_value
         #self.get_logger().info(f"Max intensity set to: {self.max_intensity}")
 
@@ -52,20 +52,20 @@ class RadiationPositionTracker(Node):
         self.current_position.z = msg.pose.pose.position.z
         
     def map_callback(self, msg):
-        self.get_logger().info("Map callback called")
-        self.get_logger().info(f"Received map with timestamp: {msg.header.stamp}")
+        #self.get_logger().info("Map callback called")
+        #self.get_logger().info(f"Received map with timestamp: {msg.header.stamp}")
         if self.map is None: 
+            self.get_logger().info('self.map is NONE!!!!!')
             self.map = OccupancyGrid()
             self.map.header = msg.header
             self.map.info = msg.info
             self.map.data = [-1] * (msg.info.width * msg.info.height)
-            self.map.data = list(msg.data)
-
+            self.map.data = list(self.map.data)
         self.update_publish_map()
 
     def update_publish_map(self):
-        self.get_logger().info(f'Is Map none : {self.map is None}')
-        self.get_logger().info(f'Is Radiation none : {self.current_radiation is None}')
+        #self.get_logger().info(f'Is Map none : {self.map is None}')
+        #self.get_logger().info(f'Is Radiation none : {self.current_radiation is None}')
         if self.map is not None and self.current_radiation is not None :
             map_origin = self.map.info.origin.position
             map_resolution = self.map.info.resolution
@@ -83,6 +83,9 @@ class RadiationPositionTracker(Node):
                 value = int(round(100 * (self.current_radiation / self.max_intensity)))
                 value = max(0, min(100, value))  # clamp entre [0, 100]
                 self.map.data[grid_index] = value
+                
+                self.get_logger().info(f'index : {grid_index} ; data : {self.map.data[grid_index]}')
+                self.get_logger().info(f'value : {value} ; current_radiation : {self.current_radiation} ; max_intensity : {self.max_intensity} resultat calcul : {100 * (self.current_radiation / self.max_intensity)}')
 
                 self.radiation_map_publisher.publish(self.map)
 
