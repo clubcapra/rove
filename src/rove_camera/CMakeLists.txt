@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rove_insta_x4)
+project(rove_camera)
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)

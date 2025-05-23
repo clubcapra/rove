@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>rove_insta_x4</name>
+  <name>rove_camera</name>
   <version>0.0.0</version>
   <description>ROS 2 node to split a 2880x1440 image into two 1440x1440 images and publish camera feed</description>
   <maintainer email="capra@ens.etsmtl.ca">Capra</maintainer>
