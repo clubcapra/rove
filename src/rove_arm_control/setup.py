@@ -22,7 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # 'rove_arm_control = rove_arm_control.arm_control:main'
+            'rove_arm_control = rove_arm_control.arm_control:main'
         ],
     },
 )
