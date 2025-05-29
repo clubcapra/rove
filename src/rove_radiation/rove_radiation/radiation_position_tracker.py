@@ -1,3 +1,4 @@
+from math import floor
 import rclpy
 import time
 from rclpy.node import Node
@@ -18,11 +19,13 @@ class RadiationPositionTracker(Node):
         self.odom_subscription = self.create_subscription(Odometry, '/odometry/local', self.localization_pose_callback, 10)
         
         map_qos = QoSProfile(depth=1, durability=QoSDurabilityPolicy.TRANSIENT_LOCAL, reliability=QoSReliabilityPolicy.RELIABLE)
-        self.map_subscription = self.create_subscription(OccupancyGrid,'/map',self.map_callback,map_qos)
+        self.map_subscription = self.create_subscription(OccupancyGrid,'/map',self.map_callback, map_qos)
         
         #self.map_subscription  = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
         #self.get_logger().info("Subscribed to /map")
-        self.marker_publisher = self.create_publisher(Marker, '/radiation_marker', 10)
+        marker_qos = QoSProfile(depth=100,durability=QoSDurabilityPolicy.TRANSIENT_LOCAL, reliability=QoSReliabilityPolicy.RELIABLE)
+        self.marker_publisher = self.create_publisher(Marker, '/radiation_marker',10)
+
 
         self.declare_parameter("max_intensity", 100.0)
         self.max_intensity = self.get_parameter("max_intensity").get_parameter_value().double_value
@@ -37,6 +40,10 @@ class RadiationPositionTracker(Node):
         self.map = None
         self.marker_id = 0
 
+        #test pour positions ecrasement donnée radiation
+        """ self.test_phase = 1
+        self.create_timer(10, self.update_test_position, callback_group=None)
+        self.force_position_phase() """
 
         self.create_timer(3, self.update_publish_map)
         
@@ -44,18 +51,40 @@ class RadiationPositionTracker(Node):
         self.current_radiation = msg.data
         #self.get_logger().info(f'Received radiation data: {msg.data}')
 
+    #debut méthode pour test positions ecrasement donnée radiation
+    def force_position_phase(self):
+        if self.test_phase == 1:
+            self.current_position.x = 2.00
+            self.current_position.y = 1.00
+            #self.get_logger().info(f'Phase 1 : position forcée à ({self.current_position.x}, {self.current_position.y})')
+        elif self.test_phase == 2:
+            self.current_position.x = 2.03
+            self.current_position.y = 1.03
+            #self.get_logger().info(f'Phase 2 : position forcée à ({self.current_position.x}, {self.current_position.y})')
+    
+    def update_test_position(self):
+        if self.test_phase == 1:
+            self.test_phase = 2
+            self.force_position_phase()  
+    #fin méthode pour test positions ecrasement donnée radiation
+
     
     def localization_pose_callback(self, msg):
         # Update robot' position
         self.current_position.x = msg.pose.pose.position.x
         self.current_position.y = msg.pose.pose.position.y
         self.current_position.z = msg.pose.pose.position.z
+
+        """ self.current_position.x = 2.0
+        self.current_position.y = 1.0
+        self.current_position.z = 0.0 """
+
         
     def map_callback(self, msg):
         #self.get_logger().info("Map callback called")
         #self.get_logger().info(f"Received map with timestamp: {msg.header.stamp}")
         if self.map is None: 
-            self.get_logger().info('self.map is NONE!!!!!')
+            #self.get_logger().info('self.map is NONE!!!!!')
             self.map = OccupancyGrid()
             self.map.header = msg.header
             self.map.info = msg.info
@@ -68,12 +97,20 @@ class RadiationPositionTracker(Node):
         #self.get_logger().info(f'Is Radiation none : {self.current_radiation is None}')
         if self.map is not None and self.current_radiation is not None :
             map_origin = self.map.info.origin.position
-            map_resolution = self.map.info.resolution
+            map_resolution = 0.1
+            #map_resolution = round(self.map.info.resolution, 4)
             map_width = self.map.info.width
+            self.get_logger().info(f"Map Resolution: {self.map.info.resolution}")
 
-            grid_x = int((self.current_position.x - map_origin.x)/map_resolution)
-            grid_y = int((self.current_position.y - map_origin.y)/map_resolution)
+            grid_x = floor((self.current_position.x - map_origin.x)/map_resolution)
+            grid_y = floor((self.current_position.y - map_origin.y)/map_resolution)
             grid_index = grid_y * map_width + grid_x
+
+            """ self.get_logger().info(
+            f"Position: ({self.current_position.x:.2f}, {self.current_position.y:.2f}) "
+            f"--> index: {grid_index} (grid_x: {grid_x}, grid_y: {grid_y})"
+            f"--> data : {self.current_radiation}"
+            ) """
 
             if 0 <= grid_index < len(self.map.data):
                 self.map.header.stamp = self.get_clock().now().to_msg()
@@ -84,8 +121,8 @@ class RadiationPositionTracker(Node):
                 value = max(0, min(100, value))  # clamp entre [0, 100]
                 self.map.data[grid_index] = value
                 
-                self.get_logger().info(f'index : {grid_index} ; data : {self.map.data[grid_index]}')
-                self.get_logger().info(f'value : {value} ; current_radiation : {self.current_radiation} ; max_intensity : {self.max_intensity} resultat calcul : {100 * (self.current_radiation / self.max_intensity)}')
+                #self.get_logger().info(f'index : {grid_index} ; data : {self.map.data[grid_index]}')
+                #self.get_logger().info(f'value : {value} ; current_radiation : {self.current_radiation} ; max_intensity : {self.max_intensity} resultat calcul : {100 * (self.current_radiation / self.max_intensity)}')
 
                 self.radiation_map_publisher.publish(self.map)
 
@@ -128,3 +165,4 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+

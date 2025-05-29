@@ -29,6 +29,12 @@ def generate_launch_description():
             name='radiation_position_tracker',
             output='screen',
             parameters=[{'max_intensity': max_intensity}]
+        ),
+        Node(
+            package='rove_radiation',
+            executable='radiation_map_data_viewer',
+            name='radiation_map_data_viewer',
+            output='screen'
         )
     ])
 
