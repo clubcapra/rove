@@ -8,10 +8,12 @@ SETPOINT = 50
 
 udp = UDP_Client()  # send data to UDP server for plotting
 
+
 def feedback_callback_fcn(msg: CanMsg, caller: ODriveCAN):
     """called on position estimate"""
     print(msg)
     udp.send(msg.data)
+
 
 async def main():
     """connect to odrive"""
@@ -49,5 +51,6 @@ async def main():
         await drv.set_input_pos(0.0)
     except Exception as e:
         print(f"Error in main function: {e}")
+
 
 asyncio.run(main())
