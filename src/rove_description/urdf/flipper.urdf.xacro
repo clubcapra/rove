@@ -45,13 +45,6 @@
             <visual>
                 <origin xyz="0 0 0" rpy="${mesh_rotation}" />
                 <geometry>
-                    <mesh filename="https://raw.githubusercontent.com/clubcapra/rove/main/src/rove_description/meshes/flipper.stl"/>
-                </geometry>
-                <material name="rubber_color" />
-            </visual>
-            <visual>
-                <origin xyz="0 0 0" rpy="${mesh_rotation}" />
-                <geometry>
                     <mesh filename="file://$(find rove_description)/meshes/flipper.stl" />
                 </geometry>
                 <material name="rubber_color" />

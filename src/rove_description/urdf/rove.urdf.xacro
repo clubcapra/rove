@@ -19,15 +19,14 @@
 
     <!-- <xacro:include filename="$(find ovis_description)/urdf/ovis.urdf.xacro" /> -->
 
+    <!-- Workaround for KDL not allowing root link to have inertia -->
+    <!-- <link name="dummy_root"/>
+    <joint name="fixed_base" type="fixed">
+        <parent link="dummy_root"/>
+        <child link="base_link"/>
+    </joint> -->
+
     <link name="base_link">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <mesh
-                    filename="https://raw.githubusercontent.com/clubcapra/rove/main/src/rove_description/meshes/base.stl" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>

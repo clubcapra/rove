@@ -58,6 +58,7 @@ COPY --chown=$USERNAME ./ /workspace/$USERNAME
 
 # Add needed packages
 RUN vcs import src < rove.repos
+RUN vcs import src < rove_hw.repos
 
 
 # Rosdep update

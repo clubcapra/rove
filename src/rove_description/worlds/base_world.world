@@ -118,12 +118,12 @@
             <render_engine>ogre2</render_engine>
         </plugin>
 
-        <include>
+        <!-- <include>
             <pose>3.5 0 0 0 0 3.14</pose>
             <uri>
                 https://fuel.gazebosim.org/1.0/sebbyjp/models/Sofa
             </uri>
-        </include>
+        </include> -->
 
         <light type="directional" name="sun">
             <cast_shadows>true</cast_shadows>

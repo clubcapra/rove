@@ -33,13 +33,6 @@
 
         <link name="track_${suffix}">
             <visual>
-                <origin xyz="0 0 0"/>
-                <geometry>
-                    <mesh filename="https://raw.githubusercontent.com/clubcapra/rove/main/src/rove_description/meshes/track.stl"/>
-                </geometry>
-                <material name="rubber_color" />
-            </visual>
-            <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
                     <mesh filename="file://$(find rove_description)/meshes/track.stl"/>

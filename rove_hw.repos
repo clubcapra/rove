@@ -14,7 +14,7 @@ repositories:
   zed_wrapper/zed-ros2-interfaces:
     type: git
     url: https://github.com/stereolabs/zed-ros2-interfaces.git
-    version: main
+    version: master
   ros2_robotiq_gripper:
     type: git
     url: https://github.com/PickNikRobotics/ros2_robotiq_gripper.git
