@@ -64,7 +64,7 @@ RUN vcs import src < rove.repos
 RUN rosdep update
 
 # Install ROS dependencies
-RUN rosdep install --from-paths src --ignore-src --rosdistro humble -y
+RUN rosdep install --from-paths src --ignore-src -r -y
 
 # Install gzharmonic after rosdep install
 RUN sudo apt install -y ros-humble-ros-gzharmonic
