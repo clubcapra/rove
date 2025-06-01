@@ -16,6 +16,8 @@ public:
             "/input_image/compressed", qos, std::bind(&ImageSplitter::image_callback, this, std::placeholders::_1));
         angle_subscription_ = this->create_subscription<std_msgs::msg::Int32>(
             "/requested_angle", qos, std::bind(&ImageSplitter::angle_callback, this, std::placeholders::_1));
+        top_subscription_ = this->create_subscription<std_msgs::msg::Int32>(
+            "/requested_top", qos, std::bind(&ImageSplitter::top_callback, this, std::placeholders::_1));
         zoom_subscription_ = this->create_subscription<std_msgs::msg::Float32>(
             "/requested_zoom", qos, std::bind(&ImageSplitter::zoom_callback, this, std::placeholders::_1));
 
@@ -25,6 +27,7 @@ public:
 private:
     int requested_angle_ = 0;
     int requested_width_;
+    int requested_top_ = 50;
     float requested_zoom_ = 1.0;  // Default zoom level (1.0 means no zoom)
 
     void angle_callback(const std_msgs::msg::Int32::SharedPtr msg) {
@@ -33,6 +36,10 @@ private:
             r_angle += 360;
         }
         requested_angle_ = r_angle;
+    }
+
+    void top_callback(const std_msgs::msg::Int32::SharedPtr msg) {
+        requested_top_ = std::min(std::max(0, msg->data), 100);
     }
 
     void zoom_callback(const std_msgs::msg::Float32::SharedPtr msg) {
@@ -56,30 +63,27 @@ private:
         int height = img.rows;
         int width = img.cols;
 
-        // Apply zoom: crop the center of the image
-        int new_width = static_cast<int>(width / zoom);
-        int new_height = static_cast<int>(height / zoom);
-        int start_x = (width - new_width) / 2;
-        int start_y = (height - new_height) / 2;
+        int crop_width = static_cast<int>(requested_width_ / zoom);
+        int crop_height = static_cast<int>(height / zoom);
 
-        cv::Mat zoomed_img = img(cv::Rect(start_x, start_y, new_width, new_height));
-        cv::resize(zoomed_img, zoomed_img, cv::Size(width, height));
-
-        // Compute cropping for requested_angle_
-        int center_x = width / 2 + (angle * width / 360);
-        int requested_start = (center_x - requested_width_ / 2) % width;
+        int start_y = static_cast<int>((height - crop_height) * requested_top_ / 100);
+        int start_x = (width - crop_width) / 2 + (angle * width / 360);
 
         cv::Mat requested_part;
-        if (requested_start + requested_width_ <= width){
-            requested_part = cv::Mat(zoomed_img, cv::Rect(requested_start, 0, requested_width_, height));
+        if (start_x + requested_width_ <= width){
+            requested_part = cv::Mat(img, cv::Rect(start_x, start_y, crop_width, crop_height));
         }
         else{
-            cv::Mat left_part(zoomed_img, cv::Rect(0, 0, requested_start + requested_width_ - width, height));
-            cv::Mat right_part(zoomed_img, cv::Rect(requested_start, 0, width - requested_start, height));
+            cv::Mat left_part(img, cv::Rect(0, start_y, start_x + crop_width - width, crop_height));
+            cv::Mat right_part(img, cv::Rect(start_x, start_y, width - start_x, crop_height));
             cv::hconcat(right_part, left_part, requested_part);
         }
+        
+        // Resize using cv::Size
+        cv::Mat resized;
+        cv::resize(requested_part, resized, cv::Size(requested_width_, height));
 
-        return requested_part;
+        return resized;
     }
 
     sensor_msgs::msg::CompressedImage create_msg (const sensor_msgs::msg::CompressedImage::SharedPtr source_msg, cv::Mat img){
@@ -92,6 +96,7 @@ private:
 
     rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr subscription_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr angle_subscription_;
+    rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr top_subscription_;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr zoom_subscription_;
     rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr publisher_requested_;
 };
