@@ -63,7 +63,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # wide,
-        # image_splitter,
-        back_camera,
+        wide,
+        image_splitter,
+        # back_camera,
     ])
