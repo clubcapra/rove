@@ -1,7 +1,7 @@
 /usb_cam_node_exe:  
     ros__parameters:
       queue_size: 1
-      video_device: "/dev/insta"
+      video_device: "/dev/video0"
       framerate: 30.0
       io_method: "mmap"
       frame_id: "camera"
@@ -10,7 +10,7 @@
       image_width: 2880
       image_height: 1440
       camera_name: "Insta360_X4"
-      camera_info_url: "package://rove_insta_x4/config/x4_camera_info_wide.yaml"
+      camera_info_url: "package://rove_camera/config/x4_camera_info_wide.yaml"
       brightness: -1
       contrast: -1
       saturation: -1

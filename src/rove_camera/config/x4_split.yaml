@@ -10,7 +10,7 @@
       image_width: 1920
       image_height: 1080
       camera_name: "Insta360_X4"
-      camera_info_url: "package://rove_insta_x4/config/x4_camera_info_split.yaml"
+      camera_info_url: "package://rove_camera/config/x4_camera_info_split.yaml"
       brightness: -1
       contrast: -1
       saturation: -1
