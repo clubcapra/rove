@@ -11,7 +11,6 @@
   <depend>sensor_msgs</depend>
   <depend>cv_bridge</depend>
   <depend>OpenCV</depend>
-  <depend>usb_cam</depend>
   <depend>vision_opencv</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
