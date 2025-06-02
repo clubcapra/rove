@@ -1,7 +1,7 @@
 /usb_cam_node_exe:  
     ros__parameters:
       queue_size: 1
-      video_device: "/dev/video0"
+      video_device: "/dev/insta"
       framerate: 30.0
       io_method: "mmap"
       frame_id: "camera"
