@@ -153,11 +153,10 @@ def generate_launch_description():
             joint_state_broadcaster_spawner,
             *delayed_controller_nodes,
             control_node,
-            # TimerAction(period=20.0, actions=[
-            # gripper,
-            # vectornav,
-            # velodyne,
+            #TimerAction(period=20.0, actions=[
+                #gripper,
+            vectornav,
+            velodyne,
             # zed,
-            # ]),
-        ]
-    )
+            #]),
+            ])
