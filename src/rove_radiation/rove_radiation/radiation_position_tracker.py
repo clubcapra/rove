@@ -100,7 +100,7 @@ class RadiationPositionTracker(Node):
             map_resolution = 0.1
             #map_resolution = round(self.map.info.resolution, 4)
             map_width = self.map.info.width
-            self.get_logger().info(f"Map Resolution: {self.map.info.resolution}")
+            #self.get_logger().info(f"Map Resolution: {self.map.info.resolution}")
 
             grid_x = floor((self.current_position.x - map_origin.x)/map_resolution)
             grid_y = floor((self.current_position.y - map_origin.y)/map_resolution)
