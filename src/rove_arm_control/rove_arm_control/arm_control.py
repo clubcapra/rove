@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist, PoseStamped
-
+from scipy.spatial.transform import Rotation as R
 
 class RoveArmControl(Node):
     
@@ -30,20 +30,49 @@ class RoveArmControl(Node):
         # Map the joystick axes to linear and angular velocities
         twist_msg = Twist()
 
-        # Assuming axes[0] = X (forward/backward), axes[1] = Y (left/right), axes[3] = pitch (rotation)
-        twist_msg.linear.x = msg.axes[0]  # Forward/backward motion (X-axis)
-        twist_msg.linear.y = msg.axes[1]  # Left/right motion (Y-axis)
-        twist_msg.linear.z = msg.axes[2]  # Up/down motion (Z-axis)
-        twist_msg.angular.x = msg.axes[3]  # Rotation in pitch
-        twist_msg.angular.y = msg.axes[4]  # Rotation in roll
-        twist_msg.angular.z = msg.axes[5]  # Rotation in yaw (twist)
-        
+        twist_msg.linear.x = msg.axes[0]  # Y axis on the mouse (forward/backward motion)
+        twist_msg.linear.y = -msg.axes[1]  # X axis on the mouse (left/right motion)
+        twist_msg.linear.z = msg.axes[2]  # Z axis on the mouse (up/down motion)
+
         self.pose.pose.position.x += twist_msg.linear.x * self.SENSITIVITY
         self.pose.pose.position.y += twist_msg.linear.y * self.SENSITIVITY
         self.pose.pose.position.z += twist_msg.linear.z  * self.SENSITIVITY
-        self.pose.pose.orientation.x += twist_msg.angular.x * self.SENSITIVITY
-        self.pose.pose.orientation.y += twist_msg.angular.y * self.SENSITIVITY
-        self.pose.pose.orientation.z += twist_msg.angular.z * self.SENSITIVITY
+
+
+
+        twist_msg.angular.x = msg.axes[3]  # Y rotation on the mouse (roll)
+        twist_msg.angular.y = msg.axes[4]  # X rotation on the mouse (pitch)
+        twist_msg.angular.z = -msg.axes[5]  # Z rotation on the mouse (yaw/twist)
+        
+        
+        # Convert current orientation to scipy Rotation
+        current_q = R.from_quat([
+            self.pose.pose.orientation.x,
+            self.pose.pose.orientation.y,
+            self.pose.pose.orientation.z,
+            self.pose.pose.orientation.w
+        ])
+
+        # Create a small delta rotation from input Euler angles
+        # Note: Order depends on the convention, here it's 'xyz' = roll, pitch, yaw
+        delta_euler = [
+            twist_msg.angular.x * self.SENSITIVITY,
+            twist_msg.angular.y * self.SENSITIVITY,
+            twist_msg.angular.z * self.SENSITIVITY
+        ]
+        delta_q = R.from_euler('xyz', delta_euler)
+        
+        # Apply delta rotation
+        new_q = current_q * delta_q  # Applies delta in local frame; reverse order for global frame
+
+        # Convert back to quaternion
+        x, y, z, w = new_q.as_quat()
+
+        # Assign to pose
+        self.pose.pose.orientation.x = x
+        self.pose.pose.orientation.y = y
+        self.pose.pose.orientation.z = z
+        self.pose.pose.orientation.w = w
     
         self.cmd_vel_publisher.publish(self.pose)
         # self.get_logger().info(f'Pose: pose.position={self.pose.pose.position}, pose.orientation={self.pose.pose.orientation}')
