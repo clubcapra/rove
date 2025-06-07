@@ -10,7 +10,7 @@ class RoveArmControl(Node):
         super().__init__('joy_listener')
         self.subscription = self.create_subscription(
             Joy,
-            'joy',
+            '/spacemouse_joy',
             self.joy_callback,
             10
         )
