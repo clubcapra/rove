@@ -27,13 +27,13 @@
         </inertial>
         <visual>
             <geometry>
-                <cylinder length="0.05" radius="0.05" />
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.05" radius="0.05" />
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </collision>
     </link>
@@ -45,16 +45,17 @@
         </inertial>
         <visual>
             <geometry>
-                <cylinder length="0.05" radius="0.05" />
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.05" radius="0.05" />
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </collision>
     </link>
+
 
 
     <link name="sensor_link">
@@ -66,20 +67,20 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.05" radius="0.05" />
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder length="0.05" radius="0.05" />
+                <cylinder length="0.1" radius="0.1" />
             </geometry>
         </collision>
     </link>
     <xacro:velodyne_lidar name="velodyne" parent_link="base_link">
         <origin xyz="0.0 0.0 0.4" rpy="0 0 3.1416" />
     </xacro:velodyne_lidar>
-
+    
     <gazebo reference="sensor_link">
         <material>Gazebo/Black</material>
         <sensor name="imu_sensor" type="imu">
