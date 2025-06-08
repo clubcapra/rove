@@ -13,7 +13,7 @@ ekf_filter_node_local:
         odom0_config: [false,  false,  false,
                        false, false, false,
                        true, true, false,
-                       false, false, true,
+                       false, false, false,
                        false, false, false]
                        
         imu0: /imu
@@ -27,7 +27,7 @@ ekf_filter_node_local:
         # Add ICP odometry as a new sensor input
         odom1: /icp_odom
         odom1_config: [true,  true,  false,
-                       false, false, false,
+                       false, false, true,
                        true, true, false,
                        false, false, true,
                        false, false, false]
@@ -50,12 +50,11 @@ ekf_filter_node_global:
                        false, false, false,
                        false, false, false]
                        
-        # imu0: /imu
         imu0: /imu
         imu0_config: [false,  false,  false, # x y z
                       false,  false,  true, # roll pitch yaw
                       false,  false,  false, # vx vy vz
-                      false,  false,  true, # vroll vpitch vyaw.
+                      false,  false,  true, # vroll vpitch vyaw
                       false, false, false] # ax ay az
         imu0_queue_size: 20
 
