@@ -14,12 +14,15 @@ def generate_launch_description():
 
     return LaunchDescription([
         IncludeLaunchDescription(
-            XMLLaunchDescriptionSource(rosbridge_launch_file)
+            XMLLaunchDescriptionSource(rosbridge_launch_file),
+            launch_arguments=[
+                ("include_hidden", "true"),
+            ],
         ),
         Node(
             package='rove_launch_handler',
             executable='launch_handler.py',
             name='launch_handler',
-            output='screen'
+            output='screen',
         )
     ])
