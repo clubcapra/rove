@@ -21,6 +21,7 @@ ament_target_dependencies(joy_remapper_node rclcpp sensor_msgs geometry_msgs con
 # Install executable
 install(TARGETS
   rove_controller_node
+  joy_remapper_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

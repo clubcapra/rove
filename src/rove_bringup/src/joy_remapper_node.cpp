@@ -1,192 +1,138 @@
 // rove_controller.cpp
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
-#include "geometry_msgs/msg/twist.hpp"
-#include "geometry_msgs/msg/twist_stamped.hpp"
-#include "std_msgs/msg/float64_multi_array.hpp"
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "control_msgs/action/gripper_command.hpp"
-
-using GripperCommand = control_msgs::action::GripperCommand;
-using GoalHandleGripperCommand = rclcpp_action::ClientGoalHandle<GripperCommand>;
-
-enum ControllerMode{
-    FLIPPER_MODE = 0,
-    ARM_MODE = 1,
-};
+#include <map>
 
 
-class RoveController : public rclcpp::Node {
+class JoyRemapper : public rclcpp::Node {
 public:
-    RoveController() : Node("rove_controller_node") {
+    JoyRemapper() : Node("joy_remapper_node") {
+
+        // From
         // Buttons
-        A = declare_parameter("A", 0);
-        B = declare_parameter("B", 1);
-        X = declare_parameter("X", 2);
-        Y = declare_parameter("Y", 3);
-        LB = declare_parameter("LB", 4);
-        RB = declare_parameter("RB", 5);
-        VIEW = declare_parameter("VIEW", 6);
-        MENU = declare_parameter("MENU", 7);
-        XBOX = declare_parameter("XBOX", 8);
-        LS = declare_parameter("LS", 9);
-        RS = declare_parameter("RS", 10);
-        SHARE = declare_parameter("SHARE", 11);
+        from.A = declare_parameter("A", 0);
+        from.B = declare_parameter("B", 1);
+        from.X = declare_parameter("X", 2);
+        from.Y = declare_parameter("Y", 3);
+        from.LB = declare_parameter("LB", 4);
+        from.RB = declare_parameter("RB", 5);
+        from.LT_BTN = declare_parameter("LT_BTN", 6);
+        from.RT_BTN = declare_parameter("RT_BTN", 7);
+        from.VIEW = declare_parameter("VIEW", 8);
+        from.MENU = declare_parameter("MENU", 9);
+        from.LS = declare_parameter("LS", 10);
+        from.RS = declare_parameter("RS", 11);
+        from.D_PAD_UP = declare_parameter("D_PAD_UP", 12);
+        from.D_PAD_DOWN = declare_parameter("D_PAD_DOWN", 13);
+        from.D_PAD_LEFT = declare_parameter("D_PAD_LEFT", 14);
+        from.D_PAD_RIGHT = declare_parameter("D_PAD_RIGHT", 15);
+        from.XBOX = declare_parameter("XBOX", 16);
+        from.SHARE = declare_parameter("SHARE", 17);
 
         // Axes
-        LS_X = declare_parameter("LS_X", 0);
-        LS_Y = declare_parameter("LS_Y", 1);
-        LT = declare_parameter("LT", 2);
-        RS_X = declare_parameter("RS_X", 3);
-        RS_Y = declare_parameter("RS_Y", 4);
-        RT = declare_parameter("RT", 5);
-        D_PAD_X = declare_parameter("D_PAD_X", 6);
-        D_PAD_Y = declare_parameter("D_PAD_Y", 7);
+        from.LS_X = declare_parameter("LS_X", 0);
+        from.LS_Y = declare_parameter("LS_Y", 1);
+        from.RS_X = declare_parameter("RS_X", 2);
+        from.RS_Y = declare_parameter("RS_Y", 3);
+
+        // To
+        // Buttons
+        to.A = declare_parameter("to.A", 0);
+        to.B = declare_parameter("to.B", 1);
+        to.X = declare_parameter("to.X", 2);
+        to.Y = declare_parameter("to.Y", 3);
+        to.LB = declare_parameter("to.LB", 4);
+        to.RB = declare_parameter("to.RB", 5);
+        to.VIEW = declare_parameter("to.VIEW", 6);
+        to.MENU = declare_parameter("to.MENU", 7);
+        to.XBOX = declare_parameter("to.XBOX", 8);
+        to.LS = declare_parameter("to.LS", 9);
+        to.RS = declare_parameter("to.RS", 10);
+        to.SHARE = declare_parameter("to.SHARE", 11);
+
+        // Axes
+        to.LS_X = declare_parameter("to.LS_X", 0);
+        to.LS_Y = declare_parameter("to.LS_Y", 1);
+        to.LT = declare_parameter("to.LT", 2);
+        to.RS_X = declare_parameter("to.RS_X", 3);
+        to.RS_Y = declare_parameter("to.RS_Y", 4);
+        to.RT = declare_parameter("to.RT", 5);
+        to.D_PAD_X = declare_parameter("to.D_PAD_X", 6);
+        to.D_PAD_Y = declare_parameter("to.D_PAD_Y", 7);
 
         // Subscribe to the joy topic
         joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
-            "/joy", 10, std::bind(&RoveController::joyCallback, this, std::placeholders::_1)
+            "/joy", 10, std::bind(&JoyRemapper::joyCallback, this, std::placeholders::_1)
         );
-        // cmd_vel_sub_ = create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 1, std::bind(&RoveController::cmdvelCallback, this, std::placeholders::_1));
 
-        joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/rove/joy", 1);
+        joy_pub_ = create_publisher<sensor_msgs::msg::Joy>("/joy_out", 1);
 
-        // auto x = create_wall_timer(
-        //     std::chrono::milliseconds(1000/20), std::bind(&RoveController::cmdvelTimerCallback, this, std::placeholders::_1)
-        // );
+        buttonsMap = {
+            {from.A, to.A},
+            {from.B, to.B},
+            {from.X, to.X},
+            {from.Y, to.Y},
+            {from.LB, to.LB},
+            {from.RB, to.RB},
+            {from.VIEW, to.VIEW},
+            {from.MENU, to.MENU},
+            {from.XBOX, to.XBOX},
+            {from.LS, to.LS},
+            {from.RS, to.RS},
+            {from.SHARE, to.SHARE},
+        };
 
-        previous_msg_ = sensor_msgs::msg::Joy();
-        previous_msg_.axes.resize(6, 0.0);
-        previous_msg_.buttons.resize(10, 0);
-
-        teleop_msg_ = sensor_msgs::msg::Joy();
-        teleop_msg_.axes.resize(2,0);
-        teleop_msg_.buttons.resize(1,0);
-
-        gripper_action_client_ = rclcpp_action::create_client<GripperCommand>(this, "/robotiq_gripper_controller/gripper_cmd");
-        
-        // Check if action server is available
-        if (!gripper_action_client_->wait_for_action_server(std::chrono::seconds(10))) {
-            RCLCPP_ERROR(get_logger(), "Action server not available after waiting");
-        }
-
-        // cmd_vel_msg_ = geometry_msgs::msg::Twist();
-        // cmd_vel_stamped_msg_ = geometry_msgs::msg::TwistStamped();
+        axesMap = {
+            {from.LS_X, to.LS_X},
+            {from.LS_Y, to.LS_Y},
+            {from.RS_X, to.RS_X},
+            {from.RS_Y, to.RS_Y},
+        };
     }
 
 private:
-    int A, B, X, Y, LB, RB, VIEW, MENU, XBOX, LS, RS, SHARE, LS_X, LS_Y, LT, RS_X, RS_Y, RT, D_PAD_X, D_PAD_Y;
-
-    int selected_mode = FLIPPER_MODE;
-
-    rclcpp_action::Client<GripperCommand>::SharedPtr gripper_action_client_;
-
-    void nextMode(){
-        selected_mode = (selected_mode + 1) % 2; // Number of modes
-        RCLCPP_INFO(get_logger(), "profil %i", selected_mode);
-    }
-
-    void common_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-        if (buttton_down(joy_msg, Y)){
-            nextMode();
-        }
-
-        if (buttton_down(joy_msg, B)){
-            gripper_opened_ = !gripper_opened_;
-            // position, effort
-            if(gripper_opened_){
-                sendGripperGoal(0.0, 10.0);
-            }
-            else{
-                sendGripperGoal(1.0, 10.0);
-            }
-        }
-
-        if(buttton_up(joy_msg, B)){
-            log("Common B up");
-        }
-    }
-
-    void arm_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-        log("Arm");
-        if(button_pressed(joy_msg, B)){
-            log("Arm B pressed");
-        }
-
-        if(buttton_up(joy_msg, X)){
-            log("Arm X up");
-        }
-
-        if(buttton_down(joy_msg, X)){
-            log("Arm X down");
-        }
-
-    }
-
-    void flipper_action(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-        log("Flipper...");
-        teleop_msg_.axes[0] = joy_msg->axes[LS_X];
-        teleop_msg_.axes[1] = joy_msg->axes[LS_Y];
-        teleop_msg_.buttons[0] = joy_msg->buttons[A];
-        joy_pub_->publish(teleop_msg_);
-    }
-
-    bool buttton_down(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
-        return previous_msg_.buttons[index] != curr_msg->buttons[index] && curr_msg->buttons[index] == 1;
-    }
-    bool buttton_up(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
-        return previous_msg_.buttons[index] != curr_msg->buttons[index] && curr_msg->buttons[index] == 0;
-    }
-    bool button_pressed(sensor_msgs::msg::Joy::SharedPtr curr_msg, int index){
-        return previous_msg_.buttons[index] == curr_msg->buttons[index] && curr_msg->buttons[index] == 1;
-    }
-
-    void log(const char *text){
-        static rclcpp::Clock clk{};
-        static const char* last = nullptr;
-        if (last == text) return;
-        last = text;
-        // RCLCPP_INFO_THROTTLE(get_logger(), clk, 2000, text);
-        RCLCPP_INFO(get_logger(), text);
-    }
+    struct FROM {
+        int A, B, X, Y, LB, RB, LT_BTN, RT_BTN, VIEW, MENU, LS, RS, D_PAD_UP, D_PAD_DOWN, D_PAD_LEFT, D_PAD_RIGHT, XBOX, SHARE;
+        int LS_X, LS_Y, RS_X, RS_Y;
+    };
+    struct TO {
+        int A, B, X, Y, LB, RB, VIEW, MENU, XBOX, LS, RS, SHARE;
+        int LS_X, LS_Y, LT, RS_X, RS_Y, RT, D_PAD_X, D_PAD_Y;
+    };
+    FROM from;
+    TO to;
+    std::map<int, int> buttonsMap{};
+    std::map<int, int> axesMap{};
 
     void joyCallback(const sensor_msgs::msg::Joy::SharedPtr joy_msg) {
-        common_action(joy_msg);
-        switch (selected_mode){
-            case ARM_MODE:
-                arm_action(joy_msg);
-                break;
-            case FLIPPER_MODE:
-                flipper_action(joy_msg);
-                break;
+        auto res = sensor_msgs::msg::Joy();
+        res.buttons.resize(12);
+        for (auto kv : buttonsMap) {
+            if (kv.first < joy_msg->buttons.size())
+                res.buttons[kv.second] = joy_msg->buttons[kv.first];
         }
 
-        previous_msg_ = *joy_msg;
-    }
+        res.axes.resize(8);
+        for (auto kv : axesMap) {
+            if (kv.first < joy_msg->axes.size())
+                res.axes[kv.second] = joy_msg->axes[kv.first];
+        }
 
-    void sendGripperGoal(double position, double max_effort) {
-        auto goal_msg = GripperCommand::Goal();
-        goal_msg.command.position = position;
-        goal_msg.command.max_effort = max_effort;
+        res.axes[to.D_PAD_X] = joy_msg->buttons[from.D_PAD_RIGHT] - joy_msg->buttons[from.D_PAD_LEFT];
+        res.axes[to.D_PAD_Y] = joy_msg->buttons[from.D_PAD_UP] - joy_msg->buttons[from.D_PAD_DOWN];
+        res.axes[to.LT] = 1 - (2 * joy_msg->buttons[from.LT_BTN]);
+        res.axes[to.RT] = 1 - (2 * joy_msg->buttons[from.RT_BTN]);
 
-        log("Sending goal");
-
-        gripper_action_client_->async_send_goal(goal_msg);
+        res.header = joy_msg->header;
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
-    // rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Joy>::SharedPtr joy_pub_;
-    sensor_msgs::msg::Joy previous_msg_; 
-    sensor_msgs::msg::Joy teleop_msg_;
-    // geometry_msgs::msg::Twist cmd_vel_msg_;
-    // geometry_msgs::msg::TwistStamped cmd_vel_stamped_msg_;
-    bool gripper_opened_ = true;
 };
 
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<RoveController>();
+    auto node = std::make_shared<JoyRemapper>();
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;

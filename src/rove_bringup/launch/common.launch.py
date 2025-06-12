@@ -83,7 +83,8 @@ def generate_launch_description():
 
     teleop = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
+            # os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
+            os.path.join(pkg_rove_bringup, "launch", "rove_controller_foxglove.launch.py"),
         ),
     )
 
