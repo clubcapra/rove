@@ -22,7 +22,7 @@ class RadiationPublisher(Node):
         
          """
         msg = Float32()
-        msg.data = 80.0 # à remplacer par la vraie valeur
+        msg.data = 100.0 # à remplacer par la vraie valeur
         self.publisher.publish(msg)
         #self.get_logger().info(f'Publishing radiation data: {msg.data}')
     
