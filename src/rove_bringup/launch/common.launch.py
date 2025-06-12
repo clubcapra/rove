@@ -104,7 +104,7 @@ def generate_launch_description():
       output='screen',
       parameters=[os.path.join(pkg_rove_bringup, 'config/twist_mux.yaml')],
       remappings={
-          ('/cmd_vel_out', '/diff_drive_controller/cmd_vel_unstamped')
+        #   ('/cmd_vel_out', '/diff_drive_controller/cmd_vel_unstamped')
       })
 
     return LaunchDescription([

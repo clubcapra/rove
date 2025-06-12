@@ -1,12 +1,14 @@
 [Unit]
-Descript=Robot launch script
+Description=Robot launch script
 After=network.target
 
 [Service]
-Environment="ROS_LOG_DIR=/tmp/log/ros2"
+User=rove
+Group=rove
+Environment="ROS_LOG_DIR=/var/log/ros2"
 Environment="ROS_DOMAIN_ID=96"
-ExecStart=/bin/bash -c 'source /media/SSD/stable/rove/install/setup.bash; ip link set can0 up type can bitrate 500000; ros2 launch rove_launch_handler launch_handler.launch.py;'
-ExecStop=ip link set can0 down
+ExecStart=/bin/bash -c 'source /media/SSD/stable/rove/install/setup.bash; ros2 launch rove_launch_handler launch_handler.launch.py;'
+ExecStop=sudo ip link set can0 down
 RemainAfterExit=no
 Restart=on-failure
 RestartSec=2s
