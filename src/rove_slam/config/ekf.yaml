@@ -9,12 +9,12 @@ ekf_filter_node_local:
         base_link_frame: base_link
         world_frame: odom
 
-        odom0: /odom
-        odom0_config: [false,  false,  false,
-                       false, false, false,
-                       true, true, false,
-                       false, false, true,
-                       false, false, false]
+        # odom0: /odom
+        # odom0_config: [false,  false,  false,
+        #                false, false, false,
+        #                true, true, false,
+        #                false, false, true,
+        #                false, false, false]
                        
         imu0: /imu
         imu0_config: [false,  false,  false, # x y z
@@ -25,8 +25,8 @@ ekf_filter_node_local:
         imu0_queue_size: 20
 
         # Add ICP odometry as a new sensor input
-        odom1: /icp_odom
-        odom1_config: [true,  true,  false,
+        odom0: /icp_odom
+        odom0_config: [true,  true,  false,
                        false, false, false,
                        true, true, false,
                        false, false, true,
@@ -43,12 +43,12 @@ ekf_filter_node_global:
         base_link_frame: base_link
         world_frame: gps
 
-        odom0: /odom
-        odom0_config: [true,  true,  false,
-                       false, false, false,
-                       true, true, false,
-                       false, false, false,
-                       false, false, false]
+        # odom0: /odom
+        # odom0_config: [true,  true,  false,
+        #                false, false, false,
+        #                true, true, false,
+        #                false, false, false,
+        #                false, false, false]
                        
         # imu0: /imu
         imu0: /imu
@@ -67,8 +67,8 @@ ekf_filter_node_global:
         # do not provide some of the state variables estimated by the filter. For example, a TwistWithCovarianceStamped message
         # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
         # if unspecified, effectively making this parameter required for each sensor.
-        odom1: /odometry/gps
-        odom1_config: [true,  true,  true,
+        odom0: /odometry/gps
+        odom0_config: [true,  true,  true,
                        false, false, false,
                        false, false, false,
                        false, false, false,
