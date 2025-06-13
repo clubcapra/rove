@@ -10,6 +10,7 @@ Rove is a robot developed by the Capra team at ÉTS, designed for advanced appli
       - [Windows Setup](#windows-setup)
       - [Linux Setup](#linux-setup)
     - [Native/WSL Installation](#nativewsl-installation)
+    - [Additionnal Tolls](#additionnal-tools)
   - [Running Rove](#running-rove)
     - [Simulation](#simulation)
     - [Real-World launch](#real-world-launch)
@@ -89,6 +90,33 @@ Requires Ubuntu 22.04 LTS.
    colcon build --symlink-install
    source install/setup.bash
    ```
+
+### Additionnal Tools
+referencing RTAB-MAP [github](https://github.com/introlab/rtabmap/wiki/Installation#ubuntu)
+installation
+```bash
+cd ~
+git clone https://github.com/introlab/rtabmap.git rtabmap
+cd rtabmap/build
+cmake ..
+make -j4
+sudo make install
+```
+
+vew database:
+```bash
+rtabmap-databaseViewer ~/.ros/rtabmap.db
+```
+
+export database
+```bash
+rtabmap-export --scan ~/.ros/rtabmap.db # ~/.ros/rtabmap_cloud.ply
+```
+
+open with meshlab:
+```bash
+meshlab ~/.ros/rtabmap_cloud.ply
+```
 
 ## Running Rove
 
