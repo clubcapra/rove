@@ -105,16 +105,16 @@ def generate_launch_description():
       output='screen',
       parameters=[os.path.join(pkg_rove_bringup, 'config/twist_mux.yaml')],
       remappings={
-        #   ('/cmd_vel_out', '/diff_drive_controller/cmd_vel_unstamped')
+          ('/cmd_vel_out', '/rove/cmd_vel')
       })
 
     return LaunchDescription([
             robot_state_publisher,
-            robot_localization_node_local,
+            # robot_localization_node_local,
             # robot_localization_node_global,
             # navsat_transform,
             twist_mux,
             #rviz,
             teleop,
-            autonomy,
+            # autonomy,
             ])

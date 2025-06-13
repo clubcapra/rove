@@ -5,6 +5,7 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 import os
 
+
 def generate_launch_description():
     rosbridge_launch_file = os.path.join(
         get_package_share_directory('foxglove_bridge'),

@@ -124,6 +124,7 @@ private:
         res.axes[to.RT] = 1 - (2 * joy_msg->buttons[from.RT_BTN]);
 
         res.header = joy_msg->header;
+        joy_pub_->publish(res);
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
