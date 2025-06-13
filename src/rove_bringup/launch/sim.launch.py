@@ -138,7 +138,7 @@ def generate_launch_description():
                 "use_sim_time": True,
             }
         ],
-        arguments=["--ros-args", "--log-level", "debug"],
+        arguments=["--ros-args"], # "--log-level", "debug"
         output="screen",
     )
 
