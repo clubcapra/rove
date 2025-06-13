@@ -1,0 +1,15 @@
+[Unit]
+Description=Robot launch script monitor
+After=network.target
+
+[Service]
+User=rove
+Group=rove
+Environment="ROS_DOMAIN_ID=96"
+ExecStart=/bin/bash -c 'source /media/SSD/stable/rove/install/setup.bash; /media/SSD/stable/rove/src/rove_launch_handler/scripts/roboguard_monitor.sh;'
+RemainAfterExit=no
+Restart=on-failure
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target
