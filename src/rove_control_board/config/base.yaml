@@ -1,4 +1,5 @@
 /rove_control_board:
   ros__parameters:
     channel: 'can0'
+    can_id: 1
     bitrate: 500000

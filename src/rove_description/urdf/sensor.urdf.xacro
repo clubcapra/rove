@@ -78,7 +78,7 @@
         </collision>
     </link>
     <xacro:velodyne_lidar name="velodyne" parent_link="base_link">
-        <origin xyz="0.0 0.0 0.4" rpy="0 0 3.1416" />
+        <origin xyz="0.0 0.0 0.4" rpy="0 0 -1.5707963" />
     </xacro:velodyne_lidar>
     
     <gazebo reference="sensor_link">
