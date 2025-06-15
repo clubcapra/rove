@@ -68,9 +68,10 @@ private:
 
         int start_y = static_cast<int>((height - crop_height) * requested_top_ / 100);
         int start_x = (width - crop_width) / 2 + (angle * width / 360);
+        start_x = start_x % width;
 
         cv::Mat requested_part;
-        if (start_x + requested_width_ <= width){
+        if (start_x + crop_width <= width){
             requested_part = cv::Mat(img, cv::Rect(start_x, start_y, crop_width, crop_height));
         }
         else{
@@ -82,7 +83,7 @@ private:
         // Resize using cv::Size
         cv::Mat resized;
         cv::resize(requested_part, resized, cv::Size(requested_width_, height));
-
+        
         return resized;
     }
 
