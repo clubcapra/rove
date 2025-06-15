@@ -1,0 +1,24 @@
+/usb_cam_node_exe:  
+    ros__parameters:
+      queue_size: 1
+      video_device: "/dev/backcamera"
+      framerate: 30.0
+      io_method: "mmap"
+      frame_id: "camera"
+      pixel_format: "mjpeg2rgb"  # see usb_cam/supported_formats for list of supported formats
+      av_device_format: "yuvj420p"
+      image_width: 1920
+      image_height: 1080
+      camera_name: "Back_Camera"
+      camera_info_url: "package://rove_insta_x4/config/back_camera_info.yaml"
+      brightness: -1
+      contrast: -1
+      saturation: -1
+      sharpness: -1
+      gain: -1
+      auto_white_balance: true
+      white_balance: 4000
+      autoexposure: true
+      exposure: 100
+      autofocus: true
+      focus: -1
