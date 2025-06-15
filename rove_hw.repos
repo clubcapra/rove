@@ -23,7 +23,3 @@ repositories:
     type: git
     url: https://github.com/tylerjw/serial.git
     version: ros2
-  capra_usb_cam:
-    type: git
-    url: https://github.com/clubcapra/capra_usb_cam.git
-    version: main

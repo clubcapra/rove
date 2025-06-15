@@ -8,8 +8,8 @@ def generate_launch_description():
     # Get params files
     
     wide = Node(
-        package='capra_usb_cam',
-        executable='capra_usb_cam_node_exe',
+        package='usb_cam',
+        executable='usb_cam_node_exe',
         name='usb_cam_node_exe',
         output='screen',
         parameters=[os.path.join(dir, 'config', 'x4_wide.yaml')],
@@ -23,8 +23,8 @@ def generate_launch_description():
     )
     
     # split = Node(
-    #     package='capra_usb_cam',
-    #     executable='capra_usb_cam_node_exe',
+    #     package='usb_cam',
+    #     executable='usb_cam_node_exe',
     #     name='usb_cam_node_exe',
     #     output='screen',
     #     parameters=[os.path.join(dir, 'config', 'x4_split.yaml')],
@@ -38,8 +38,8 @@ def generate_launch_description():
     # )
     
     back_camera = Node(
-        package='capra_usb_cam',
-        executable='capra_usb_cam_node_exe',
+        package='usb_cam',
+        executable='usb_cam_node_exe',
         name='usb_cam_node_exe',
         output='screen',
         parameters=[os.path.join(dir, 'config', 'back_camera.yaml')],
