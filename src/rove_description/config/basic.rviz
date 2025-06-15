@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /DepthCloud1/Auto Size1
-        - /RobotModel2/Status1
       Splitter Ratio: 0.5
     Tree Height: 325
   - Class: rviz_common/Selection
@@ -73,6 +72,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         flipper_rr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        friction_plate_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -193,8 +197,7 @@ Visualization Manager:
       Show Arrows: true
       Show Axes: true
       Show Names: false
-      Tree:
-        {}
+      Tree: {}
       Update Interval: 0
       Value: false
     - Alpha: 0.699999988079071
@@ -410,12 +413,14 @@ Visualization Manager:
         Value: /zed/zed_node/left/image_rect_color
       Value: true
       Visibility:
+        3D masks: true
         DepthCloud: true
         Grid: true
         Imu: true
         LaserScan: true
         Map: true
         MapCloud: true
+        Objection position: true
         Path: true
         PointStamped: true
         RobotModel: true
@@ -451,7 +456,7 @@ Visualization Manager:
       Color: 0; 255; 255
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 0
@@ -472,7 +477,7 @@ Visualization Manager:
         Value: /frontier_points
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
@@ -491,53 +496,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        ovis_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        ovis_end_effector:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        ovis_link_1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ovis_link_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ovis_link_3:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ovis_link_4:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ovis_link_5:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ovis_link_6:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ovis_link_base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Mass Properties:
         Inertia: false
         Mass: false
@@ -546,6 +504,74 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 0; 0
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 0; 0
+      Max Intensity: 0.2092139720916748
+      Min Color: 0; 0; 0
+      Min Intensity: 0.20315484702587128
+      Name: Objection position
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.30000001192092896
+      Style: Spheres
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /shepherd/object_positions
+      Use Fixed Frame: true
+      Use rainbow: false
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 0; 0
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 0; 0
+      Max Intensity: 0.2092139720916748
+      Min Color: 0; 0; 0
+      Min Intensity: 0.20315484702587128
+      Name: 3D masks
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.05000000074505806
+      Style: Spheres
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /shepherd/object_point_clouds
+      Use Fixed Frame: true
+      Use rainbow: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -592,25 +618,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.473262786865234
+      Distance: 6.400912284851074
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 2.4571151733398438
-        Y: -1.7171390056610107
-        Z: -1.659576654434204
+        X: -0.19593286514282227
+        Y: 0.8443164229393005
+        Z: 3.4472599029541016
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8547973036766052
+      Pitch: 0.9802020788192749
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.2836241722106934
+      Yaw: 2.9686474800109863
     Saved: ~
 Window Geometry:
   Camera:
@@ -630,5 +656,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1103
-  X: 817
-  Y: 109
+  X: 698
+  Y: 67

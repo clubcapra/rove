@@ -2,33 +2,64 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    SetEnvironmentVariable,
+)
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
+    # Declare launch arguments
+    declare_small_house_arg = DeclareLaunchArgument(
+        "small_house",
+        default_value="false",
+        description='Set to "true" to use the small house world.',
+    )
+
+    declare_with_ovis_arg = DeclareLaunchArgument(
+        "with_ovis",
+        default_value="false",
+        description='Set to "true" to use Ovis.',
+    )
+
     # Get the launch directory
     pkg_rove_bringup = get_package_share_directory("rove_bringup")
     pkg_rove_description = get_package_share_directory("rove_description")
     pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
     pkg_ovis = get_package_share_directory("ovis_bringup")
+    pkg_aws_house = get_package_share_directory("aws_robomaker_small_house_world")
 
     # Get simulation file
-    world_file_name = "worlds/base_world.world"
-    world = os.path.join(pkg_rove_description, world_file_name)
+    walls_file_path = os.path.join(pkg_rove_description, "worlds", "walls.sdf")
+    actor_file_path = os.path.join(pkg_rove_description, "worlds", "actor.sdf")
+    world_file_path = os.path.join(pkg_rove_description, "worlds", "base_world.world")
+    small_house_file_path = os.path.join(pkg_aws_house, "worlds", "small_house.world")
+
+    model_path = os.path.join(pkg_aws_house, "models")
 
     # Setup to launch the simulator and Gazebo world
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
         ),
-        launch_arguments={"gz_args": "-v 4 -r " + world}.items(),
+        launch_arguments={"gz_args": "-v 4 -r " + world_file_path}.items(),
+        condition=UnlessCondition(LaunchConfiguration("small_house")),
     )
 
-    walls_file_path = os.path.join(pkg_rove_description, "worlds", "walls.sdf")
+    gz_sim_house = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
+        launch_arguments={"gz_args": "-v 4 -r " + small_house_file_path}.items(),
+        condition=IfCondition(LaunchConfiguration("small_house")),
+    )
+
     spawn_walls = Node(
         package="ros_gz_sim",
         executable="create",
@@ -44,10 +75,10 @@ def generate_launch_description():
             "-z",
             "0",
         ],
+        condition=UnlessCondition(LaunchConfiguration("small_house")),
         output="screen",
     )
 
-    actor_file_path = os.path.join(pkg_rove_description, "worlds", "actor.sdf")
     spawn_actor = Node(
         package="ros_gz_sim",
         executable="create",
@@ -63,6 +94,7 @@ def generate_launch_description():
             "-z",
             "0.06",
         ],
+        condition=UnlessCondition(LaunchConfiguration("small_house")),
         output="screen",
     )
 
@@ -118,7 +150,6 @@ def generate_launch_description():
         }.items(),
     )
 
-
     ovis = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ovis, "launch", "sim.launch.py"),
@@ -126,15 +157,18 @@ def generate_launch_description():
         launch_arguments={
             "with_rove": "true",
             "with_joy": "false",
-            "ovis_base_origin": "0.22 0 0.34 0 0 3.14",
+            "ovis_base_origin": "0.22 0 0.38 0 0 3.14",
         }.items(),
+        condition=IfCondition(LaunchConfiguration("with_ovis")),
     )
-
-
 
     return LaunchDescription(
         [
+            SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", model_path),
+            declare_small_house_arg,
+            declare_with_ovis_arg,
             gz_sim,
+            gz_sim_house,
             bridge,
             spawn_walls,
             spawn_actor,
