@@ -5,6 +5,18 @@
 
 #include <capra_comm.h>
 
+enum RGBModeType : euint8_t
+{
+    RGB_MODE_STATIC = 0,
+    RGB_MODE_FADE2 = 1,
+    RGB_MODE_FADE3 = 2,
+    RGB_MODE_STRIPE = 3,
+    RGB_MODE_FLAG_3 = 4,
+    RGB_MODE_FLAG_5 = 5,
+    RGB_MODE_2_COLORS = 6,
+    RGB_MODE_3_COLORS = 7,
+};
+
 
 
 
@@ -69,21 +81,27 @@ struct Float
 };
 static_assert(sizeof(Float) == 4);
 
-struct RGB
+struct RGBLed
 {
     euint8_t r;
     euint8_t g;
     euint8_t b;
-    euint8_t pad0;
-};
-static_assert(sizeof(RGB) == 4);
-
-struct RGBLed
-{
-    RGB rgb;
     euint8_t index;
 };
-static_assert(sizeof(RGBLed) == 5);
+static_assert(sizeof(RGBLed) == 4);
+
+struct RGBPattern
+{
+    RGBModeType mode;
+    eint8_t spinRate;
+    eint8_t breateRate;
+    RGBLed color1;
+    RGBLed color2;
+    RGBLed color3;
+    RGBLed color4;
+    RGBLed color5;
+};
+static_assert(sizeof(RGBPattern) == 23);
 
 // --- COMMANDS ---
 Int ping(Int);
@@ -128,11 +146,8 @@ static_assert((sizeof(Void)+1) == 2);
 Bool_ setGPIO3(Bool_);
 static_assert((sizeof(Bool_)+1) == 2);
 
-RGB getRGBLed(Int);
-static_assert((sizeof(Int)+1) == 5);
-
-Bool_ setRGBLed(RGBLed);
-static_assert((sizeof(RGBLed)+1) == 6);
+Bool_ setRGBPattern(RGBPattern);
+static_assert((sizeof(RGBPattern)+1) == 24);
 
 static BaseFunction_ptr commands[] = {
     new Function<Int, Int>(&ping),
@@ -149,10 +164,9 @@ static BaseFunction_ptr commands[] = {
     new Function<Bool_, Bool_>(&setGPIO2),
     new Function<Bool_, Void>(&getGPIO3),
     new Function<Bool_, Bool_>(&setGPIO3),
-    new Function<RGB, Int>(&getRGBLed),
-    new Function<Bool_, RGBLed>(&setRGBLed),
+    new Function<Bool_, RGBPattern>(&setRGBPattern),
 };
-#define COMMANDS_COUNT 16
-#define MAX_DECODED_SIZE 9
-#define MAX_ENCODED_SIZE 13
-#define API_HASH 8296394150149560740UL
+#define COMMANDS_COUNT 15
+#define MAX_DECODED_SIZE 24
+#define MAX_ENCODED_SIZE 33
+#define API_HASH 4563500909845532811UL

@@ -1,13 +1,15 @@
 from io import IOBase, RawIOBase
-import io
-import os
-import sys
 import time
 from types import TracebackType
 from typing import Iterable, Literal, TypeAlias, Union
 import capra_micro_comm_py as comm
 import can
 import collections
+import sys
+sys.path.append(__file__.removesuffix(f"/{__file__.split('/')[-1]}"))
+from can_handler import CanHandler
+import rclpy
+import rclpy.logging
 
 Interface:TypeAlias = Literal[
     "kvaser",
@@ -34,8 +36,6 @@ Interface:TypeAlias = Literal[
     "etas",
     "socketcand",
 ]
-
-CANBUS_BITRATE = 500000
 
 class CanBusStream(RawIOBase, can.Listener):
     def __init__(self, bus:can.BusABC, maxLenth:int, notifier:can.Notifier, timeout:float=1, remoteID:int=0x103, localID:int=0x446):
@@ -292,9 +292,9 @@ class CanBusCommandManager(comm.CommandManager):
         
     def _default(self):
         if self._bitrate is None:
-            self._bitrate = CANBUS_BITRATE
+            self._bitrate = 500000
         if self._bus is None:
-            self._bus = can.Bus(self._channel, self._interface, bitrate=self._bitrate)
+            self._bus = CanHandler(rclpy.logging.get_logger('can_handler'))
         if self._notifier is None:
             self._notifier = can.Notifier(self._bus, [])
         

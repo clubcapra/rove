@@ -1,5 +1,4 @@
-from enum import Enum, Flag
-from typing import NoReturn
+from enum import Enum
 import capra_micro_comm_py as comm
 from rove_control_board.canutils import CanBusCommandManager, CanBusMockManager
 
@@ -7,20 +6,58 @@ from rove_control_board.canutils import CanBusCommandManager, CanBusMockManager
 manager = CanBusCommandManager()
 # manager = CanBusMockManager()
 
-@manager.struct('BBBx')
-class RGB(comm.BinaryData):
-    def __init__(self, r:int=0,g:int=0,b:int=0):
-        super().__init__(r=r,g=g,b=b)
+@manager.enum('B')
+class RGBModeType(Enum):
+    RGB_MODE_STATIC = 0
+    RGB_MODE_FADE2 = 1
+    RGB_MODE_FADE3 = 2
+    RGB_MODE_STRIPE = 3
+    RGB_MODE_FLAG_3 = 4
+    RGB_MODE_FLAG_5 = 5
+    RGB_MODE_2_COLORS = 6
+    RGB_MODE_3_COLORS = 7
+    
+        
+@manager.struct('BBBB')
+class RGBLed(comm.BinaryData):
+    def __init__(self, r:int=0, g:int=0, b:int=0, index:int=0):
+        super().__init__(r=r, g=g, b=b, index=index)
         self.r:int
         self.g:int
         self.b:int
-        
-@manager.struct('_B')
-class RGBLed(comm.BinaryData):
-    def __init__(self, rgb:RGB=RGB(), index:int=0):
-        super().__init__(rgb=rgb, index=index)
-        self.rgb:RGB
         self.index:int
+        
+@manager.struct('_BB_____')
+class RGBPattern(comm.BinaryData):
+    def __init__(
+        self,
+        mode:RGBModeType=RGBModeType.RGB_MODE_STATIC,
+        spinRate:int = 0,
+        breatheRate:int = 0,
+        color1:RGBLed = RGBLed(),
+        color2:RGBLed = RGBLed(),
+        color3:RGBLed = RGBLed(),
+        color4:RGBLed = RGBLed(),
+        color5:RGBLed = RGBLed()
+    ):
+        super().__init__(
+            mode=mode,
+            spinRate=spinRate,
+            breateRate=breatheRate,
+            color1=color1,
+            color2=color2,
+            color3=color3,
+            color4=color4,
+            color5=color5
+        )
+        self.mode:RGBModeType
+        self.spinRate:int
+        self.breatheRate:int
+        self.color1:RGBLed
+        self.color2:RGBLed
+        self.color3:RGBLed
+        self.color4:RGBLed
+        self.color5:RGBLed
         
 @manager.command(comm.Bool_, comm.Bool_)
 def setLEDFront(state:comm.Bool_) -> comm.Bool_:
@@ -70,12 +107,8 @@ def getGPIO3() -> comm.Bool_:
 def setGPIO3(state:comm.Bool_) -> comm.Bool_:
     pass
 
-@manager.command(comm.Int, RGB)
-def getRGBLed(index:comm.Int) -> RGB:
-    pass
-
-@manager.command(RGBLed, comm.Bool_)
-def setRGBLed(led:RGBLed) -> comm.Bool_:
+@manager.command(RGBPattern, comm.Bool_)
+def setRGBPattern(pattern:RGBPattern) -> comm.Bool_:
     pass
 
 # from enum import Enum, Flag

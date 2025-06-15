@@ -1,14 +1,4 @@
-rove_control_board:
-    ros_parameters:
-        tpv_x_step_count:
-            4096
-        tpv_x_min:
-            0
-        tpv_x_max:
-            360
-        tpv_y_step_count:
-            4096
-        tpv_y_min:
-            0
-        tpv_y_max:
-            90
+/rove_control_board:
+  ros__parameters:
+    channel: 'can0'
+    bitrate: 500000
