@@ -93,8 +93,8 @@ static_assert(sizeof(RGBLed) == 4);
 struct RGBPattern
 {
     RGBModeType mode;
-    eint8_t spinRate;
-    eint8_t breateRate;
+    euint8_t spinRate;
+    euint8_t breateRate;
     RGBLed color1;
     RGBLed color2;
     RGBLed color3;
@@ -169,4 +169,4 @@ static BaseFunction_ptr commands[] = {
 #define COMMANDS_COUNT 15
 #define MAX_DECODED_SIZE 24
 #define MAX_ENCODED_SIZE 33
-#define API_HASH 4563500909845532811UL
+#define API_HASH 9525383782417191012UL
