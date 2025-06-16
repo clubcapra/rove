@@ -9,6 +9,9 @@ from nav_msgs.msg import OccupancyGrid
 from visualization_msgs.msg import Marker
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
 
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.ndimage import gaussian_filter
 
 
 class RadiationPositionTracker(Node):
@@ -21,6 +24,13 @@ class RadiationPositionTracker(Node):
         map_qos = QoSProfile(depth=1, durability=QoSDurabilityPolicy.TRANSIENT_LOCAL, reliability=QoSReliabilityPolicy.RELIABLE)
         self.map_subscription = self.create_subscription(OccupancyGrid,'/map',self.map_callback, map_qos)
         
+        self.pose_subscription = self.create_subscription(
+            PoseWithCovarianceStamped,
+            '/amcl_pose',
+            self.localization_pose_callback,
+            QoSProfile(depth=10)
+        )
+
         #self.map_subscription  = self.create_subscription(OccupancyGrid, '/map', self.map_callback, 10)
         #self.get_logger().info("Subscribed to /map")
         marker_qos = QoSProfile(depth=100,durability=QoSDurabilityPolicy.TRANSIENT_LOCAL, reliability=QoSReliabilityPolicy.RELIABLE)
@@ -38,6 +48,7 @@ class RadiationPositionTracker(Node):
         self.current_position = Point(x=0.0, y=0.0, z=0.0)
         self.current_radiation = None
         self.map = None
+        self.obstacle_grid = None  
         self.marker_id = 0
 
         #test pour positions ecrasement donnée radiation
@@ -83,6 +94,7 @@ class RadiationPositionTracker(Node):
     def map_callback(self, msg):
         #self.get_logger().info("Map callback called")
         #self.get_logger().info(f"Received map with timestamp: {msg.header.stamp}")
+        self.obstacle_grid = msg
         if self.map is None: 
             #self.get_logger().info('self.map is NONE!!!!!')
             self.map = OccupancyGrid()
@@ -97,9 +109,10 @@ class RadiationPositionTracker(Node):
         #self.get_logger().info(f'Is Radiation none : {self.current_radiation is None}')
         if self.map is not None and self.current_radiation is not None :
             map_origin = self.map.info.origin.position
-            map_resolution = 0.1
-            #map_resolution = round(self.map.info.resolution, 4)
+            #map_resolution = 0.1
+            map_resolution = round(self.map.info.resolution, 4)
             map_width = self.map.info.width
+            map_height = self.map.info.height
             #self.get_logger().info(f"Map Resolution: {self.map.info.resolution}")
 
             grid_x = floor((self.current_position.x - map_origin.x)/map_resolution)
@@ -154,6 +167,81 @@ class RadiationPositionTracker(Node):
                 marker.color.a = 1.0  
 
                 self.marker_publisher.publish(marker)
+
+                self.get_logger().info(f"Obstacle Map Width: {self.obstacle_grid.info.width}")
+                self.get_logger().info(f"Radiation Map Width: {self.map.info.width}")
+                self.generate_and_save_image()
+    
+
+    
+    def generate_and_save_image(self):
+        og = self.obstacle_grid.info # OccupancyGrid obstacle
+        rg = self.map.info # OccupancyGrid radiation
+
+        #parfois les asserts sont faux donc ca crash... 
+        assert og.width == rg.width, "le Width des deux grilles est différent"
+        assert og.height == rg.height, "le Height des deux grilles différent"
+        assert np.isclose(og.resolution, rg.resolution), "la Resolution différente"
+
+        width = og.width
+        height = og.height
+
+        obstacle_data = np.array(self.obstacle_grid.data, dtype=np.int8).reshape((height, width))
+        radiation_data = np.array(self.map.data, dtype=np.int8).reshape((height, width))
+
+        image = np.full((height, width, 3), fill_value=0.85, dtype=np.float32)
+        obstacle_mask = (obstacle_data >= 50)  # revoir car je pourrais mettre ou ==100
+        image[obstacle_mask] = np.array([0.0, 0.0, 0.0], dtype=np.float32)
+
+        """ norm_map = np.zeros((height, width), dtype=np.float32)
+        valid_mask = (radiation_data >= 0)
+        norm_map[valid_mask] = radiation_data[valid_mask] / 100.0 """
+
+        measured_indices = np.argwhere(radiation_data > 0)
+        rayon = 1
+
+        cmap = plt.get_cmap('jet')
+        for (i, j) in measured_indices:
+            raw = int(radiation_data[i, j])
+            v   = raw / 100.0
+            if raw >= 100:
+                rgb = (1.0, 0.0, 0.0) #rouge pour quand radiation est a 100 %
+            else:
+                rgb = cmap(v)[:3] #sinon bleu a rouge
+
+            imin = max(i - rayon, 0)
+            imax = min(i + rayon, height - 1)
+            jmin = max(j - rayon, 0)
+            jmax = min(j + rayon, width  - 1)
+
+            image[imin:imax+1, jmin:jmax+1, :] = rgb
+
+
+        zoom = 2 #2×2 pixel par cellule
+        dpi  = 100
+
+        fig_w = (width  * zoom) / dpi  
+        fig_h = (height * zoom) / dpi  
+
+        fig, ax = plt.subplots(figsize=(fig_w, fig_h), dpi=dpi)
+
+        # Afficher limage 
+        ax.imshow(image, origin='lower', interpolation='nearest')
+
+         #Tracer la grille
+        ax.set_xticks(np.arange(-0.5, width, 1), minor=False)
+        ax.set_yticks(np.arange(-0.5, height, 1), minor=False)
+        ax.grid(which='both', color='black', linestyle='-', linewidth=0.2)
+
+        ax.axis('off')
+
+        # save le pdf
+        sortie = '/home/janice/radiation_map.pdf' #pt etre mettre ca en param en cli
+        fig.savefig(sortie, bbox_inches='tight', pad_inches=0)
+        plt.close(fig)
+
+        self.get_logger().info(f"le pdf se sauvegarde : {sortie} "
+                            f"(dimensions {fig_w*dpi:.0f}×{fig_h*dpi:.0f} pixel)")
 
 
 def main(args=None):
