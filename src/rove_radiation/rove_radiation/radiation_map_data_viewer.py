@@ -22,7 +22,7 @@ class RadiationMapDataViewer(Node):
         grid_2d = [data[i * width:(i + 1) * width] for i in range(height)]
 
         # Sauvegarde dans un fichier CSV
-        with open('/home/janice/radiation_map.csv', 'w', newline='') as f:
+        with open('../radiation_map.csv', 'w', newline='') as f:
             writer = csv.writer(f)
             for row in grid_2d:
                 writer.writerow(row)
