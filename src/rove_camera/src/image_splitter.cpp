@@ -21,7 +21,7 @@ public:
         zoom_subscription_ = this->create_subscription<std_msgs::msg::Float32>(
             "/requested_zoom", qos, std::bind(&ImageSplitter::zoom_callback, this, std::placeholders::_1));
 
-        publisher_requested_ = this->create_publisher<sensor_msgs::msg::CompressedImage>("/requested_image/compressed", qos);
+        publisher_requested_ = this->create_publisher<sensor_msgs::msg::CompressedImage>("/requested_image/compressed", 10);
     }
 
 private:

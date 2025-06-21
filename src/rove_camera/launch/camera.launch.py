@@ -61,9 +61,18 @@ def generate_launch_description():
             ('input_image/compressed', f'insta360/image_compressed'),
         ]
     )
+    
+    x4_stream = Node(
+        package='image2rtsp',
+        executable='image2rtsp',
+        name='image2rtsp',
+        output='screen',
+        parameters=[os.path.join(dir, 'config', 'x4_stream.yaml')]
+    )
 
     return LaunchDescription([
         wide,
         image_splitter,
         # back_camera,
+        x4_stream,
     ])
