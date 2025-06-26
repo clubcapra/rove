@@ -21,7 +21,12 @@ It publishes:
 ros2 launch rove_bringup sim.launch.py
 ```
 
-### 2. (Optional) Build after making code changes
+### 2. Launch the SLAM system
+```bash
+ros2 launch rove_slam slam2d.launch.py
+```
+
+### 3. (Optional) Build after making code changes
 ```bash
 
 colcon build --packages-select rove_radiation
@@ -29,7 +34,7 @@ colcon build --packages-select rove_radiation
 
 Run this if you modified any files in the rove_radiation package.
 
-### 3. Launch the radiation mapping
+### 4. Launch the radiation mapping
 
 ```bash
 ros2 launch rove_radiation radiation.launch.py max_intensity:=10.0
