@@ -16,7 +16,6 @@ def generate_launch_description():
     launch_file_path = os.path.join(pkg_rove_radiation, "radiacode_driver.launch.py")
     print(launch_file_path)
 
-
     max_intensity = LaunchConfiguration("max_intensity", default=10.0)
 
     return LaunchDescription(
@@ -34,8 +33,6 @@ def generate_launch_description():
                 name="radiation_map_data_viewer",
                 output="screen",
             ),
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(launch_file_path)
-            )
+            IncludeLaunchDescription(PythonLaunchDescriptionSource(launch_file_path)),
         ]
     )

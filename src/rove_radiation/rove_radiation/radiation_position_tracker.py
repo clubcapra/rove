@@ -51,14 +51,11 @@ class RadiationPositionTracker(Node):
         self.obstacle_grid = None
         self.initialized = False
 
-        
-
         self.create_timer(3, self.update_publish_map)
 
     def radiation_callback(self, msg):
         """Stocke la dernière valeur mesurée de radiation"""
         self.current_radiation = msg.data
-
 
     def localization_pose_callback(self, msg):
         """Met à jour la position du robot. Cette callback est utilisée pour Odometry ou AMCL selon votre configuration"""
@@ -66,20 +63,19 @@ class RadiationPositionTracker(Node):
         self.current_position.y = msg.pose.pose.position.y
         self.current_position.z = msg.pose.pose.position.z
 
-
     def map_callback(self, msg):
         """
-        Reçoit nouvelle carte SLAM (OccupancyGrid : self.obstacle_grid).  
+        Reçoit nouvelle carte SLAM (OccupancyGrid : self.obstacle_grid).
         - Conserve l'historique (au niveau des dimensions) de la carte de radiation au fur et à mesure que sa taille change
-        - Reconstruit la nouvelel données en recollant l'ancien contenu, initialise à une valeur de -1 ailleurs  
+        - Reconstruit la nouvelel données en recollant l'ancien contenu, initialise à une valeur de -1 ailleurs
         """
         # 1) mettre à jour l'obstacle_grid
         self.obstacle_grid = msg
 
         # 2)mémoriser l'ancienne taille et l'ancien data
         if self.map is not None:
-            old_w  = self.map.info.width
-            old_h  = self.map.info.height
+            old_w = self.map.info.width
+            old_h = self.map.info.height
             old_data = np.array(self.map.data, dtype=np.int8).reshape((old_h, old_w))
         else:
             old_w = old_h = 0
@@ -91,7 +87,7 @@ class RadiationPositionTracker(Node):
 
         # 4)Mise à jour systématique de taille, origine,resolution et header
         self.map.header = msg.header
-        self.map.info   = msg.info
+        self.map.info = msg.info
 
         # 5)Dimensions de la nouvelle grille
         new_w = msg.info.width
@@ -130,7 +126,6 @@ class RadiationPositionTracker(Node):
             grid_y = floor((self.current_position.y - map_origin.y) / map_resolution)
             grid_index = grid_y * map_width + grid_x
 
-            
             if 0 <= grid_index < len(self.map.data):
                 self.map.header.stamp = self.get_clock().now().to_msg()
                 self.map.data = list(self.map.data)
@@ -139,7 +134,6 @@ class RadiationPositionTracker(Node):
                 value = max(0, min(100, value))  # clamp entre [0, 100]
                 self.map.data[grid_index] = value
 
-                
                 self.radiation_map_publisher.publish(self.map)
 
                 self.generate_and_save_image()
@@ -160,15 +154,17 @@ class RadiationPositionTracker(Node):
         width = og.width
         height = og.height
 
-        obstacle_data = np.array(self.obstacle_grid.data, dtype=np.int8).reshape((height, width))
+        obstacle_data = np.array(self.obstacle_grid.data, dtype=np.int8).reshape(
+            (height, width)
+        )
         radiation_data = np.array(self.map.data, dtype=np.int8).reshape((height, width))
 
-        #fond gris clair + murs noirs
+        # fond gris clair + murs noirs
         image = np.full((height, width, 3), fill_value=0.85, dtype=np.float32)
-        obstacle_mask = obstacle_data >= 50  # revoir 
+        obstacle_mask = obstacle_data >= 50  # revoir
         image[obstacle_mask] = np.array([0.0, 0.0, 0.0], dtype=np.float32)
 
-        #coloration des cellules mesurées qui ont une valeur de radiation > 0
+        # coloration des cellules mesurées qui ont une valeur de radiation > 0
         measured_indices = np.argwhere(radiation_data > 0)
         rayon = 1
         cmap = plt.get_cmap("jet")
@@ -187,7 +183,7 @@ class RadiationPositionTracker(Node):
 
             image[imin : imax + 1, jmin : jmax + 1, :] = rgb
 
-        #config figure et grille
+        # config figure et grille
         zoom = 2  # 2×2 pixel par cellule
         dpi = 100
 
@@ -210,8 +206,6 @@ class RadiationPositionTracker(Node):
         sortie = "../radiation_map.pdf"  # pt etre mettre ca en param en cli
         fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
         plt.close(fig)
-
-
 
 
 def main(args=None):
