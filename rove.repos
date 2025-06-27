@@ -7,27 +7,15 @@ repositories:
     type: git
     url: https://github.com/clubcapra/ovis_ros2
     version: new-env-with-arm
-  ros_odrive:
+  gz_ros2_control:
     type: git
-    url: https://github.com/IliTheButterfly/ros_odrive.git
-    version: 0fa84d3745a8c385076d29b7f54971e9f2d14de7
-  vectornav:
+    url: https://github.com/clubcapra/gz_ros2_control.git
+    version: iron
+  aws_robomaker_small_house_world:
     type: git
-    url: https://github.com/dawonn/vectornav.git
-    version: ros2
-  zed_wrapper:
+    url: https://github.com/clubcapra/aws-robomaker-small-house-world.git
+    version: capra-fix
+  ros_gz:
     type: git
-    url: https://github.com/stereolabs/zed-ros2-wrapper.git
-    version: master
-  zed_wrapper/zed-ros2-interfaces:
-    type: git
-    url: https://github.com/stereolabs/zed-ros2-interfaces.git
-    version: main
-  ros2_robotiq_gripper:
-    type: git
-    url: https://github.com/PickNikRobotics/ros2_robotiq_gripper.git
-    version: main
-  serial:
-    type: git
-    url: https://github.com/tylerjw/serial.git
-    version: ros2
+    url: https://github.com/gazebosim/ros_gz
+    version: humble
