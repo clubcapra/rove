@@ -1,4 +1,5 @@
 from math import floor
+from typing import Optional
 
 import matplotlib
 import rclpy
@@ -53,9 +54,9 @@ class RadiationPositionTracker(Node):
         )
 
         self.current_position = Point(x=0.0, y=0.0, z=0.0)
-        self.current_radiation = None
-        self.map = None
-        self.obstacle_grid = None
+        self.current_radiation: Optional[float] = None
+        self.map: Optional[OccupancyGrid] = None
+        self.obstacle_grid: Optional[OccupancyGrid] = None
         self.initialized = False
 
         self.create_timer(3, self.update_publish_map)
@@ -144,10 +145,16 @@ class RadiationPositionTracker(Node):
                 value = max(0, min(100, value))  # clamp entre [0, 100]
                 self.map.data[grid_index] = value
 
-                self.radiation_map_publisher.publish(self.map)
                 
                 self.generate_and_save_image()
-                self.generate_heat_map()
+                normed = self.generate_heat_map()
+                
+                rad_map = OccupancyGrid()
+                rad_map.data = normed.flatten().tolist()
+                rad_map.header = self.map.header
+                rad_map.info = self.map.info
+                
+                self.radiation_map_publisher.publish(rad_map)
 
     def generate_heat_map(self):
         """
@@ -179,12 +186,12 @@ class RadiationPositionTracker(Node):
         for (i, j) in measured_indices:
             temp_map[...] = 0.0  # clear temp map
             temp_map[i, j] = radiation_data[i, j] / 100.0  # set only this one point
-            blurred = gaussian_filter(temp_map, sigma=8.0)
+            blurred = gaussian_filter(temp_map, sigma=20.0)
             heatmap = np.maximum(heatmap, blurred)  # combine without amplifying
 
 
         # Step 5: Smooth with Gaussian blur
-        heatmap = gaussian_filter(heatmap, sigma=8.0)
+        heatmap = gaussian_filter(heatmap, sigma=20.0)
 
         # Step 6: Normalize and apply colormap
         normed = np.clip(heatmap / np.max(heatmap), 0, 1) if np.max(heatmap) > 0 else heatmap
@@ -198,7 +205,7 @@ class RadiationPositionTracker(Node):
         fig, ax = plt.subplots(figsize=(10, 8))
 
         # Display image
-        im = ax.imshow(image)
+        # im = ax.imshow(image)
 
         # Add colorbar with same normalization
         norm = matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity)
@@ -210,8 +217,9 @@ class RadiationPositionTracker(Node):
         ax.set_yticks([])
 
         # Step 8: Save as PDF
-        plt.savefig("output/radiation_heatmap.pdf", bbox_inches='tight')
-        plt.close(fig)
+        # plt.savefig("output/radiation_heatmap.pdf", bbox_inches='tight')
+        # plt.close(fig)
+        return (normed * 100).astype(np.int8)
 
 
     def generate_and_save_image(self):
@@ -283,8 +291,8 @@ class RadiationPositionTracker(Node):
 
         # save le pdf
         sortie = "output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
-        fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
-        plt.close(fig)
+        # fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
+        # plt.close(fig)
 
     def send_point(self, x, y, radiation_level, frame='map'):
         msg = PointStamped()

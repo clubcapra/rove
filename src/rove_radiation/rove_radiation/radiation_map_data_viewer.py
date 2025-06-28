@@ -1,3 +1,5 @@
+import io
+import os
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import OccupancyGrid
@@ -19,10 +21,10 @@ class RadiationMapDataViewer(Node):
         grid_2d = [data[i * width : (i + 1) * width] for i in range(height)]
 
         # Sauvegarde dans un fichier CSV
-        with open("../radiation_map.csv", "w", newline="") as f:
-            writer = csv.writer(f)
-            for row in grid_2d:
-                writer.writerow(row)
+        # with open("../radiation_map.csv", "+w", newline="") as f:
+        #     writer = csv.writer(f)
+        #     for row in grid_2d:
+        #         writer.writerow(row)
 
 
 def main():
