@@ -1,4 +1,6 @@
 from math import floor
+
+import matplotlib
 import rclpy
 import time
 from rclpy.node import Node
@@ -12,7 +14,7 @@ from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
-
+import matplotlib.cm as cm
 
 class RadiationPositionTracker(Node):
     def __init__(self):
@@ -56,6 +58,8 @@ class RadiationPositionTracker(Node):
     def radiation_callback(self, msg):
         """Stocke la dernière valeur mesurée de radiation"""
         self.current_radiation = msg.data
+        if self.current_radiation > self.max_intensity: 
+            self.max_intensity = self.current_radiation
 
     def localization_pose_callback(self, msg):
         """Met à jour la position du robot. Cette callback est utilisée pour Odometry ou AMCL selon votre configuration"""
@@ -135,8 +139,74 @@ class RadiationPositionTracker(Node):
                 self.map.data[grid_index] = value
 
                 self.radiation_map_publisher.publish(self.map)
-
+                
                 self.generate_and_save_image()
+                self.generate_heat_map()
+
+    def generate_heat_map(self):
+        """
+        Génère une image PDF des readings de la radiation dans une carte 2D heatmap et une légende, 
+        similaire à generate_and_save_image(), sauf qu'un blur gaussien est effectué pour améliorer 
+        visuellement le résultat final
+        """
+        og = self.obstacle_grid.info  # OccupancyGrid obstacle
+        rg = self.map.info  # OccupancyGrid radiation
+
+        # Step 1: Grid setup
+        width = og.width
+        height = og.height
+
+        obstacle_data = np.array(self.obstacle_grid.data, dtype=np.int8).reshape((height, width))
+        radiation_data = np.array(self.map.data, dtype=np.int8).reshape((height, width))
+
+        # Step 2: Base image: light gray
+        image = np.full((height, width, 3), fill_value=0.85, dtype=np.float32)
+        obstacle_mask = obstacle_data >= 50
+        image[obstacle_mask] = np.array([0.0, 0.0, 0.0], dtype=np.float32)
+
+        # Step 3: Generate empty heatmap grid
+        heatmap = np.zeros((height, width), dtype=np.float32)
+        temp_map = np.zeros((height, width), dtype=np.float32)
+
+        # Step 4: Populate heatmap based on radiation points
+        measured_indices = np.argwhere(radiation_data > 0)
+        for (i, j) in measured_indices:
+            temp_map[...] = 0.0  # clear temp map
+            temp_map[i, j] = radiation_data[i, j] / 100.0  # set only this one point
+            blurred = gaussian_filter(temp_map, sigma=8.0)
+            heatmap = np.maximum(heatmap, blurred)  # combine without amplifying
+
+
+        # Step 5: Smooth with Gaussian blur
+        heatmap = gaussian_filter(heatmap, sigma=8.0)
+
+        # Step 6: Normalize and apply colormap
+        normed = np.clip(heatmap / np.max(heatmap), 0, 1) if np.max(heatmap) > 0 else heatmap
+        colored_heatmap = cm.jet(normed)[..., :3]  # Drop alpha
+
+        # Step 7: Overlay heatmap onto base image (blend)
+        alpha = 0.6  # blending factor
+        image = (1 - alpha) * image + alpha * colored_heatmap
+
+        # === Save with sidebar ===
+        fig, ax = plt.subplots(figsize=(10, 8))
+
+        # Display image
+        im = ax.imshow(image)
+
+        # Add colorbar with same normalization
+        norm = matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity)
+        cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap='jet'), ax=ax)
+        cbar.set_label("Radiation intensity", fontsize=12)
+
+        # Remove axes ticks if desired
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+        # Step 8: Save as PDF
+        plt.savefig("../output/radiation_heatmap.pdf", bbox_inches='tight')
+        plt.close()
+
 
     def generate_and_save_image(self):
         """
@@ -166,7 +236,7 @@ class RadiationPositionTracker(Node):
 
         # coloration des cellules mesurées qui ont une valeur de radiation > 0
         measured_indices = np.argwhere(radiation_data > 0)
-        rayon = 1
+        rayon = 3
         cmap = plt.get_cmap("jet")
         for (i, j) in measured_indices:
             raw = int(radiation_data[i, j])
@@ -182,7 +252,9 @@ class RadiationPositionTracker(Node):
             jmax = min(j + rayon, width - 1)
 
             image[imin : imax + 1, jmin : jmax + 1, :] = rgb
-
+        # self.get_logger().info(str(radiation_data))
+        # heatmap, xedges, yedges = np.histogram2d(measured_indices[:,0],measured_indices[:,1], bins=(width, height))
+        # extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
         # config figure et grille
         zoom = 2  # 2×2 pixel par cellule
         dpi = 100
@@ -193,7 +265,8 @@ class RadiationPositionTracker(Node):
         fig, ax = plt.subplots(figsize=(fig_w, fig_h), dpi=dpi)
 
         # Afficher limage
-        ax.imshow(image, origin="lower", interpolation="nearest")
+        ax.imshow(image, origin="lower", cmap='hot', interpolation="nearest")
+        # ax.imshow(heatmap.T, extent=extent, origin="lower")
 
         # Tracer la grille
         ax.set_xticks(np.arange(-0.5, width, 1), minor=False)
@@ -203,7 +276,7 @@ class RadiationPositionTracker(Node):
         ax.axis("off")
 
         # save le pdf
-        sortie = "../radiation_map.pdf"  # pt etre mettre ca en param en cli
+        sortie = "../output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
         fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
         plt.close(fig)
 
