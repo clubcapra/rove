@@ -15,6 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 import matplotlib.cm as cm
+from geometry_msgs.msg import PointStamped
 
 class RadiationPositionTracker(Node):
     def __init__(self):
@@ -35,6 +36,10 @@ class RadiationPositionTracker(Node):
         self.map_subscription = self.create_subscription(
             OccupancyGrid, "/map", self.map_callback, map_qos
         )
+        self.cost_map_subscription = self.create_subscription(
+            OccupancyGrid, "/map", self.map_callback, map_qos
+        )
+        self.pub = self.create_publisher(PointStamped, 'radiation_points', 10)
 
         self.marker_publisher = self.create_publisher(Marker, "/radiation_marker", 10)
 
@@ -60,6 +65,7 @@ class RadiationPositionTracker(Node):
         self.current_radiation = msg.data
         if self.current_radiation > self.max_intensity: 
             self.max_intensity = self.current_radiation
+        self.send_point(self.current_position.x, self.current_position.y, self.current_radiation)
 
     def localization_pose_callback(self, msg):
         """Met à jour la position du robot. Cette callback est utilisée pour Odometry ou AMCL selon votre configuration"""
@@ -204,8 +210,8 @@ class RadiationPositionTracker(Node):
         ax.set_yticks([])
 
         # Step 8: Save as PDF
-        plt.savefig("../output/radiation_heatmap.pdf", bbox_inches='tight')
-        plt.close()
+        plt.savefig("output/radiation_heatmap.pdf", bbox_inches='tight')
+        plt.close(fig)
 
 
     def generate_and_save_image(self):
@@ -276,10 +282,19 @@ class RadiationPositionTracker(Node):
         ax.axis("off")
 
         # save le pdf
-        sortie = "../output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
+        sortie = "output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
         fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
         plt.close(fig)
 
+    def send_point(self, x, y, radiation_level, frame='map'):
+        msg = PointStamped()
+        msg.header.frame_id = frame
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.point.x = x
+        msg.point.y = y
+        msg.point.z = radiation_level
+        self.pub.publish(msg)
+        self.get_logger().info(f'Published radiation point at ({x:.2f}, {y:.2f})')
 
 def main(args=None):
     rclpy.init(args=args)

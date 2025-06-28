@@ -3,7 +3,6 @@ from rclpy.node import Node
 from nav_msgs.msg import OccupancyGrid
 import csv
 
-
 class RadiationMapDataViewer(Node):
     def __init__(self):
         super().__init__("radiation_map_data_viewer")
@@ -24,8 +23,6 @@ class RadiationMapDataViewer(Node):
             writer = csv.writer(f)
             for row in grid_2d:
                 writer.writerow(row)
-
-        # self.get_logger().info('Radiation map enregistré dans fichier radiation_map.csv')
 
 
 def main():
