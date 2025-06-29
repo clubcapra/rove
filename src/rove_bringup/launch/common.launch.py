@@ -30,9 +30,7 @@ def generate_launch_description():
         output="both",
         parameters=[
             {"robot_description": robot_desc},
-            {
-                "use_sim_time": use_sim_time,
-            },
+            {"use_sim_time": use_sim_time},
         ],
     )
 
@@ -111,15 +109,9 @@ def generate_launch_description():
         executable="twist_mux",
         output="screen",
         parameters=[os.path.join(pkg_rove_bringup, "config/twist_mux.yaml")],
-        remappings={("/cmd_vel_out", "/rove/cmd_vel")},
-    )
-
-    twist_mux = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        output="screen",
-        parameters=[os.path.join(pkg_rove_bringup, "config/twist_mux.yaml")],
-        remappings={("/cmd_vel_out", "/diff_drive_controller/cmd_vel_unstamped")},
+        remappings={
+            ("/cmd_vel_out", "/rove/cmd_vel"),
+        },
     )
 
     return LaunchDescription(

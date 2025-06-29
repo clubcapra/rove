@@ -7,10 +7,10 @@ repositories:
     type: git
     url: https://github.com/clubcapra/ovis_ros2
     version: new-env-with-arm
-  ros_odrive:
+  gz_ros2_control:
     type: git
     url: https://github.com/clubcapra/gz_ros2_control.git
-    version: iron
+    version: humble
   aws_robomaker_small_house_world:
     type: git
     url: https://github.com/clubcapra/aws-robomaker-small-house-world.git
