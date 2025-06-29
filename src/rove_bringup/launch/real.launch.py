@@ -150,13 +150,13 @@ def generate_launch_description():
     return LaunchDescription(
         [
             common,
-            joint_state_broadcaster_spawner,
-            *delayed_controller_nodes,
-            control_node,
+            # joint_state_broadcaster_spawner,
+            # *delayed_controller_nodes,
+            # control_node,
             # TimerAction(period=20.0, actions=[
             # gripper,
-            # vectornav,
-            # velodyne,
+            vectornav,
+            velodyne,
             # zed,
             # ]),
         ]
