@@ -6,4 +6,4 @@ repositories:
   zed_wrapper/zed-ros2-interfaces:
     type: git
     url: https://github.com/stereolabs/zed-ros2-interfaces.git
-    version: main
+    version: master

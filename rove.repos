@@ -3,9 +3,13 @@ repositories:
     type: git
     url: https://github.com/clubcapra/aws-robomaker-small-house-world.git
     version: capra-fix
+  capra_control_msgs:
+    type: git
+    url: https://github.com/clubcapra/capra_control_msgs.git
+    version: master
   capra_pose_tracking:
     type: git
-    url: https://github.com/clubcapra/capra-pose-tracking
+    url: https://github.com/clubcapra/capra-pose-tracking.git
     version: master
   control_msgs:
     type: git
@@ -14,12 +18,12 @@ repositories:
   gz_ros2_control:
     type: git
     url: https://github.com/clubcapra/gz_ros2_control.git
-    version: humble
+    version: iron
   ros2_control:
     type: git
     url: https://github.com/ros-controls/ros2_control.git
     version: humble
   ros_gz:
     type: git
-    url: https://github.com/gazebosim/ros_gz
+    url: https://github.com/gazebosim/ros_gz.git
     version: humble
