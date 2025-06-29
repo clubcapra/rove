@@ -168,7 +168,7 @@ ros2 launch robotiq_description view_gripper.launch.py
 
 2. Or launch manually:
    ```bash
-   ros2 launch rove_launch_handler launch_handler.py
+   ros2 launch rove_launch_handler launch_handler.launch.py
    ```
 
 Configuration file location: `utils/ui/capra_ui.json`
