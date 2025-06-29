@@ -23,7 +23,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="https://raw.githubusercontent.com/clubcapra/rove/main/src/rove_description/meshes/base.stl"/>
+                <mesh filename="file://$(find rove_description)/meshes/base.stl"/>
             </geometry>
             <material name="frame_color"/>
         </visual>
