@@ -89,7 +89,9 @@ def generate_launch_description():
     teleop = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             # os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
-            os.path.join(pkg_rove_bringup, "launch", "rove_controller_foxglove.launch.py"),
+            os.path.join(
+                pkg_rove_bringup, "launch", "rove_controller_foxglove.launch.py"
+            ),
         ),
     )
 
@@ -103,15 +105,14 @@ def generate_launch_description():
             "use_slam3d": "true",
         }.items(),
     )
-    
+
     twist_mux = Node(
-      package='twist_mux',
-      executable='twist_mux',
-      output='screen',
-      parameters=[os.path.join(pkg_rove_bringup, 'config/twist_mux.yaml')],
-      remappings={
-          ('/cmd_vel_out', '/rove/cmd_vel')
-      })
+        package="twist_mux",
+        executable="twist_mux",
+        output="screen",
+        parameters=[os.path.join(pkg_rove_bringup, "config/twist_mux.yaml")],
+        remappings={("/cmd_vel_out", "/rove/cmd_vel")},
+    )
 
     twist_mux = Node(
         package="twist_mux",
@@ -128,7 +129,7 @@ def generate_launch_description():
             # robot_localization_node_global,
             # navsat_transform,
             twist_mux,
-            #rviz,
+            # rviz,
             teleop,
             autonomy,
         ]

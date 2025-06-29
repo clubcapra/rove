@@ -16,7 +16,6 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
 # Node to handle when the robot loses connection with internet, stores waypoints to fall back to to try to get back connection
 class LostNetworkFallback(Node):
-
     def __init__(self):
         self.DISTANCE_BETWEEN_FALLBACKS = 0.2  # meters
         self.NB_MAX_FAILED_CONNS = 5
