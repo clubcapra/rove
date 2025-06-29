@@ -20,14 +20,16 @@
       },
       "foxglovePanelTitle": "Battery Level"
     },
-    "Publish!1b7sy1a": {
-      "buttonText": "Front LED ON",
-      "buttonTooltip": "",
-      "advancedView": false,
-      "value": "{\n  \"linear\": {\n    \"x\": 0,\n    \"y\": 0,\n    \"z\": 0\n  },\n  \"angular\": {\n    \"x\": 0,\n    \"y\": 0,\n    \"z\": 0\n  }\n}",
-      "foxglovePanelTitle": "Front LED ON",
-      "topicName": "/cmd_vel.linear.x",
-      "datatype": "geometry_msgs/msg/Twist"
+    "CallService!1rkdql5": {
+      "requestPayload": "{\"data\" : false }",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "foxglovePanelTitle": "Reset over current",
+      "serviceName": "ack_peak_current",
+      "buttonColor": "#fefe30",
+      "editingMode": false,
+      "buttonText": "Ack Over Current",
+      "buttonTooltip": "Acknoledge peak current error"
     },
     "Indicator!4gm9084": {
       "path": "/RoboGuard/estop_bt.data",
@@ -59,12 +61,20 @@
         }
       ]
     },
-    "Publish!2vkw4zk": {
-      "buttonText": "Back LED ON",
-      "buttonTooltip": "",
-      "advancedView": false,
-      "value": "{}",
-      "foxglovePanelTitle": "Back LED ON"
+    "Indicator!1i0gn4l": {
+      "path": "over_current.data",
+      "style": "background",
+      "fontSize": 10,
+      "fallbackColor": "#00ff15",
+      "fallbackLabel": "Current OK",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#ff0000",
+          "label": "Over Current"
+        }
+      ]
     },
     "Indicator!52bgsl": {
       "path": "/estop.data",
@@ -81,7 +91,7 @@
         }
       ]
     },
-    "Image!3qxgyue": {
+    "Image!36h2dmv": {
       "cameraState": {
         "distance": 20,
         "perspective": true,
@@ -121,10 +131,7 @@
         "poseEstimateYDeviation": 0.5,
         "poseEstimateThetaDeviation": 0.26179939
       },
-      "imageMode": {
-        "imageTopic": "/zed/zed_node/rgb/image_rect_color",
-        "calibrationTopic": "/zed/zed_node/depth/camera_info"
-      }
+      "imageMode": {}
     },
     "Image!2smenht": {
       "cameraState": {
@@ -173,7 +180,8 @@
     },
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
-      "selectedHardwareId": "write_loop"
+      "selectedHardwareId": "odrive_node_21",
+      "selectedName": "track_fl_j"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -181,6 +189,65 @@
       "hardwareIdFilter": "",
       "topicToRender": "/diagnostics",
       "sortByLevel": true
+    },
+    "RosOut!16p6li0": {
+      "searchTerms": [],
+      "minLogLevel": 1,
+      "nameFilter": {}
+    },
+    "Plot!37cxows": {
+      "paths": [
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.effort[0]",
+          "enabled": true,
+          "color": "#4e98e2",
+          "label": "flipper_fl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.effort[1]",
+          "enabled": true,
+          "color": "#f5774d",
+          "label": "flipper_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.effort[2]",
+          "enabled": true,
+          "color": "#f7df71",
+          "label": "track_fl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.effort[3]",
+          "enabled": true,
+          "color": "#5cd6a9",
+          "label": "track_rl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.effort[4]",
+          "enabled": true,
+          "color": "#61cbff",
+          "label": "track_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.effort[5]",
+          "enabled": true,
+          "color": "#a395e2",
+          "label": "track_rr"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240
     },
     "Joystick Panel.Joystick!4cyq4bd": {
       "foxglovePanelTitle": "Gamepad",
@@ -335,18 +402,20 @@
         "poseEstimateYDeviation": 0.5,
         "poseEstimateThetaDeviation": 0.26179939
       },
-      "imageMode": {}
+      "imageMode": {
+        "imageTopic": "/green_person_bounding_box"
+      }
     },
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 4.2927752788386435,
-        "phi": 54.44990509724666,
-        "thetaOffset": 116.09279254340281,
+        "distance": 3.9778689060056878,
+        "phi": 35.430637256821406,
+        "thetaOffset": 13.073449965882581,
         "targetOffset": [
-          -0.7615092299368544,
-          0.2285453624404468,
-          6.954899124612145e-16
+          -0.28508452800413125,
+          -0.04889261274523319,
+          8.543553254624711e-16
         ],
         "target": [
           0,
@@ -432,8 +501,9 @@
           "colorMode": "colormap",
           "colorMap": "turbo",
           "flatColor": "#ff0000ff",
-          "pointSize": 2,
-          "explicitAlpha": 1
+          "pointSize": 5,
+          "explicitAlpha": 1,
+          "pointShape": "circle"
         },
         "/robot_description": {
           "visible": false
@@ -442,10 +512,13 @@
           "visible": false,
           "colorField": "intensity",
           "colorMode": "colormap",
-          "colorMap": "turbo"
+          "colorMap": "turbo",
+          "explicitAlpha": 1
         },
         "/map": {
-          "visible": true
+          "visible": true,
+          "drawBehind": false,
+          "colorMode": "custom"
         },
         "/octomap_grid": {
           "visible": false
@@ -460,17 +533,18 @@
           "visible": false,
           "colorField": "rgb",
           "colorMode": "rgb",
-          "colorMap": "turbo"
+          "colorMap": "turbo",
+          "pointSize": 10.51
         },
         "/cloud_map": {
-          "visible": true,
+          "visible": false,
           "colorField": "rgb",
           "colorMode": "flat",
           "colorMap": "turbo",
           "stixelsEnabled": false,
           "pointShape": "square",
           "flatColor": "#0006ff82",
-          "pointSize": 1
+          "pointSize": 13.88
         },
         "/cost_cloud": {
           "visible": false
@@ -494,7 +568,11 @@
           "visible": false
         },
         "/cloud_obstacles": {
-          "visible": false
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo",
+          "pointSize": 10.44
         },
         "/camera/depth/color/points": {
           "visible": false
@@ -533,6 +611,64 @@
           "visible": true
         },
         "/set_pose": {
+          "visible": false
+        },
+        "/goal_pose": {
+          "visible": false
+        },
+        "/octomap_empty_space": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo",
+          "pointSize": 15.4
+        },
+        "/octomap_global_frontier_space": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo",
+          "pointSize": 0.54
+        },
+        "/odom_filtered_input_scan": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo",
+          "pointSize": 9.32
+        },
+        "/odom_local_map": {
+          "visible": false
+        },
+        "/velodyne_packets": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/local_grid_obstacle": {
+          "visible": false,
+          "colorField": "z",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/localization_pose": {
+          "visible": false
+        },
+        "/octomap_occupied_space": {
+          "visible": false,
+          "colorField": "rgb",
+          "colorMode": "rgb",
+          "colorMap": "turbo",
+          "pointSize": 7.87
+        },
+        "/odom_local_scan_map": {
+          "visible": false,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
+        },
+        "/vectornav/pose": {
           "visible": false
         }
       },
@@ -807,20 +943,19 @@
                 "splitPercentage": 49.99744702578504
               },
               "second": {
-                "first": "Publish!1b7sy1a",
+                "first": "CallService!1rkdql5",
                 "second": {
                   "first": "Indicator!4gm9084",
                   "second": "Indicator!yfjylf",
                   "direction": "column"
                 },
-                "direction": "column",
-                "splitPercentage": 49.99744702578504
+                "direction": "column"
               },
               "direction": "row",
-              "splitPercentage": 59.45945945945946
+              "splitPercentage": 48.23955358460312
             },
             "second": {
-              "first": "Publish!2vkw4zk",
+              "first": "Indicator!1i0gn4l",
               "second": "Indicator!52bgsl",
               "direction": "column"
             },
@@ -834,12 +969,12 @@
       ]
     },
     "Tab!2clm2nl": {
-      "activeTabIdx": 1,
+      "activeTabIdx": 0,
       "tabs": [
         {
           "title": "Camera",
           "layout": {
-            "first": "Image!3qxgyue",
+            "first": "Image!36h2dmv",
             "second": "Image!2smenht",
             "direction": "row"
           }
@@ -851,6 +986,14 @@
             "second": "DiagnosticSummary!120zsba",
             "direction": "row"
           }
+        },
+        {
+          "title": "Logs",
+          "layout": "RosOut!16p6li0"
+        },
+        {
+          "title": "Currents",
+          "layout": "Plot!37cxows"
         }
       ]
     },
@@ -895,7 +1038,7 @@
                   "splitPercentage": 48.66220735785953
                 },
                 "direction": "row",
-                "splitPercentage": 76.66227107369984
+                "splitPercentage": 76.34516149783803
               },
               "direction": "row",
               "splitPercentage": 22.561529751795238
@@ -967,6 +1110,6 @@
     },
     "second": "Tab!1dud6cr",
     "direction": "column",
-    "splitPercentage": 33.33333333333333
+    "splitPercentage": 34.54356846473029
   }
 }

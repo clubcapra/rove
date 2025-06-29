@@ -11,11 +11,11 @@ import sensor_msgs_py.point_cloud2 as pc2
 
 class FrontierExploration(Node):
     def __init__(self):
-        super().__init__('frontier_exploration_node')
+        super().__init__("frontier_exploration_node")
         self.map_subscription = self.create_subscription(
-            OccupancyGrid, 'map', self.map_callback, 10)
-        self.frontier_pub = self.create_publisher(
-            PointCloud2, 'frontier_points', 10)
+            OccupancyGrid, "map", self.map_callback, 10
+        )
+        self.frontier_pub = self.create_publisher(PointCloud2, "frontier_points", 10)
 
         self.map_data = None
         self.map_lock = Lock()
@@ -34,12 +34,13 @@ class FrontierExploration(Node):
             largest_frontier = max(frontiers, key=len)
             self.publish_frontier(largest_frontier)
         else:
-            self.get_logger().info('No frontiers detected.')
+            self.get_logger().info("No frontiers detected.")
 
     def find_frontiers(self):
         with self.map_lock:
             map_array = np.array(self.map_data.data).reshape(
-                (self.map_data.info.height, self.map_data.info.width))
+                (self.map_data.info.height, self.map_data.info.width)
+            )
 
         frontiers = []
         visited = np.zeros_like(map_array, dtype=bool)
@@ -56,10 +57,21 @@ class FrontierExploration(Node):
                         if visited[py, px]:
                             continue
                         visited[py, px] = True
-                        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # 4-connectivity
+                        for dx, dy in [
+                            (-1, 0),
+                            (1, 0),
+                            (0, -1),
+                            (0, 1),
+                        ]:  # 4-connectivity
                             nx, ny = px + dx, py + dy
-                            if 0 <= nx < map_array.shape[1] and 0 <= ny < map_array.shape[0]:
-                                if map_array[ny, nx] == -1 and not frontier_flag[ny, nx]:  # Unknown space
+                            if (
+                                0 <= nx < map_array.shape[1]
+                                and 0 <= ny < map_array.shape[0]
+                            ):
+                                if (
+                                    map_array[ny, nx] == -1
+                                    and not frontier_flag[ny, nx]
+                                ):  # Unknown space
                                     frontier_flag[ny, nx] = True
                                     new_frontier.append((nx, ny))
                                 elif map_array[ny, nx] == 0 and not visited[ny, nx]:
@@ -72,16 +84,27 @@ class FrontierExploration(Node):
         header = Header()
         header.stamp = self.get_clock().now().to_msg()
         header.frame_id = self.map_data.header.frame_id
-        points = [(x * self.map_data.info.resolution + self.map_data.info.origin.position.x,
-                   y * self.map_data.info.resolution + self.map_data.info.origin.position.y, 0.0) for x, y in frontier]
+        points = [
+            (
+                x * self.map_data.info.resolution
+                + self.map_data.info.origin.position.x,
+                y * self.map_data.info.resolution
+                + self.map_data.info.origin.position.y,
+                0.0,
+            )
+            for x, y in frontier
+        ]
         fields = [
-            PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
-            PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
-            PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1),
-        ]        
-        cloud = pc2.create_cloud(header,fields, points)
+            PointField(name="x", offset=0, datatype=PointField.FLOAT32, count=1),
+            PointField(name="y", offset=4, datatype=PointField.FLOAT32, count=1),
+            PointField(name="z", offset=8, datatype=PointField.FLOAT32, count=1),
+        ]
+        cloud = pc2.create_cloud(header, fields, points)
         self.frontier_pub.publish(cloud)
-        self.get_logger().info(f'Published {len(frontier)} points representing the largest frontier.')
+        self.get_logger().info(
+            f"Published {len(frontier)} points representing the largest frontier."
+        )
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -90,5 +113,6 @@ def main(args=None):
     node.destroy_node()
     rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

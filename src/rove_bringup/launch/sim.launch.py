@@ -5,13 +5,26 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from math import pi
 
 
 def generate_launch_description():
+    # Declare launch arguments
+    declare_small_house_arg = DeclareLaunchArgument(
+        "small_house",
+        default_value="false",
+        description='Set to "true" to use the small house world.',
+    )
+
+    declare_with_ovis_arg = DeclareLaunchArgument(
+        "with_ovis",
+        default_value="false",
+        description='Set to "true" to use Ovis.',
+    )
+
     # Get the launch directory
     pkg_rove_bringup = get_package_share_directory('rove_bringup')
     pkg_rove_description = get_package_share_directory('rove_description')
@@ -28,33 +41,56 @@ def generate_launch_description():
     # Setup to launch the simulator and Gazebo world
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        launch_arguments={'gz_args': "-v 4 -r " + world}.items(),
+            os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
+        launch_arguments={"gz_args": "-v 4 -r " + world_file_path}.items(),
+        condition=UnlessCondition(LaunchConfiguration("small_house")),
     )
 
-    walls_file_path = os.path.join(pkg_rove_description, 'worlds', 'walls.sdf')
+    gz_sim_house = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
+        launch_arguments={"gz_args": "-v 4 -r " + small_house_file_path}.items(),
+        condition=IfCondition(LaunchConfiguration("small_house")),
+    )
+
     spawn_walls = Node(
-        package='ros_gz_sim',
-        executable='create',
-        arguments=['-file', walls_file_path,
-                   '-name', 'walls',
-                   '-x', '0',
-                   '-y', '0',
-                   '-z', '0'],
-        output='screen',
+        package="ros_gz_sim",
+        executable="create",
+        arguments=[
+            "-file",
+            walls_file_path,
+            "-name",
+            "walls",
+            "-x",
+            "0",
+            "-y",
+            "0",
+            "-z",
+            "0",
+        ],
+        condition=UnlessCondition(LaunchConfiguration("small_house")),
+        output="screen",
     )
 
-    actor_file_path = os.path.join(pkg_rove_description, 'worlds', 'actor.sdf')
     spawn_actor = Node(
-        package='ros_gz_sim',
-        executable='create',
-        arguments=['-file', actor_file_path,
-                   '-name', 'actor',
-                   '-topic', 'actor_pose',
-                   '-x', '0',
-                   '-y', '0',
-                   '-z', '0.1'],
-        output='screen',
+        package="ros_gz_sim",
+        executable="create",
+        arguments=[
+            "-file",
+            actor_file_path,
+            "-name",
+            "actor",
+            "-x",
+            "0",
+            "-y",
+            "0",
+            "-z",
+            "0.06",
+        ],
+        condition=UnlessCondition(LaunchConfiguration("small_house")),
+        output="screen",
     )
 
     yaw = -pi / 2
@@ -119,6 +155,7 @@ def generate_launch_description():
 
     return LaunchDescription([
             gz_sim,
+            gz_sim_house,
             bridge,
             robot_state_publisher,
             spawn_walls,

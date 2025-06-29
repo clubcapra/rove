@@ -10,24 +10,27 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch_ros.actions import SetRemap
 
+
 def generate_launch_description():
-    
+
     mule_behavior = Node(
-            package="rove_navigation",
-            executable='mule_behavior',
-            name='mule_behavior',
-            output='screen',
-        )
+        package="rove_navigation",
+        executable="mule_behavior",
+        name="mule_behavior",
+        output="screen",
+    )
 
     person_following = Node(
-            package="rove_navigation",
-            executable='person_following',
-            name='navigate_to_person',
-            output='screen',
-        )
-    
-    return LaunchDescription([
-        #person_following_node,
-        mule_behavior,
-        person_following
-    ])
+        package="rove_navigation",
+        executable="person_following",
+        name="navigate_to_person",
+        output="screen",
+    )
+
+    return LaunchDescription(
+        [
+            # person_following_node,
+            mule_behavior,
+            person_following,
+        ]
+    )
