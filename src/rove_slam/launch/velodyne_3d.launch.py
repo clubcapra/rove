@@ -8,7 +8,7 @@ import os
 def generate_launch_description():
 
     # Launch configuration
-    use_sim_time = LaunchConfiguration("use_sim_time")
+    use_sim_time = LaunchConfiguration("use_sim_time", default=False)
     deskewing = False
 
     # Nodes

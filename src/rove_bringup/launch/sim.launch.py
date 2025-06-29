@@ -162,6 +162,13 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("with_ovis")),
     )
 
+    # Visualize in RViz
+    rviz = Node(
+        package="rviz2",
+        executable="rviz2",
+        arguments=["-d", os.path.join(pkg_rove_description, "config", "basic.rviz")],
+    )
+
     return LaunchDescription(
         [
             SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", model_path),
@@ -175,6 +182,7 @@ def generate_launch_description():
             spawn_rove,
             common,
             # human_tracker,
+            rviz,
             ovis,
         ]
     )

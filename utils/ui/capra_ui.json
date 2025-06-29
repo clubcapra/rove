@@ -496,7 +496,7 @@
       },
       "topics": {
         "/scan": {
-          "visible": false,
+          "visible": true,
           "colorField": "intensity",
           "colorMode": "colormap",
           "colorMap": "turbo",
