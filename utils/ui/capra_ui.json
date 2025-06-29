@@ -13,12 +13,13 @@
       "reverse": false,
       "foxglovePanelTitle": "Speed"
     },
-    "Battery Indicator.Battery display!2ungb0h": {
-      "batteryTopic": "",
-      "topic": {
-        "batteryTopic": ""
-      },
-      "foxglovePanelTitle": "Battery Level"
+    "RawMessages!1y55c7o": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/RoboGuard/ambiant_temp.data",
+      "fontSize": 12
     },
     "CallService!1rkdql5": {
       "requestPayload": "{\"data\" : false }",
@@ -61,7 +62,7 @@
         }
       ]
     },
-    "Indicator!1i0gn4l": {
+    "Indicator!1e1hofj": {
       "path": "over_current.data",
       "style": "background",
       "fontSize": 10,
@@ -91,97 +92,10 @@
         }
       ]
     },
-    "Image!36h2dmv": {
-      "cameraState": {
-        "distance": 20,
-        "perspective": true,
-        "phi": 60,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 45,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {},
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {}
-    },
-    "Image!2smenht": {
-      "cameraState": {
-        "distance": 20,
-        "perspective": true,
-        "phi": 60,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 45,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {},
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {
-        "imageTopic": "/zed/zed_node/depth/depth_registered",
-        "calibrationTopic": "/zed/zed_node/depth/camera_info"
-      }
-    },
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
-      "selectedHardwareId": "odrive_node_21",
-      "selectedName": "track_fl_j"
+      "selectedHardwareId": "can0",
+      "selectedName": "Can status"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -238,6 +152,13 @@
           "enabled": true,
           "color": "#a395e2",
           "label": "track_rr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/RoboGuard/battery.current",
+          "enabled": true,
+          "color": "#cad660",
+          "label": "Battery current"
         }
       ],
       "showXAxisLabels": true,
@@ -307,7 +228,34 @@
       "minLogLevel": 1,
       "nameFilter": {
         "foxglove_bridge": {
+          "visible": true
+        },
+        "rtabmap": {
+          "visible": true
+        },
+        "icp_odometry": {
+          "visible": true
+        },
+        "twist_mux": {
+          "visible": true
+        },
+        "robot_state_publisher": {
+          "visible": true
+        },
+        "velodyne_driver_node": {
+          "visible": true
+        },
+        "vectornav": {
+          "visible": true
+        },
+        "scan": {
           "visible": false
+        },
+        "velodyne_points": {
+          "visible": true
+        },
+        "point_cloud_assembler": {
+          "visible": true
         }
       }
     },
@@ -409,13 +357,13 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 3.9778689060056878,
-        "phi": 35.430637256821406,
-        "thetaOffset": 13.073449965882581,
+        "distance": 3.2399990856211147,
+        "phi": 29.736436905329928,
+        "thetaOffset": -56.52233210792924,
         "targetOffset": [
-          -0.28508452800413125,
-          -0.04889261274523319,
-          8.543553254624711e-16
+          0.9097470115786276,
+          0.5440284801467746,
+          8.714741427486392e-16
         ],
         "target": [
           0,
@@ -496,7 +444,7 @@
       },
       "topics": {
         "/scan": {
-          "visible": true,
+          "visible": false,
           "colorField": "intensity",
           "colorMode": "colormap",
           "colorMap": "turbo",
@@ -938,7 +886,7 @@
             "first": {
               "first": {
                 "first": "Gauge!3mhnam3",
-                "second": "Battery Indicator.Battery display!2ungb0h",
+                "second": "RawMessages!1y55c7o",
                 "direction": "column",
                 "splitPercentage": 49.99744702578504
               },
@@ -955,30 +903,20 @@
               "splitPercentage": 48.23955358460312
             },
             "second": {
-              "first": "Indicator!1i0gn4l",
+              "first": "Indicator!1e1hofj",
               "second": "Indicator!52bgsl",
-              "direction": "column"
+              "direction": "column",
+              "splitPercentage": 49.99739596895995
             },
             "direction": "row",
             "splitPercentage": 71.29629629629629
           }
-        },
-        {
-          "title": "Camera"
         }
       ]
     },
     "Tab!2clm2nl": {
       "activeTabIdx": 0,
       "tabs": [
-        {
-          "title": "Camera",
-          "layout": {
-            "first": "Image!36h2dmv",
-            "second": "Image!2smenht",
-            "direction": "row"
-          }
-        },
         {
           "title": "Diagnostics",
           "layout": {
@@ -1011,9 +949,6 @@
         {
           "title": "Joystick",
           "layout": "virtual-joystick.Virtual Joystick!9rfrv4"
-        },
-        {
-          "title": "Camera"
         }
       ]
     },
@@ -1110,6 +1045,6 @@
     },
     "second": "Tab!1dud6cr",
     "direction": "column",
-    "splitPercentage": 34.54356846473029
+    "splitPercentage": 34.232365145228215
   }
 }
