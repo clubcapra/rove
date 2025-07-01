@@ -183,7 +183,9 @@ global_costmap:
       robot_base_frame: base_link
       robot_radius: 0.22 # radius set and used, so no footprint points
       resolution: 0.05
-      plugins: ["static_layer", "obstacle_layer", "voxel_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "voxel_layer", "inflation_layer", "radiation_layer"]
+      radiation_layer:
+        plugin: "radiation_costmap_plugin::RadiationLayer"
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: true

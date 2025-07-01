@@ -21,16 +21,14 @@
       "topicPath": "/RoboGuard/ambiant_temp.data",
       "fontSize": 12
     },
-    "CallService!1rkdql5": {
-      "requestPayload": "{\"data\" : false }",
-      "layout": "vertical",
-      "timeoutSeconds": 10,
-      "foxglovePanelTitle": "Reset over current",
-      "serviceName": "ack_peak_current",
-      "buttonColor": "#fefe30",
-      "editingMode": false,
-      "buttonText": "Ack Over Current",
-      "buttonTooltip": "Acknoledge peak current error"
+    "Publish!1j49mwn": {
+      "buttonText": "Ack Peak Current",
+      "buttonTooltip": "Ack current peak error",
+      "advancedView": false,
+      "value": "{\n  \"data\": true\n}",
+      "topicName": "/ack_peak_current",
+      "datatype": "std_msgs/Bool",
+      "buttonColor": "#eeff00"
     },
     "Indicator!4gm9084": {
       "path": "/RoboGuard/estop_bt.data",
@@ -63,7 +61,7 @@
       ]
     },
     "Indicator!1e1hofj": {
-      "path": "over_current.data",
+      "path": "/over_current.data",
       "style": "background",
       "fontSize": 10,
       "fallbackColor": "#00ff15",
@@ -94,8 +92,8 @@
     },
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
-      "selectedHardwareId": "write_loop",
-      "selectedName": "Write loop stats"
+      "selectedHardwareId": "none",
+      "selectedName": "rtabmap: Output Status"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -170,6 +168,60 @@
       "xAxisVal": "timestamp",
       "sidebarDimension": 240
     },
+    "Plot!3kc30m9": {
+      "paths": [
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[0]",
+          "enabled": true,
+          "color": "#4e98e2",
+          "label": "flipper_fl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[1]",
+          "enabled": true,
+          "color": "#f5774d",
+          "label": "flipper_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[2]",
+          "enabled": true,
+          "color": "#f7df71",
+          "label": "track_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[3]",
+          "enabled": true,
+          "color": "#5cd6a9",
+          "label": "track_rl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[4]",
+          "enabled": true,
+          "color": "#61cbff",
+          "label": "track_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[5]",
+          "enabled": true,
+          "color": "#a395e2",
+          "label": "track_rr"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240
+    },
     "Joystick Panel.Joystick!4cyq4bd": {
       "foxglovePanelTitle": "Gamepad",
       "publishMode": true,
@@ -225,7 +277,7 @@
     },
     "RosOut!32lzifo": {
       "searchTerms": [],
-      "minLogLevel": 1,
+      "minLogLevel": 2,
       "nameFilter": {
         "foxglove_bridge": {
           "visible": true
@@ -249,7 +301,7 @@
           "visible": true
         },
         "scan": {
-          "visible": false
+          "visible": true
         },
         "velodyne_points": {
           "visible": true
@@ -357,13 +409,13 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 6.311578947358871,
-        "phi": 43.426630724903056,
-        "thetaOffset": -160.99785660647362,
+        "distance": 10.014414690394421,
+        "phi": 30.839218137491827,
+        "thetaOffset": -69.10974471836273,
         "targetOffset": [
-          0.30173321683775806,
-          0.2541494394184953,
-          8.744697249649562e-16
+          -0.6221891980342781,
+          0.5915950820488679,
+          8.742346368823276e-16
         ],
         "target": [
           0,
@@ -891,7 +943,7 @@
                 "splitPercentage": 49.99744702578504
               },
               "second": {
-                "first": "CallService!1rkdql5",
+                "first": "Publish!1j49mwn",
                 "second": {
                   "first": "Indicator!4gm9084",
                   "second": "Indicator!yfjylf",
@@ -932,6 +984,10 @@
         {
           "title": "Currents",
           "layout": "Plot!37cxows"
+        },
+        {
+          "title": "Velocities",
+          "layout": "Plot!3kc30m9"
         }
       ]
     },
