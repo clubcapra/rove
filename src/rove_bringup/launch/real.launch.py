@@ -78,6 +78,12 @@ def generate_launch_description():
         output="both",
     )
 
+    ffmpeg_manager= Node(
+        package="ffmpeg_manager",
+        executable="ffmpeg_manager_node",
+        output="both",
+    )
+
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -155,6 +161,7 @@ def generate_launch_description():
             # joint_state_broadcaster_spawner,
             # *delayed_controller_nodes,
             control_node,
+            ffmpeg_manager,
             spacemouse,
             # TimerAction(period=20.0, actions=[
             gripper,
