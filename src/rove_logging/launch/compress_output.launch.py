@@ -11,10 +11,16 @@ def generate_launch_description():
     return LaunchDescription([
         ExecuteProcess(
             cmd=[
-                'rm -f output.zip && zip -r output.zip ./output -x "./output/bags/*" "./output/README.md" && zip -r output.zip ./output/bags/rosbag_latest'
+                'bash', '-c',
+                '"rtabmap-export --scan ~/.ros/rtabmap.db && ' + 
+                'mv ~/.ros/rtabmap_cloud.ply ./output/ && ' +
+                'rm -f output.zip && zip -r output.zip ./output -x ./output/bags/\* ./output/README.md && '+
+                'zip -r output.zip ./output/bags/rosbag_latest && ',
+                # we publish at the end to let foxglove know that the compression is finished
+                'ros2 topic pub /is_compression_finished std_msgs/Bool \'{data: true}\' "'
             ],
             shell=True,
-            output='screen'
-
+            output='screen',
+            log_cmd=True,
         )
     ])

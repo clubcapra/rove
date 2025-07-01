@@ -709,10 +709,26 @@
           "operator": "=",
           "rawValue": "true",
           "color": "#29cd00",
-          "label": "True (switch tabs to recheck)"
+          "label": "True"
         }
       ],
       "foxglovePanelTitle": "Rosbag Running"
+    },
+    "Indicator!3kli6u9": {
+      "path": "/is_compression_finished.data",
+      "style": "bulb",
+      "fontSize": 36,
+      "fallbackColor": "#ff0000",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#29cd00",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Is compression finished?"
     },
     "Tab!2iobm2s": {
       "activeTabIdx": 0,
@@ -850,7 +866,11 @@
               "second": "CallService!19ybsmi",
               "direction": "row"
             },
-            "second": "Indicator!1wnksao",
+            "second": {
+              "first": "Indicator!1wnksao",
+              "second": "Indicator!3kli6u9",
+              "direction": "row"
+            },
             "direction": "column",
             "splitPercentage": 53.106138478163466
           }
