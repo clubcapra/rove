@@ -21,15 +21,6 @@
       "topicPath": "/RoboGuard/ambiant_temp.data",
       "fontSize": 12
     },
-    "Publish!1j49mwn": {
-      "buttonText": "Ack Peak Current",
-      "buttonTooltip": "Ack current peak error",
-      "advancedView": false,
-      "value": "{\n  \"data\": true\n}",
-      "topicName": "/ack_peak_current",
-      "datatype": "std_msgs/Bool",
-      "buttonColor": "#eeff00"
-    },
     "Indicator!4gm9084": {
       "path": "/RoboGuard/estop_bt.data",
       "style": "background",
@@ -60,20 +51,18 @@
         }
       ]
     },
-    "Indicator!1e1hofj": {
-      "path": "/over_current.data",
-      "style": "background",
-      "fontSize": 10,
-      "fallbackColor": "#00ff15",
-      "fallbackLabel": "Current OK",
-      "rules": [
-        {
-          "operator": "=",
-          "rawValue": "true",
-          "color": "#ff0000",
-          "label": "Over Current"
-        }
-      ]
+    "Gauge!1mdifj3": {
+      "path": "/dose_rate.data",
+      "minValue": 0,
+      "maxValue": 80,
+      "colorMap": "red-yellow-green",
+      "colorMode": "colormap",
+      "gradient": [
+        "#0000ff",
+        "#ff00ff"
+      ],
+      "reverse": true,
+      "foxglovePanelTitle": "Geiger"
     },
     "Indicator!52bgsl": {
       "path": "/estop.data",
@@ -275,42 +264,6 @@
       "buttonText": "Real",
       "buttonColor": "#ff0000"
     },
-    "RosOut!32lzifo": {
-      "searchTerms": [],
-      "minLogLevel": 2,
-      "nameFilter": {
-        "foxglove_bridge": {
-          "visible": true
-        },
-        "rtabmap": {
-          "visible": true
-        },
-        "icp_odometry": {
-          "visible": true
-        },
-        "twist_mux": {
-          "visible": true
-        },
-        "robot_state_publisher": {
-          "visible": true
-        },
-        "velodyne_driver_node": {
-          "visible": true
-        },
-        "vectornav": {
-          "visible": true
-        },
-        "scan": {
-          "visible": true
-        },
-        "velodyne_points": {
-          "visible": true
-        },
-        "point_cloud_assembler": {
-          "visible": true
-        }
-      }
-    },
     "CallService!1z631qn": {
       "requestPayload": "{\n \"package\" : \"rove_navigation\",\n \"file_name\" : \"navigation.launch.py\"\n}",
       "layout": "vertical",
@@ -337,27 +290,17 @@
       "layout": "vertical",
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
+      "editingMode": true,
       "foxglovePanelTitle": "Scenario",
       "buttonText": "Reconnoitring of structures",
       "buttonColor": "#ff0000"
     },
-    "CallService!2qnnpsv": {
-      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
-      "layout": "vertical",
-      "timeoutSeconds": 20,
-      "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
-      "foxglovePanelTitle": "Scenario",
-      "buttonText": "Transport – Mule",
-      "buttonColor": "#ff0000"
-    },
     "CallService!6ywrf4": {
-      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "requestPayload": "{\n \"package\" : \"rove_radiation\",\n \"file_name\" : \"radiation.launch.py\"\n}",
       "layout": "vertical",
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
+      "editingMode": true,
       "foxglovePanelTitle": "Scenario",
       "buttonText": "Search & Rescue",
       "buttonColor": "#ff0000"
@@ -736,7 +679,7 @@
     },
     "Indicator!1wnksao": {
       "path": "/is_rosbag_running.data",
-      "style": "bulb",
+      "style": "background",
       "fontSize": 36,
       "fallbackColor": "#ff0000",
       "fallbackLabel": "False",
@@ -752,7 +695,7 @@
     },
     "Indicator!3kli6u9": {
       "path": "/is_compression_finished.data",
-      "style": "bulb",
+      "style": "background",
       "fontSize": 36,
       "fallbackColor": "#ff0000",
       "fallbackLabel": "False",
@@ -780,7 +723,7 @@
                 "splitPercentage": 49.99744702578504
               },
               "second": {
-                "first": "Publish!1j49mwn",
+                "first": "RawMessages!1wdewas",
                 "second": {
                   "first": "Indicator!4gm9084",
                   "second": "Indicator!yfjylf",
@@ -792,13 +735,13 @@
               "splitPercentage": 48.23955358460312
             },
             "second": {
-              "first": "Indicator!1e1hofj",
+              "first": "Gauge!1mdifj3",
               "second": "Indicator!52bgsl",
               "direction": "column",
               "splitPercentage": 49.99739596895995
             },
             "direction": "row",
-            "splitPercentage": 71.29629629629629
+            "splitPercentage": 67.5
           }
         }
       ]
@@ -868,14 +811,10 @@
               "splitPercentage": 48.44013223582317
             },
             "second": {
-              "first": {
-                "first": "CallService!43dz0yr",
-                "second": "CallService!2qnnpsv",
-                "direction": "column"
-              },
+              "first": "CallService!43dz0yr",
               "second": "CallService!6ywrf4",
               "direction": "column",
-              "splitPercentage": 64.83679525222553
+              "splitPercentage": 48.720381645185945
             },
             "direction": "row",
             "splitPercentage": 71.89728958630528
@@ -912,6 +851,14 @@
           }
         }
       ]
+    },
+    "RawMessages!1wdewas": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/dose_rate",
+      "fontSize": 12
     }
   },
   "globalVariables": {},
@@ -934,7 +881,7 @@
         "first": "Tab!2iobm2s",
         "second": "Tab!2clm2nl",
         "direction": "row",
-        "splitPercentage": 69.35624971658098
+        "splitPercentage": 27.898408728973823
       },
       "second": "Tab!1w9p6uc",
       "direction": "row",

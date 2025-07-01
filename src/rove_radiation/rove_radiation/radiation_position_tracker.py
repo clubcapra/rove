@@ -64,8 +64,8 @@ class RadiationPositionTracker(Node):
     def radiation_callback(self, msg):
         """Stocke la dernière valeur mesurée de radiation"""
         self.current_radiation = msg.data
-        if self.current_radiation > self.max_intensity: 
-            self.max_intensity = self.current_radiation
+        # if self.current_radiation > self.max_intensity: 
+        #     self.max_intensity = self.current_radiation
         self.send_point(self.current_position.x, self.current_position.y, self.current_radiation)
 
     def localization_pose_callback(self, msg):
@@ -185,13 +185,12 @@ class RadiationPositionTracker(Node):
         measured_indices = np.argwhere(radiation_data > 0)
         for (i, j) in measured_indices:
             temp_map[...] = 0.0  # clear temp map
-            temp_map[i, j] = radiation_data[i, j] / 100.0  # set only this one point
-            blurred = gaussian_filter(temp_map, sigma=20.0)
+            temp_map[i, j] = radiation_data[i, j] / 127  # set only this one point
+            blurred = gaussian_filter(temp_map, sigma=8.0)
             heatmap = np.maximum(heatmap, blurred)  # combine without amplifying
 
-
         # Step 5: Smooth with Gaussian blur
-        heatmap = gaussian_filter(heatmap, sigma=20.0)
+        heatmap = gaussian_filter(heatmap, sigma=8.0)
 
         # Step 6: Normalize and apply colormap
         normed = np.clip(heatmap / np.max(heatmap), 0, 1) if np.max(heatmap) > 0 else heatmap
@@ -205,7 +204,7 @@ class RadiationPositionTracker(Node):
         fig, ax = plt.subplots(figsize=(10, 8))
 
         # Display image
-        # im = ax.imshow(image)
+        im = ax.imshow(image)
 
         # Add colorbar with same normalization
         norm = matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity)
@@ -217,9 +216,10 @@ class RadiationPositionTracker(Node):
         ax.set_yticks([])
 
         # Step 8: Save as PDF
-        # plt.savefig("output/radiation_heatmap.pdf", bbox_inches='tight')
-        # plt.close(fig)
-        return (normed * 100).astype(np.int8)
+        plt.savefig("./output/radiation_heatmap.pdf", bbox_inches='tight')
+        plt.close()
+        # return a value normed from 0 to 127, being the max int8 value to map out in ros2)
+        return ((normed * 127)).astype(np.int8)
 
 
     def generate_and_save_image(self):
@@ -291,8 +291,8 @@ class RadiationPositionTracker(Node):
 
         # save le pdf
         sortie = "output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
-        # fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
-        # plt.close(fig)
+        fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
 
     def send_point(self, x, y, radiation_level, frame='map'):
         msg = PointStamped()
