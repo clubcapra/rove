@@ -24,3 +24,6 @@ __pycache__/
 
 # generated map database by rtabmap
 *.db
+
+# Ignore .zip files
+*.zip
