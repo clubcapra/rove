@@ -275,6 +275,42 @@
       "buttonText": "Real",
       "buttonColor": "#ff0000"
     },
+    "RosOut!32lzifo": {
+      "searchTerms": [],
+      "minLogLevel": 2,
+      "nameFilter": {
+        "foxglove_bridge": {
+          "visible": true
+        },
+        "rtabmap": {
+          "visible": true
+        },
+        "icp_odometry": {
+          "visible": true
+        },
+        "twist_mux": {
+          "visible": true
+        },
+        "robot_state_publisher": {
+          "visible": true
+        },
+        "velodyne_driver_node": {
+          "visible": true
+        },
+        "vectornav": {
+          "visible": true
+        },
+        "scan": {
+          "visible": true
+        },
+        "velodyne_points": {
+          "visible": true
+        },
+        "point_cloud_assembler": {
+          "visible": true
+        }
+      }
+    },
     "CallService!1z631qn": {
       "requestPayload": "{\n \"package\" : \"rove_navigation\",\n \"file_name\" : \"navigation.launch.py\"\n}",
       "layout": "vertical",

@@ -22,6 +22,7 @@ def generate_launch_description():
     pkg_rove_description = get_package_share_directory("rove_description")
     pkg_robotiq_description = get_package_share_directory("robotiq_description")
     pkg_rove_zed = get_package_share_directory("rove_zed")
+    pkg_rove_radiation = get_package_share_directory("rove_radiation")
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, "urdf", "rove.urdf.xacro")
@@ -69,10 +70,12 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[
-            robot_description,
-            controllers,
-        ],
+        output="both",
+    )
+
+    spacemouse= Node(
+        package="spacemouse_joy",
+        executable="spacemouse_tcp_server",
         output="both",
     )
 
@@ -144,19 +147,27 @@ def generate_launch_description():
     zed = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_zed, "launch", "zed_mapping.launch.py"),
-        ),
+        )
+    )
+    
+    radiation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_radiation, "launch", "radiation.launch.py"),
+        )
     )
 
     return LaunchDescription(
         [
             common,
-            joint_state_broadcaster_spawner,
-            *delayed_controller_nodes,
+            # joint_state_broadcaster_spawner,
+            # *delayed_controller_nodes,
             control_node,
+            spacemouse,
             # TimerAction(period=20.0, actions=[
-            # gripper,
-            # vectornav,
-            # velodyne,
+            gripper,
+            vectornav,
+            velodyne,
+            radiation,
             # zed,
             # ]),
         ]

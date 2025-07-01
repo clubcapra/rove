@@ -1,7 +1,8 @@
-# Ignore build and log directories
+# Ignore build, install, log and output directories
 build/
 log/
 install/
+ouput
 
 # Ignore everything in src except rove_*
 src/*

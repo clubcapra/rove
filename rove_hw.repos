@@ -1,20 +1,8 @@
 repositories:
-  ros_odrive:
+  radiacode_driver:
     type: git
-    url: https://github.com/IliTheButterfly/ros_odrive.git
-    version: 0fa84d3745a8c385076d29b7f54971e9f2d14de7
-  vectornav:
-    type: git
-    url: https://github.com/dawonn/vectornav.git
-    version: ros2
-  zed_wrapper:
-    type: git
-    url: https://github.com/stereolabs/zed-ros2-wrapper.git
+    url: https://github.com/clubcapra/radiacode_driver.git
     version: master
-  zed_wrapper/zed-ros2-interfaces:
-    type: git
-    url: https://github.com/stereolabs/zed-ros2-interfaces.git
-    version: main
   ros2_robotiq_gripper:
     type: git
     url: https://github.com/PickNikRobotics/ros2_robotiq_gripper.git
@@ -22,4 +10,8 @@ repositories:
   serial:
     type: git
     url: https://github.com/tylerjw/serial.git
+    version: ros2
+  vectornav:
+    type: git
+    url: https://github.com/dawonn/vectornav.git
     version: ros2

@@ -32,6 +32,8 @@ setup(
             "exploration = rove_navigation.exploration:main",
             "lost_connection = rove_navigation.lost_connection:main",
             "mule_behavior = rove_navigation.mule_behavior:main",
+            "ovis_pull = rove_navigation.ovis_pull:main",
+            "model_attacher = rove_navigation.model_attacher:main",
         ],
     },
 )
