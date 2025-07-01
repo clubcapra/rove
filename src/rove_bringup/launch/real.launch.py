@@ -22,6 +22,7 @@ def generate_launch_description():
     pkg_rove_description = get_package_share_directory("rove_description")
     pkg_robotiq_description = get_package_share_directory("robotiq_description")
     pkg_rove_zed = get_package_share_directory("rove_zed")
+    pkg_rove_radiation = get_package_share_directory("rove_radiation")
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, "urdf", "rove.urdf.xacro")
@@ -144,7 +145,13 @@ def generate_launch_description():
     zed = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_zed, "launch", "zed_mapping.launch.py"),
-        ),
+        )
+    )
+    
+    radiation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_rove_radiation, "launch", "radiation.launch.py"),
+        )
     )
 
     return LaunchDescription(
@@ -157,6 +164,7 @@ def generate_launch_description():
             # gripper,
             vectornav,
             velodyne,
+            radiation,
             # zed,
             # ]),
         ]
