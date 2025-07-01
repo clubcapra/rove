@@ -686,7 +686,17 @@
       "timeoutSeconds": 10,
       "serviceName": "/launchHandler/launchFile",
       "foxglovePanelTitle": "Toggle Rosbag logging",
-      "buttonText": "Toggle Logging"
+      "buttonText": "Toggle Logging",
+      "buttonTooltip": "Toggle the rosbag2 logging of the robot, CAUTION: only press this once you are ready for the run"
+    },
+    "CallService!19ybsmi": {
+      "requestPayload": "{\n \"package\" : \"rove_logging\",\n \"file_name\" : \"compress_output.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "serviceName": "/launchHandler/launchFile",
+      "foxglovePanelTitle": "Toggle Rosbag logging",
+      "buttonText": "Prepare output zip folder",
+      "buttonTooltip": "Compress the output folder (rosbag, mapping data, etc) into a zip file ready for transfer"
     },
     "Indicator!1wnksao": {
       "path": "/is_rosbag_running.data",
@@ -794,7 +804,7 @@
                 "first": "CallService!2b4k70w",
                 "second": "CallService!3utg1bx",
                 "direction": "column",
-                "splitPercentage": 55.29901689465222
+                "splitPercentage": 48.720381645185945
               },
               "second": {
                 "first": "CallService!1z631qn",
@@ -803,7 +813,7 @@
                 "splitPercentage": 48.66220735785953
               },
               "direction": "row",
-              "splitPercentage": 46.156774961378055
+              "splitPercentage": 48.44013223582317
             },
             "second": {
               "first": {
@@ -835,7 +845,11 @@
         {
           "title": "Logging/Uploading",
           "layout": {
-            "first": "CallService!1wdk26y",
+            "first": {
+              "first": "CallService!1wdk26y",
+              "second": "CallService!19ybsmi",
+              "direction": "row"
+            },
             "second": "Indicator!1wnksao",
             "direction": "column",
             "splitPercentage": 53.106138478163466

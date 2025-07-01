@@ -7,10 +7,6 @@ import os
 from launch.event_handlers import OnShutdown, OnProcessStart
 
 def generate_launch_description():
-    if (not os.path.isdir('./output/bags')): os.mkdir('./output/bags')
-    folder_number = len(next(os.walk('./output/bags'))[1])
-    if(folder_number > 0): os.rename("./output/bags/rosbag_latest", "./output/bags/rosbag_{:02}".format(folder_number-1))
-
     # This deletes then creates a compressed version of the output folder without the older rosbag records or the readme
     return LaunchDescription([
         ExecuteProcess(
