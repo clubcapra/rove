@@ -13,23 +13,22 @@
       "reverse": false,
       "foxglovePanelTitle": "Speed"
     },
-    "Battery Indicator.Battery display!2ungb0h": {
-      "batteryTopic": "",
-      "topic": {
-        "batteryTopic": ""
-      },
-      "foxglovePanelTitle": "Battery Level"
+    "RawMessages!1y55c7o": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/RoboGuard/ambiant_temp.data",
+      "fontSize": 12
     },
-    "CallService!1rkdql5": {
-      "requestPayload": "{\"data\" : false }",
-      "layout": "vertical",
-      "timeoutSeconds": 10,
-      "foxglovePanelTitle": "Reset over current",
-      "serviceName": "ack_peak_current",
-      "buttonColor": "#fefe30",
-      "editingMode": false,
-      "buttonText": "Ack Over Current",
-      "buttonTooltip": "Acknoledge peak current error"
+    "Publish!1j49mwn": {
+      "buttonText": "Ack Peak Current",
+      "buttonTooltip": "Ack current peak error",
+      "advancedView": false,
+      "value": "{\n  \"data\": true\n}",
+      "topicName": "/ack_peak_current",
+      "datatype": "std_msgs/Bool",
+      "buttonColor": "#eeff00"
     },
     "Indicator!4gm9084": {
       "path": "/RoboGuard/estop_bt.data",
@@ -61,8 +60,8 @@
         }
       ]
     },
-    "Indicator!1i0gn4l": {
-      "path": "over_current.data",
+    "Indicator!1e1hofj": {
+      "path": "/over_current.data",
       "style": "background",
       "fontSize": 10,
       "fallbackColor": "#00ff15",
@@ -91,97 +90,10 @@
         }
       ]
     },
-    "Image!36h2dmv": {
-      "cameraState": {
-        "distance": 20,
-        "perspective": true,
-        "phi": 60,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 45,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {},
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {}
-    },
-    "Image!2smenht": {
-      "cameraState": {
-        "distance": 20,
-        "perspective": true,
-        "phi": 60,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 45,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {},
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {
-        "imageTopic": "/zed/zed_node/depth/depth_registered",
-        "calibrationTopic": "/zed/zed_node/depth/camera_info"
-      }
-    },
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
-      "selectedHardwareId": "odrive_node_21",
-      "selectedName": "track_fl_j"
+      "selectedHardwareId": "none",
+      "selectedName": "rtabmap: Output Status"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -235,6 +147,67 @@
         {
           "timestampMethod": "receiveTime",
           "value": "/joint_states.effort[5]",
+          "enabled": true,
+          "color": "#a395e2",
+          "label": "track_rr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/RoboGuard/battery.current",
+          "enabled": true,
+          "color": "#cad660",
+          "label": "Battery current"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240
+    },
+    "Plot!3kc30m9": {
+      "paths": [
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[0]",
+          "enabled": true,
+          "color": "#4e98e2",
+          "label": "flipper_fl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[1]",
+          "enabled": true,
+          "color": "#f5774d",
+          "label": "flipper_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[2]",
+          "enabled": true,
+          "color": "#f7df71",
+          "label": "track_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[3]",
+          "enabled": true,
+          "color": "#5cd6a9",
+          "label": "track_rl"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[4]",
+          "enabled": true,
+          "color": "#61cbff",
+          "label": "track_fr"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/joint_states.velocity[5]",
           "enabled": true,
           "color": "#a395e2",
           "label": "track_rr"
@@ -304,10 +277,37 @@
     },
     "RosOut!32lzifo": {
       "searchTerms": [],
-      "minLogLevel": 1,
+      "minLogLevel": 2,
       "nameFilter": {
         "foxglove_bridge": {
-          "visible": false
+          "visible": true
+        },
+        "rtabmap": {
+          "visible": true
+        },
+        "icp_odometry": {
+          "visible": true
+        },
+        "twist_mux": {
+          "visible": true
+        },
+        "robot_state_publisher": {
+          "visible": true
+        },
+        "velodyne_driver_node": {
+          "visible": true
+        },
+        "vectornav": {
+          "visible": true
+        },
+        "scan": {
+          "visible": true
+        },
+        "velodyne_points": {
+          "visible": true
+        },
+        "point_cloud_assembler": {
+          "visible": true
         }
       }
     },
@@ -409,13 +409,13 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 3.9778689060056878,
-        "phi": 35.430637256821406,
-        "thetaOffset": 13.073449965882581,
+        "distance": 10.014414690394421,
+        "phi": 30.839218137491827,
+        "thetaOffset": -69.10974471836273,
         "targetOffset": [
-          -0.28508452800413125,
-          -0.04889261274523319,
-          8.543553254624711e-16
+          -0.6221891980342781,
+          0.5915950820488679,
+          8.742346368823276e-16
         ],
         "target": [
           0,
@@ -938,12 +938,12 @@
             "first": {
               "first": {
                 "first": "Gauge!3mhnam3",
-                "second": "Battery Indicator.Battery display!2ungb0h",
+                "second": "RawMessages!1y55c7o",
                 "direction": "column",
                 "splitPercentage": 49.99744702578504
               },
               "second": {
-                "first": "CallService!1rkdql5",
+                "first": "Publish!1j49mwn",
                 "second": {
                   "first": "Indicator!4gm9084",
                   "second": "Indicator!yfjylf",
@@ -955,30 +955,20 @@
               "splitPercentage": 48.23955358460312
             },
             "second": {
-              "first": "Indicator!1i0gn4l",
+              "first": "Indicator!1e1hofj",
               "second": "Indicator!52bgsl",
-              "direction": "column"
+              "direction": "column",
+              "splitPercentage": 49.99739596895995
             },
             "direction": "row",
             "splitPercentage": 71.29629629629629
           }
-        },
-        {
-          "title": "Camera"
         }
       ]
     },
     "Tab!2clm2nl": {
       "activeTabIdx": 0,
       "tabs": [
-        {
-          "title": "Camera",
-          "layout": {
-            "first": "Image!36h2dmv",
-            "second": "Image!2smenht",
-            "direction": "row"
-          }
-        },
         {
           "title": "Diagnostics",
           "layout": {
@@ -994,6 +984,10 @@
         {
           "title": "Currents",
           "layout": "Plot!37cxows"
+        },
+        {
+          "title": "Velocities",
+          "layout": "Plot!3kc30m9"
         }
       ]
     },
@@ -1011,9 +1005,6 @@
         {
           "title": "Joystick",
           "layout": "virtual-joystick.Virtual Joystick!9rfrv4"
-        },
-        {
-          "title": "Camera"
         }
       ]
     },
@@ -1110,6 +1101,6 @@
     },
     "second": "Tab!1dud6cr",
     "direction": "column",
-    "splitPercentage": 34.54356846473029
+    "splitPercentage": 34.232365145228215
   }
 }

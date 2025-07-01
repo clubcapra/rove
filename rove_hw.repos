@@ -1,12 +1,4 @@
 repositories:
-  ros_odrive:
-    type: git
-    url: https://github.com/IliTheButterfly/ros_odrive.git
-    version: 0fa84d3745a8c385076d29b7f54971e9f2d14de7
-  vectornav:
-    type: git
-    url: https://github.com/dawonn/vectornav.git
-    version: ros2
   ros2_robotiq_gripper:
     type: git
     url: https://github.com/PickNikRobotics/ros2_robotiq_gripper.git
@@ -15,7 +7,7 @@ repositories:
     type: git
     url: https://github.com/tylerjw/serial.git
     version: ros2
-  radiacode_driver:
+  vectornav:
     type: git
-    url: https://github.com/clubcapra/radiacode_driver.git
-    version: master
+    url: https://github.com/dawonn/vectornav.git
+    version: ros2

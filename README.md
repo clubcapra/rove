@@ -100,7 +100,15 @@ export LIBGL_ALWAYS_INDIRECT=0 export LIBGL_ALWAYS_SOFTWARE=1
 
 Launch simulation:
 ```bash
+colcon build --symlink-install
+source install/setup.bash
 ros2 launch rove_bringup sim.launch.py
+```
+OR Do these commands to only run the rviz simulation (with joints control)
+```bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch rove_description launch.py
 ```
 
 You can also launch the simulation with Ovis using the following command:

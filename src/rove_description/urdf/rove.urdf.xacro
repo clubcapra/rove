@@ -23,8 +23,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh
-                    filename="https://raw.githubusercontent.com/clubcapra/rove/main/src/rove_description/meshes/base.stl" />
+                <mesh filename="file://$(find rove_description)/meshes/base.stl" />
             </geometry>
             <material name="frame_color" />
         </visual>
@@ -48,90 +47,7 @@
         </inertial>
     </link>
 
-    <link name="friction_plate_base">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <box size="0.3 0.3 0.01" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
-        <visual>
-            <origin xyz="0.14 0 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.02 0.3 0.04" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
-        <visual>
-            <origin xyz="-0.14 0 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.02 0.3 0.04" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
-        <visual>
-            <origin xyz="0 0.14 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.26 0.02 0.04" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
-        <visual>
-            <origin xyz="0 -0.14 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.26 0.02 0.04" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
-
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <box size="0.3 0.3 0.01" />
-            </geometry>
-        </collision>
-        <collision>
-            <origin xyz="0.14 0 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.02 0.3 0.04" />
-            </geometry>
-        </collision>
-        <collision>
-            <origin xyz="-0.14 0 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.02 0.3 0.04" />
-            </geometry>
-        </collision>
-        <collision>
-            <origin xyz="0 0.14 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.26 0.02 0.04" />
-            </geometry>
-        </collision>
-        <collision>
-            <origin xyz="0 -0.14 0.02" rpy="0 0 0" />
-            <geometry>
-                <box size="0.26 0.02 0.04" />
-            </geometry>
-        </collision>
-
-        <inertial>
-            <mass value="1.5" />
-            <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02" />
-        </inertial>
-    </link>
-
-    <joint name="friction_plate_base_joint" type="fixed">
-        <parent link="base_link" />
-        <child link="friction_plate_base" />
-        <origin xyz="0.22 0 0.2" rpy="0 0 0" />
-    </joint>
-
-    <!-- <xacro:rove_ros2_control/> -->
     <!-- Put these at -1 to mock the motors if working without the motors -->
-    <!-- <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24"/> -->
-    <!-- TODO Fix rr Odrive, it keeps crashing the rest of the drives. IT has been disabled for now. -->
     <xacro:odrive_control fl_id="21" rl_id="22" fr_id="23" rr_id="24" />
 
 

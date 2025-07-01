@@ -57,6 +57,7 @@
     </link>
 
 
+
     <link name="sensor_link">
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -77,7 +78,7 @@
         </collision>
     </link>
     <xacro:velodyne_lidar name="velodyne" parent_link="base_link">
-        <origin xyz="-0.2 0.0 0.5" rpy="0 0 0" />
+        <origin xyz="-0.2 0.0 0.5" rpy="0 0 ${-pi/2}" />
     </xacro:velodyne_lidar>
 
     <gazebo reference="sensor_link">
@@ -110,7 +111,7 @@
                     <far>20.0</far>
                 </clip>
                 <!-- Rotate the camera to point forward -->
-                <origin xyz="0.1 0 0.4" rpy="-1.57 0 -1.57" />
+                <origin xyz="0.1 0 0.4" rpy="${-pi/2} 0 ${-pi/2}" />
             </camera>
         </sensor>
         <sensor name="camera1" type="camera">
