@@ -69,10 +69,12 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[
-            robot_description,
-            controllers,
-        ],
+        output="both",
+    )
+
+    spacemouse= Node(
+        package="spacemouse_joy",
+        executable="spacemouse_tcp_server",
         output="both",
     )
 
@@ -152,9 +154,10 @@ def generate_launch_description():
             common,
             # joint_state_broadcaster_spawner,
             # *delayed_controller_nodes,
-            # control_node,
+            control_node,
+            spacemouse,
             # TimerAction(period=20.0, actions=[
-            # gripper,
+            gripper,
             vectornav,
             velodyne,
             # zed,
