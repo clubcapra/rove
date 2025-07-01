@@ -22,6 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'rosbag_state_node.py = rove_logging.rosbag_state_node:main',
         ],
     },
 )
