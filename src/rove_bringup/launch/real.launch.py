@@ -55,7 +55,10 @@ def generate_launch_description():
             os.path.join(
                 pkg_robotiq_description, "launch", "robotiq_control.launch.py"
             ),
-        )
+        ),
+        launch_arguments={
+            "com_port": "/dev/ttyUSB_gripper",
+        }.items(),
     )
 
     ###### ROS2 control ######
