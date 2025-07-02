@@ -17,6 +17,9 @@ def generate_launch_description():
                 name="game_controller_node",
                 output="screen",
                 parameters=[joy_params_file],
+                remappings=[
+                    # ("/joy", "/rove/joy"),
+                ]
             ),
         ]
     )
