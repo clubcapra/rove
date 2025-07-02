@@ -316,12 +316,12 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 20.535018443129076,
-        "phi": 42.9947097238342,
-        "thetaOffset": -70.39316714918232,
+        "distance": 34.29722988070159,
+        "phi": 36.57759742437087,
+        "thetaOffset": -115.95466447538558,
         "targetOffset": [
-          -2.8822295365373685,
-          2.578244581809097,
+          -4.472862691534758,
+          2.3842538553310604,
           -2.118868401559234
         ],
         "target": [
@@ -815,7 +815,7 @@
       ]
     },
     "Tab!1dud6cr": {
-      "activeTabIdx": 1,
+      "activeTabIdx": 0,
       "tabs": [
         {
           "title": "Launch",

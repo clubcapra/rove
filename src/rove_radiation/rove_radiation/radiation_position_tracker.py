@@ -1,3 +1,4 @@
+import datetime
 from math import floor
 from typing import Optional
 
@@ -22,6 +23,7 @@ class RadiationPositionTracker(Node):
     def __init__(self):
         super().__init__("radiation_position_tracker")
         self.max_rad_record = 0
+        self.SIGMA = 20
 
         self.radiation_subscription = self.create_subscription(
             Float32, "/dose_rate", self.radiation_callback, 10
@@ -181,7 +183,7 @@ class RadiationPositionTracker(Node):
             temp = np.zeros((height, width), dtype=np.float32)
             intensity = radiation_data[i, j]
             temp[i, j] = intensity
-            blurred = gaussian_filter(temp, sigma=15.0)
+            blurred = gaussian_filter(temp, sigma=self.SIGMA)
             accum += blurred**p  # accumulate powers
     
         heatmap = accum**(1/p)  # power mean
@@ -201,10 +203,12 @@ class RadiationPositionTracker(Node):
             cm.ScalarMappable(norm=matplotlib.colors.Normalize(vmin=0, vmax=self.max_rad_record), cmap='jet'),
             ax=ax
         )
-        cbar.set_label("Radiation intensity", fontsize=12)
+        cbar.set_label("Radiation intensity [µSv]", fontsize=12)
         ax.set_xticks([])
         ax.set_yticks([])
-    
+        
+        plt.title("Enrich 2025 Capra Radiation heatmap", fontsize=16, fontweight='bold', y=0.95)
+
         plt.savefig("./output/radiation_heatmap.pdf", bbox_inches='tight')
         plt.close()
     
@@ -280,6 +284,16 @@ class RadiationPositionTracker(Node):
         ax.axis("off")
 
         # save le pdf
+        cbar = fig.colorbar(
+            cm.ScalarMappable(norm=matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity), cmap='jet'),
+            ax=ax
+        )
+        cbar.set_label("Radiation intensity [µSv]", fontsize=12)
+        
+        ax.set_xticks([])
+        ax.set_yticks([])
+        plt.title("Enrich 2025 Radiation Map of Recorded Data Points", fontsize=16, fontweight='bold')
+
         sortie = "output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
         fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
         plt.close(fig)
