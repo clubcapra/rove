@@ -1,18 +1,5 @@
 {
   "configById": {
-    "Gauge!3mhnam3": {
-      "path": "/rove/cmd_vel.linear.x",
-      "minValue": 0,
-      "maxValue": 2,
-      "colorMap": "red-yellow-green",
-      "colorMode": "colormap",
-      "gradient": [
-        "#0000ff",
-        "#ff00ff"
-      ],
-      "reverse": false,
-      "foxglovePanelTitle": "Speed"
-    },
     "RawMessages!1y55c7o": {
       "diffEnabled": false,
       "diffMethod": "custom",
@@ -89,8 +76,8 @@
     },
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
-      "selectedHardwareId": "none",
-      "selectedName": "ekf_filter_node_local: odometry/filtered topic status"
+      "selectedHardwareId": "can0",
+      "selectedName": "Can status"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -219,19 +206,6 @@
       "xAxisVal": "timestamp",
       "sidebarDimension": 240
     },
-    "Joystick Panel.Joystick!4cyq4bd": {
-      "foxglovePanelTitle": "Gamepad",
-      "publishMode": true,
-      "subJoyTopic": "/joy",
-      "pubJoyTopic": "/joy",
-      "publishFrameId": "",
-      "dataSource": "gamepad",
-      "displayMode": "custom",
-      "debugGamepad": false,
-      "layoutName": "steamdeck",
-      "mapping_name": "TODO",
-      "gamepadId": 0
-    },
     "Joystick Panel.Joystick!31gwyzo": {
       "foxglovePanelTitle": "Keyboard",
       "subJoyTopic": "/joy",
@@ -252,6 +226,18 @@
       "topic": "/joy_vel",
       "messageSchema": "geometry_msgs/msg/Twist"
     },
+    "Joystick Panel.Joystick!3htyhue": {
+      "subJoyTopic": "/rove/joy",
+      "pubJoyTopic": "/joy",
+      "publishMode": false,
+      "publishFrameId": "",
+      "dataSource": "gamepad",
+      "displayMode": "custom",
+      "debugGamepad": false,
+      "layoutName": "xbox",
+      "mapping_name": "TODO",
+      "gamepadId": 0
+    },
     "CallService!2b4k70w": {
       "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"sim.launch.py\"\n}",
       "layout": "vertical",
@@ -260,6 +246,16 @@
       "editingMode": true,
       "foxglovePanelTitle": "simulation",
       "buttonText": "Simulation",
+      "buttonColor": "#ff0000"
+    },
+    "CallService!qgiheg": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/start_streams",
+      "editingMode": false,
+      "foxglovePanelTitle": "simulation",
+      "buttonText": "Start",
       "buttonColor": "#ff0000"
     },
     "CallService!3utg1bx": {
@@ -272,6 +268,16 @@
       "buttonText": "Real",
       "buttonColor": "#ff0000"
     },
+    "CallService!4n47km": {
+      "requestPayload": "{}",
+      "layout": "vertical",
+      "timeoutSeconds": 20,
+      "serviceName": "/stop_streams",
+      "editingMode": false,
+      "foxglovePanelTitle": "real launch",
+      "buttonText": "Stop",
+      "buttonColor": "#ff0000"
+    },
     "CallService!1z631qn": {
       "requestPayload": "{\n \"package\" : \"rove_navigation\",\n \"file_name\" : \"navigation.launch.py\"\n}",
       "layout": "vertical",
@@ -279,17 +285,17 @@
       "serviceName": "/launchHandler/launchFile",
       "editingMode": true,
       "foxglovePanelTitle": "navigation",
-      "buttonText": "navigation",
+      "buttonText": "Navigation",
       "buttonColor": "#ff0000"
     },
     "CallService!90e1se": {
-      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"velodyne_3d.launch.py\"\n}",
+      "requestPayload": "{\n \"package\" : \"rove_bringup\",\n \"file_name\" : \"autonomy.launch.py\"\n}",
       "layout": "vertical",
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
       "editingMode": true,
-      "foxglovePanelTitle": "slam",
-      "buttonText": "slam",
+      "foxglovePanelTitle": "SLAM",
+      "buttonText": "SLAM",
       "buttonColor": "#ff0000",
       "buttonTooltip": "Lidar"
     },
@@ -309,25 +315,24 @@
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
       "editingMode": true,
-      "foxglovePanelTitle": "Scenario",
-      "buttonText": "Search & Rescue",
+      "foxglovePanelTitle": "Radiation",
+      "buttonText": "Radiation",
       "buttonColor": "#ff0000"
     },
     "3D!wd5ayb": {
       "cameraState": {
+        "distance": 5.270401889312207,
         "perspective": true,
-        "distance": 34.29722988070159,
-        "phi": 36.57759742437087,
-        "thetaOffset": -115.95466447538558,
-        "targetOffset": [
-          -4.472862691534758,
-          2.3842538553310604,
-          -2.118868401559234
-        ],
+        "phi": 51.940355812157776,
         "target": [
           0,
           0,
           0
+        ],
+        "targetOffset": [
+          0.16477625566412332,
+          0.5879894901772289,
+          -1.475518171971596e-16
         ],
         "targetOrientation": [
           0,
@@ -335,6 +340,7 @@
           0,
           1
         ],
+        "thetaOffset": -42.521828691725496,
         "fovy": 45,
         "near": 0.5,
         "far": 5000
@@ -551,7 +557,7 @@
           "visible": false
         },
         "/velodyne_packets": {
-          "visible": true,
+          "visible": false,
           "colorField": "intensity",
           "colorMode": "colormap",
           "colorMap": "turbo"
@@ -589,12 +595,18 @@
           "frameLocked": false,
           "unknownColor": "#888888ff",
           "colorMode": "costmap",
-          "alpha": 0.6
+          "alpha": 1
         },
         "/radiation_marker": {
-          "visible": true,
+          "visible": false,
           "color": "#ff0000ff",
           "showOutlines": true
+        },
+        "/assembled_cloud": {
+          "visible": true,
+          "colorField": "intensity",
+          "colorMode": "colormap",
+          "colorMap": "turbo"
         }
       },
       "layers": {
@@ -682,6 +694,24 @@
         },
         "point_cloud_assembler": {
           "visible": true
+        },
+        "ffmpeg_manager": {
+          "visible": true
+        },
+        "radiacode_node": {
+          "visible": true
+        },
+        "controller_manager": {
+          "visible": true
+        },
+        "radiation_position_tracker": {
+          "visible": true
+        },
+        "odrive_control": {
+          "visible": true
+        },
+        "rove_controller_node": {
+          "visible": true
         }
       }
     },
@@ -742,12 +772,7 @@
           "title": "Status",
           "layout": {
             "first": {
-              "first": {
-                "first": "Gauge!3mhnam3",
-                "second": "RawMessages!1y55c7o",
-                "direction": "column",
-                "splitPercentage": 49.99744702578504
-              },
+              "first": "RawMessages!1y55c7o",
               "second": {
                 "first": "RawMessages!1wdewas",
                 "second": {
@@ -794,16 +819,15 @@
         {
           "title": "Velocities",
           "layout": "Plot!3kc30m9"
+        },
+        {
+          "title": ""
         }
       ]
     },
     "Tab!1w9p6uc": {
-      "activeTabIdx": 0,
+      "activeTabIdx": 2,
       "tabs": [
-        {
-          "title": "Gamepad",
-          "layout": "Joystick Panel.Joystick!4cyq4bd"
-        },
         {
           "title": "Keyboard",
           "layout": "Joystick Panel.Joystick!31gwyzo"
@@ -811,6 +835,10 @@
         {
           "title": "Joystick",
           "layout": "virtual-joystick.Virtual Joystick!9rfrv4"
+        },
+        {
+          "title": "",
+          "layout": "Joystick Panel.Joystick!3htyhue"
         }
       ]
     },
@@ -822,8 +850,17 @@
           "layout": {
             "first": {
               "first": {
-                "first": "CallService!2b4k70w",
-                "second": "CallService!3utg1bx",
+                "first": {
+                  "first": "CallService!2b4k70w",
+                  "second": "CallService!qgiheg",
+                  "direction": "row"
+                },
+                "second": {
+                  "first": "CallService!3utg1bx",
+                  "second": "CallService!4n47km",
+                  "direction": "row",
+                  "splitPercentage": 70.3425674808074
+                },
                 "direction": "column",
                 "splitPercentage": 48.21433277984239
               },
@@ -853,7 +890,7 @@
       ]
     },
     "Tab!3a420zm": {
-      "activeTabIdx": 1,
+      "activeTabIdx": 0,
       "tabs": [
         {
           "title": "Log Console",
