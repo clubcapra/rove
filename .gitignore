@@ -2,7 +2,6 @@
 build/
 log/
 install/
-ouput
 
 # Ignore everything in src except rove_*
 src/*
