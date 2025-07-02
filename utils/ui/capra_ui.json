@@ -21,6 +21,14 @@
       "topicPath": "/RoboGuard/ambiant_temp.data",
       "fontSize": 12
     },
+    "RawMessages!1wdewas": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/dose_rate.data",
+      "fontSize": 12
+    },
     "Indicator!4gm9084": {
       "path": "/RoboGuard/estop_bt.data",
       "style": "background",
@@ -54,7 +62,7 @@
     "Gauge!1mdifj3": {
       "path": "/dose_rate.data",
       "minValue": 0,
-      "maxValue": 80,
+      "maxValue": 2,
       "colorMap": "red-yellow-green",
       "colorMode": "colormap",
       "gradient": [
@@ -82,7 +90,7 @@
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
       "selectedHardwareId": "none",
-      "selectedName": "rtabmap: Output Status"
+      "selectedName": "ekf_filter_node_local: odometry/filtered topic status"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -308,13 +316,13 @@
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 13.623350792075382,
-        "phi": 44.3151539663691,
-        "thetaOffset": -69.75145594830951,
+        "distance": 20.535018443129076,
+        "phi": 42.9947097238342,
+        "thetaOffset": -70.39316714918232,
         "targetOffset": [
-          0.9419729753961615,
-          -0.5006553754631804,
-          8.010875688739382e-16
+          -2.8822295365373685,
+          2.578244581809097,
+          -2.118868401559234
         ],
         "target": [
           0,
@@ -417,7 +425,10 @@
         "/map": {
           "visible": true,
           "drawBehind": false,
-          "colorMode": "custom"
+          "colorMode": "map",
+          "minColor": "#ffffff00",
+          "maxColor": "#000000ff",
+          "unknownColor": "#808080ff"
         },
         "/octomap_grid": {
           "visible": false
@@ -569,6 +580,21 @@
         },
         "/vectornav/pose": {
           "visible": false
+        },
+        "/radiation_map": {
+          "visible": true,
+          "drawBehind": false,
+          "maxColor": "#ff0000ff",
+          "minColor": "#ffffffff",
+          "frameLocked": false,
+          "unknownColor": "#888888ff",
+          "colorMode": "costmap",
+          "alpha": 0.6
+        },
+        "/radiation_marker": {
+          "visible": true,
+          "color": "#ff0000ff",
+          "showOutlines": true
         }
       },
       "layers": {
@@ -741,7 +767,7 @@
               "splitPercentage": 49.99739596895995
             },
             "direction": "row",
-            "splitPercentage": 67.5
+            "splitPercentage": 70.26239067055393
           }
         }
       ]
@@ -789,7 +815,7 @@
       ]
     },
     "Tab!1dud6cr": {
-      "activeTabIdx": 0,
+      "activeTabIdx": 1,
       "tabs": [
         {
           "title": "Launch",
@@ -799,7 +825,7 @@
                 "first": "CallService!2b4k70w",
                 "second": "CallService!3utg1bx",
                 "direction": "column",
-                "splitPercentage": 48.720381645185945
+                "splitPercentage": 48.21433277984239
               },
               "second": {
                 "first": "CallService!1z631qn",
@@ -851,14 +877,6 @@
           }
         }
       ]
-    },
-    "RawMessages!1wdewas": {
-      "diffEnabled": false,
-      "diffMethod": "custom",
-      "diffTopicPath": "",
-      "showFullMessageForDiff": false,
-      "topicPath": "/dose_rate",
-      "fontSize": 12
     }
   },
   "globalVariables": {},
@@ -881,11 +899,11 @@
         "first": "Tab!2iobm2s",
         "second": "Tab!2clm2nl",
         "direction": "row",
-        "splitPercentage": 27.898408728973823
+        "splitPercentage": 29.64674000432109
       },
       "second": "Tab!1w9p6uc",
       "direction": "row",
-      "splitPercentage": 75.33460803059273
+      "splitPercentage": 75.23809523809524
     },
     "second": {
       "first": "Tab!1dud6cr",
