@@ -21,8 +21,9 @@ def generate_launch_description():
     pkg_rove_bringup = get_package_share_directory("rove_bringup")
     pkg_rove_description = get_package_share_directory("rove_description")
     pkg_robotiq_description = get_package_share_directory("robotiq_description")
-    pkg_rove_zed = get_package_share_directory("rove_zed")
+    #pkg_rove_zed = get_package_share_directory("rove_zed")
     pkg_rove_radiation = get_package_share_directory("rove_radiation")
+    pkg_capra_actions_mapper = get_package_share_directory("capra_actions_mapper")
 
     # Get the URDF file
     urdf_path = os.path.join(pkg_rove_description, "urdf", "rove.urdf.xacro")
@@ -153,15 +154,21 @@ def generate_launch_description():
         ),
     )
 
-    zed = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_zed, "launch", "zed_mapping.launch.py"),
-        )
-    )
-    
+    #zed = IncludeLaunchDescription(
+    #    PythonLaunchDescriptionSource(
+    #        os.path.join(pkg_rove_zed, "launch", "zed_mapping.launch.py"),
+    #   )
+    #)
+
     radiation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_rove_radiation, "launch", "radiation.launch.py"),
+        )
+    )
+
+    capra_actions_mapper = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_capra_actions_mapper, "launch", "mapper.launch.py"),
         )
     )
 
@@ -172,12 +179,13 @@ def generate_launch_description():
             # *delayed_controller_nodes,
             control_node,
             ffmpeg_manager,
-            spacemouse,
+            # spacemouse,
             # TimerAction(period=20.0, actions=[
-            gripper,
+            # gripper,
             vectornav,
             velodyne,
             radiation,
+            capra_actions_mapper,
             # zed,
             # ]),
         ]

@@ -8,6 +8,10 @@ ouput
 src/*
 !src/rove_*
 
+# Ignore everything in output except the readme
+output/*
+!src/README.md
+
 # Ignore Python bytecodes
 __pycache__/
 *.pyc
@@ -22,3 +26,5 @@ __pycache__/
 # generated map database by rtabmap
 *.db
 
+# Ignore .zip files
+*.zip

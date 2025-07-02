@@ -15,8 +15,8 @@ def generate_launch_description():
     pkg_rove_nav = get_package_share_directory("rove_navigation")
     slam_pkg_path = get_package_share_directory("slam_toolbox")
 
-    use_slam3d = LaunchConfiguration("use_slam3d")
-    use_sim_time = LaunchConfiguration("use_sim_time")
+    use_slam3d = LaunchConfiguration("use_slam3d", default=True)
+    use_sim_time = LaunchConfiguration("use_sim_time", default=False)
 
     slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

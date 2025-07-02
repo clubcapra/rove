@@ -88,7 +88,8 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             # os.path.join(pkg_rove_bringup, "launch", "rove_controller_usb.launch.py"),
             os.path.join(
-                pkg_rove_bringup, "launch", "rove_controller_foxglove.launch.py"
+                # pkg_rove_bringup, "launch", "rove_controller_foxglove.launch.py"
+                pkg_rove_bringup, "launch", "joy_local.launch.py"
             ),
         ),
     )
@@ -123,6 +124,6 @@ def generate_launch_description():
             twist_mux,
             # rviz,
             teleop,
-            autonomy,
+            #autonomy,
         ]
     )
