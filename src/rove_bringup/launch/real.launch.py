@@ -55,7 +55,10 @@ def generate_launch_description():
             os.path.join(
                 pkg_robotiq_description, "launch", "robotiq_control.launch.py"
             ),
-        )
+        ),
+        launch_arguments={
+            "com_port": "/dev/ttyUSB_gripper",
+        }.items(),
     )
 
     ###### ROS2 control ######
@@ -76,6 +79,12 @@ def generate_launch_description():
     spacemouse= Node(
         package="spacemouse_joy",
         executable="spacemouse_tcp_server",
+        output="both",
+    )
+
+    ffmpeg_manager= Node(
+        package="ffmpeg_manager",
+        executable="ffmpeg_manager_node",
         output="both",
     )
 
@@ -162,6 +171,7 @@ def generate_launch_description():
             # joint_state_broadcaster_spawner,
             # *delayed_controller_nodes,
             control_node,
+            ffmpeg_manager,
             spacemouse,
             # TimerAction(period=20.0, actions=[
             gripper,
