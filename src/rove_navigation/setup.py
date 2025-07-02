@@ -21,7 +21,7 @@ setup(
     description="TODO: Package description",
     license="TODO: License declaration",
     tests_require=["pytest"],
-    package_dir={"": "src"},
+    # package_dir={"": "src"},
     entry_points={
         "console_scripts": [
             "navigate_to_person = rove_navigation.navigate_to_person:main",
