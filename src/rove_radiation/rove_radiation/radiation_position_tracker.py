@@ -1,3 +1,4 @@
+import datetime
 from math import floor
 from typing import Optional
 
@@ -21,6 +22,8 @@ from geometry_msgs.msg import PointStamped
 class RadiationPositionTracker(Node):
     def __init__(self):
         super().__init__("radiation_position_tracker")
+        self.max_rad_record = 0
+        self.SIGMA = 20
 
         self.radiation_subscription = self.create_subscription(
             Float32, "/dose_rate", self.radiation_callback, 10
@@ -64,8 +67,10 @@ class RadiationPositionTracker(Node):
     def radiation_callback(self, msg):
         """Stocke la dernière valeur mesurée de radiation"""
         self.current_radiation = msg.data
-        if self.current_radiation > self.max_intensity: 
-            self.max_intensity = self.current_radiation
+        if self.current_radiation > self.max_rad_record: 
+            self.max_rad_record = self.current_radiation
+        # if self.current_radiation > self.max_intensity: 
+        #     self.max_intensity = self.current_radiation
         self.send_point(self.current_position.x, self.current_position.y, self.current_radiation)
 
     def localization_pose_callback(self, msg):
@@ -150,76 +155,65 @@ class RadiationPositionTracker(Node):
                 normed = self.generate_heat_map()
                 
                 rad_map = OccupancyGrid()
-                rad_map.data = normed.flatten().tolist()
+                int_data = (normed * 100).astype(np.int8).flatten().tolist()
+                rad_map.data = int_data
                 rad_map.header = self.map.header
                 rad_map.info = self.map.info
                 
                 self.radiation_map_publisher.publish(rad_map)
 
     def generate_heat_map(self):
-        """
-        Génère une image PDF des readings de la radiation dans une carte 2D heatmap et une légende, 
-        similaire à generate_and_save_image(), sauf qu'un blur gaussien est effectué pour améliorer 
-        visuellement le résultat final
-        """
-        og = self.obstacle_grid.info  # OccupancyGrid obstacle
-        rg = self.map.info  # OccupancyGrid radiation
-
-        # Step 1: Grid setup
+        og = self.obstacle_grid.info
         width = og.width
         height = og.height
-
+    
         obstacle_data = np.array(self.obstacle_grid.data, dtype=np.int8).reshape((height, width))
-        radiation_data = np.array(self.map.data, dtype=np.int8).reshape((height, width))
-
-        # Step 2: Base image: light gray
+        radiation_data = np.array(self.map.data, dtype=np.float32).reshape((height, width))
+    
         image = np.full((height, width, 3), fill_value=0.85, dtype=np.float32)
         obstacle_mask = obstacle_data >= 50
         image[obstacle_mask] = np.array([0.0, 0.0, 0.0], dtype=np.float32)
-
-        # Step 3: Generate empty heatmap grid
-        heatmap = np.zeros((height, width), dtype=np.float32)
-        temp_map = np.zeros((height, width), dtype=np.float32)
-
-        # Step 4: Populate heatmap based on radiation points
+    
         measured_indices = np.argwhere(radiation_data > 0)
-        for (i, j) in measured_indices:
-            temp_map[...] = 0.0  # clear temp map
-            temp_map[i, j] = radiation_data[i, j] / 100.0  # set only this one point
-            blurred = gaussian_filter(temp_map, sigma=20.0)
-            heatmap = np.maximum(heatmap, blurred)  # combine without amplifying
-
-
-        # Step 5: Smooth with Gaussian blur
-        heatmap = gaussian_filter(heatmap, sigma=20.0)
-
-        # Step 6: Normalize and apply colormap
-        normed = np.clip(heatmap / np.max(heatmap), 0, 1) if np.max(heatmap) > 0 else heatmap
-        colored_heatmap = cm.jet(normed)[..., :3]  # Drop alpha
-
-        # Step 7: Overlay heatmap onto base image (blend)
-        alpha = 0.6  # blending factor
+        p = 8  # power for smooth max, tune this
+    
+        accum = np.zeros((height, width), dtype=np.float32)
+        
+        for i, j in measured_indices:
+            temp = np.zeros((height, width), dtype=np.float32)
+            intensity = radiation_data[i, j]
+            temp[i, j] = intensity
+            blurred = gaussian_filter(temp, sigma=self.SIGMA)
+            accum += blurred**p  # accumulate powers
+    
+        heatmap = accum**(1/p)  # power mean
+    
+        # Normalize for display
+        normed = heatmap / np.max(heatmap) if np.max(heatmap) > 0 else heatmap
+    
+        colored_heatmap = cm.jet(normed)[..., :3]
+    
+        alpha = 0.6
         image = (1 - alpha) * image + alpha * colored_heatmap
-
-        # === Save with sidebar ===
+    
         fig, ax = plt.subplots(figsize=(10, 8))
-
-        # Display image
-        # im = ax.imshow(image)
-
-        # Add colorbar with same normalization
-        norm = matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity)
-        cbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap='jet'), ax=ax)
-        cbar.set_label("Radiation intensity", fontsize=12)
-
-        # Remove axes ticks if desired
+        ax.imshow(image)
+    
+        cbar = fig.colorbar(
+            cm.ScalarMappable(norm=matplotlib.colors.Normalize(vmin=0, vmax=self.max_rad_record), cmap='jet'),
+            ax=ax
+        )
+        cbar.set_label("Radiation intensity [µSv]", fontsize=12)
         ax.set_xticks([])
         ax.set_yticks([])
+        
+        plt.title("Enrich 2025 Capra Radiation heatmap", fontsize=16, fontweight='bold', y=0.95)
 
-        # Step 8: Save as PDF
-        # plt.savefig("output/radiation_heatmap.pdf", bbox_inches='tight')
-        # plt.close(fig)
-        return (normed * 100).astype(np.int8)
+        plt.savefig("./output/radiation_heatmap.pdf", bbox_inches='tight')
+        plt.close()
+    
+        return normed
+
 
 
     def generate_and_save_image(self):
@@ -290,9 +284,19 @@ class RadiationPositionTracker(Node):
         ax.axis("off")
 
         # save le pdf
+        cbar = fig.colorbar(
+            cm.ScalarMappable(norm=matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity), cmap='jet'),
+            ax=ax
+        )
+        cbar.set_label("Radiation intensity [µSv]", fontsize=12)
+        
+        ax.set_xticks([])
+        ax.set_yticks([])
+        plt.title("Enrich 2025 Radiation Map of Recorded Data Points", fontsize=16, fontweight='bold')
+
         sortie = "output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
-        # fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
-        # plt.close(fig)
+        fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
 
     def send_point(self, x, y, radiation_level, frame='map'):
         msg = PointStamped()

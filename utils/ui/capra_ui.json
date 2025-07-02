@@ -21,14 +21,13 @@
       "topicPath": "/RoboGuard/ambiant_temp.data",
       "fontSize": 12
     },
-    "Publish!1j49mwn": {
-      "buttonText": "Ack Peak Current",
-      "buttonTooltip": "Ack current peak error",
-      "advancedView": false,
-      "value": "{\n  \"data\": true\n}",
-      "topicName": "/ack_peak_current",
-      "datatype": "std_msgs/Bool",
-      "buttonColor": "#eeff00"
+    "RawMessages!1wdewas": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/dose_rate.data",
+      "fontSize": 12
     },
     "Indicator!4gm9084": {
       "path": "/RoboGuard/estop_bt.data",
@@ -60,20 +59,18 @@
         }
       ]
     },
-    "Indicator!1e1hofj": {
-      "path": "/over_current.data",
-      "style": "background",
-      "fontSize": 10,
-      "fallbackColor": "#00ff15",
-      "fallbackLabel": "Current OK",
-      "rules": [
-        {
-          "operator": "=",
-          "rawValue": "true",
-          "color": "#ff0000",
-          "label": "Over Current"
-        }
-      ]
+    "Gauge!1mdifj3": {
+      "path": "/dose_rate.data",
+      "minValue": 0,
+      "maxValue": 2,
+      "colorMap": "red-yellow-green",
+      "colorMode": "colormap",
+      "gradient": [
+        "#0000ff",
+        "#ff00ff"
+      ],
+      "reverse": true,
+      "foxglovePanelTitle": "Geiger"
     },
     "Indicator!52bgsl": {
       "path": "/estop.data",
@@ -93,7 +90,7 @@
     "DiagnosticStatusPanel!3hobcok": {
       "topicToRender": "/diagnostics",
       "selectedHardwareId": "none",
-      "selectedName": "rtabmap: Output Status"
+      "selectedName": "ekf_filter_node_local: odometry/filtered topic status"
     },
     "DiagnosticSummary!120zsba": {
       "minLevel": 0,
@@ -260,7 +257,7 @@
       "layout": "vertical",
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
+      "editingMode": true,
       "foxglovePanelTitle": "simulation",
       "buttonText": "Simulation",
       "buttonColor": "#ff0000"
@@ -271,45 +268,9 @@
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
       "editingMode": true,
-      "foxglovePanelTitle": "simulation",
+      "foxglovePanelTitle": "real launch",
       "buttonText": "Real",
       "buttonColor": "#ff0000"
-    },
-    "RosOut!32lzifo": {
-      "searchTerms": [],
-      "minLogLevel": 2,
-      "nameFilter": {
-        "foxglove_bridge": {
-          "visible": true
-        },
-        "rtabmap": {
-          "visible": true
-        },
-        "icp_odometry": {
-          "visible": true
-        },
-        "twist_mux": {
-          "visible": true
-        },
-        "robot_state_publisher": {
-          "visible": true
-        },
-        "velodyne_driver_node": {
-          "visible": true
-        },
-        "vectornav": {
-          "visible": true
-        },
-        "scan": {
-          "visible": true
-        },
-        "velodyne_points": {
-          "visible": true
-        },
-        "point_cloud_assembler": {
-          "visible": true
-        }
-      }
     },
     "CallService!1z631qn": {
       "requestPayload": "{\n \"package\" : \"rove_navigation\",\n \"file_name\" : \"navigation.launch.py\"\n}",
@@ -337,85 +298,31 @@
       "layout": "vertical",
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
+      "editingMode": true,
       "foxglovePanelTitle": "Scenario",
       "buttonText": "Reconnoitring of structures",
       "buttonColor": "#ff0000"
     },
-    "CallService!2qnnpsv": {
-      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
-      "layout": "vertical",
-      "timeoutSeconds": 20,
-      "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
-      "foxglovePanelTitle": "Scenario",
-      "buttonText": "Transport – Mule",
-      "buttonColor": "#ff0000"
-    },
     "CallService!6ywrf4": {
-      "requestPayload": "{\n \"package\" : \"rove_slam\",\n \"file_name\" : \"slam3d_full.launch.py\"\n}",
+      "requestPayload": "{\n \"package\" : \"rove_radiation\",\n \"file_name\" : \"radiation.launch.py\"\n}",
       "layout": "vertical",
       "timeoutSeconds": 20,
       "serviceName": "/launchHandler/launchFile",
-      "editingMode": false,
+      "editingMode": true,
       "foxglovePanelTitle": "Scenario",
       "buttonText": "Search & Rescue",
       "buttonColor": "#ff0000"
     },
-    "Image!49i1pep": {
-      "cameraState": {
-        "distance": 20,
-        "perspective": true,
-        "phi": 60,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 45,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {},
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {
-        "imageTopic": "/green_person_bounding_box"
-      }
-    },
     "3D!wd5ayb": {
       "cameraState": {
         "perspective": true,
-        "distance": 10.014414690394421,
-        "phi": 30.839218137491827,
-        "thetaOffset": -69.10974471836273,
+        "distance": 34.29722988070159,
+        "phi": 36.57759742437087,
+        "thetaOffset": -115.95466447538558,
         "targetOffset": [
-          -0.6221891980342781,
-          0.5915950820488679,
-          8.742346368823276e-16
+          -4.472862691534758,
+          2.3842538553310604,
+          -2.118868401559234
         ],
         "target": [
           0,
@@ -518,7 +425,10 @@
         "/map": {
           "visible": true,
           "drawBehind": false,
-          "colorMode": "custom"
+          "colorMode": "map",
+          "minColor": "#ffffff00",
+          "maxColor": "#000000ff",
+          "unknownColor": "#808080ff"
         },
         "/octomap_grid": {
           "visible": false
@@ -670,6 +580,21 @@
         },
         "/vectornav/pose": {
           "visible": false
+        },
+        "/radiation_map": {
+          "visible": true,
+          "drawBehind": false,
+          "maxColor": "#ff0000ff",
+          "minColor": "#ffffffff",
+          "frameLocked": false,
+          "unknownColor": "#888888ff",
+          "colorMode": "costmap",
+          "alpha": 0.6
+        },
+        "/radiation_marker": {
+          "visible": true,
+          "color": "#ff0000ff",
+          "showOutlines": true
         }
       },
       "layers": {
@@ -724,211 +649,92 @@
       "imageMode": {},
       "followTf": "base_link"
     },
-    "Image!3tf48t5": {
-      "cameraState": {
-        "distance": 20,
-        "perspective": true,
-        "phi": 60,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 45,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {},
-      "transforms": {},
-      "topics": {},
-      "layers": {},
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {}
-    },
-    "3D!6mcngs": {
-      "cameraState": {
-        "distance": 4.292775278858483,
-        "perspective": false,
-        "phi": 60.00000000000029,
-        "target": [
-          0,
-          0,
-          0
-        ],
-        "targetOffset": [
-          0,
-          0,
-          0
-        ],
-        "targetOrientation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "thetaOffset": 93.53932584269747,
-        "fovy": 45,
-        "near": 0.5,
-        "far": 5000
-      },
-      "followMode": "follow-pose",
-      "scene": {
-        "transforms": {
-          "visible": true,
-          "showLabel": true
-        },
-        "meshUpAxis": "z_up",
-        "enableStats": false
-      },
-      "transforms": {
-        "frame:map": {
-          "visible": false
-        },
-        "frame:odom": {
-          "visible": false
-        },
-        "frame:base_link": {
-          "visible": false
-        },
-        "frame:sensor_link": {
-          "visible": false
-        },
-        "frame:camera_link": {
-          "visible": false
-        },
-        "frame:zed_camera_link": {
-          "visible": false
-        },
-        "frame:track_l": {
-          "visible": false
-        },
-        "frame:track_fl": {
-          "visible": false
-        },
-        "frame:track_rl": {
-          "visible": false
-        },
-        "frame:track_r": {
-          "visible": false
-        },
-        "frame:track_fr": {
-          "visible": false
-        },
-        "frame:track_rr": {
-          "visible": false
-        },
-        "frame:velodyne_link": {
-          "visible": false
-        },
-        "frame:velodyne_laser": {
-          "visible": false
-        },
-        "frame:flipper_fl": {
-          "visible": false
-        },
-        "frame:flipper_fr": {
-          "visible": false
-        },
-        "frame:flipper_rl": {
-          "visible": false
-        },
-        "frame:flipper_rr": {
-          "visible": false
-        }
-      },
-      "topics": {
-        "/scan": {
-          "visible": false,
-          "colorField": "intensity",
-          "colorMode": "colormap",
-          "colorMap": "turbo"
-        },
-        "/map": {
+    "RosOut!12aksv8": {
+      "searchTerms": [],
+      "minLogLevel": 2,
+      "nameFilter": {
+        "foxglove_bridge": {
           "visible": true
         },
-        "/cloud_map": {
-          "visible": false,
-          "colorField": "rgb",
-          "colorMode": "rgb",
-          "colorMap": "turbo"
-        }
-      },
-      "layers": {
-        "grid": {
-          "visible": true,
-          "frameLocked": true,
-          "label": "Grid",
-          "instanceId": "611e5ac6-23a9-4a4b-9468-08108f028679",
-          "layerId": "foxglove.Grid",
-          "size": 10,
-          "divisions": 10,
-          "lineWidth": 1,
-          "color": "#248eff",
-          "position": [
-            0,
-            0,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            0
-          ]
+        "rtabmap": {
+          "visible": true
         },
-        "15aa06bd-cc6d-4591-a71a-9a94936586cd": {
-          "displayMode": "auto",
-          "fallbackColor": "#ffffff",
-          "showAxis": false,
-          "axisScale": 1,
-          "showOutlines": true,
-          "opacity": 1,
-          "visible": true,
-          "frameLocked": true,
-          "instanceId": "15aa06bd-cc6d-4591-a71a-9a94936586cd",
-          "label": "URDF",
-          "layerId": "foxglove.Urdf",
-          "sourceType": "topic",
-          "url": "",
-          "filePath": "",
-          "parameter": "",
-          "topic": "/robot_description",
-          "framePrefix": "",
-          "order": 1
+        "icp_odometry": {
+          "visible": true
+        },
+        "twist_mux": {
+          "visible": true
+        },
+        "robot_state_publisher": {
+          "visible": true
+        },
+        "velodyne_driver_node": {
+          "visible": true
+        },
+        "vectornav": {
+          "visible": true
+        },
+        "scan": {
+          "visible": true
+        },
+        "velodyne_points": {
+          "visible": true
+        },
+        "point_cloud_assembler": {
+          "visible": true
         }
-      },
-      "publish": {
-        "type": "point",
-        "poseTopic": "/move_base_simple/goal",
-        "pointTopic": "/clicked_point",
-        "poseEstimateTopic": "/initialpose",
-        "poseEstimateXDeviation": 0.5,
-        "poseEstimateYDeviation": 0.5,
-        "poseEstimateThetaDeviation": 0.26179939
-      },
-      "imageMode": {}
+      }
     },
-    "map!irg0ly": {},
+    "CallService!1wdk26y": {
+      "requestPayload": "{\n \"package\" : \"rove_logging\",\n \"file_name\" : \"start_logging.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "serviceName": "/launchHandler/launchFile",
+      "foxglovePanelTitle": "Toggle Rosbag logging",
+      "buttonText": "Toggle Logging",
+      "buttonTooltip": "Toggle the rosbag2 logging of the robot, CAUTION: only press this once you are ready for the run"
+    },
+    "CallService!19ybsmi": {
+      "requestPayload": "{\n \"package\" : \"rove_logging\",\n \"file_name\" : \"compress_output.launch.py\"\n}",
+      "layout": "vertical",
+      "timeoutSeconds": 10,
+      "serviceName": "/launchHandler/launchFile",
+      "foxglovePanelTitle": "Toggle Rosbag logging",
+      "buttonText": "Prepare output zip folder",
+      "buttonTooltip": "Compress the output folder (rosbag, mapping data, etc) into a zip file ready for transfer"
+    },
+    "Indicator!1wnksao": {
+      "path": "/is_rosbag_running.data",
+      "style": "background",
+      "fontSize": 36,
+      "fallbackColor": "#ff0000",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#29cd00",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Rosbag Running"
+    },
+    "Indicator!3kli6u9": {
+      "path": "/is_compression_finished.data",
+      "style": "background",
+      "fontSize": 36,
+      "fallbackColor": "#ff0000",
+      "fallbackLabel": "False",
+      "rules": [
+        {
+          "operator": "=",
+          "rawValue": "true",
+          "color": "#29cd00",
+          "label": "True"
+        }
+      ],
+      "foxglovePanelTitle": "Is compression finished?"
+    },
     "Tab!2iobm2s": {
       "activeTabIdx": 0,
       "tabs": [
@@ -943,7 +749,7 @@
                 "splitPercentage": 49.99744702578504
               },
               "second": {
-                "first": "Publish!1j49mwn",
+                "first": "RawMessages!1wdewas",
                 "second": {
                   "first": "Indicator!4gm9084",
                   "second": "Indicator!yfjylf",
@@ -955,13 +761,13 @@
               "splitPercentage": 48.23955358460312
             },
             "second": {
-              "first": "Indicator!1e1hofj",
+              "first": "Gauge!1mdifj3",
               "second": "Indicator!52bgsl",
               "direction": "column",
               "splitPercentage": 49.99739596895995
             },
             "direction": "row",
-            "splitPercentage": 71.29629629629629
+            "splitPercentage": 70.26239067055393
           }
         }
       ]
@@ -1018,56 +824,56 @@
               "first": {
                 "first": "CallService!2b4k70w",
                 "second": "CallService!3utg1bx",
-                "direction": "column"
+                "direction": "column",
+                "splitPercentage": 48.21433277984239
               },
               "second": {
-                "first": "RosOut!32lzifo",
-                "second": {
-                  "first": "CallService!1z631qn",
-                  "second": "CallService!90e1se",
-                  "direction": "column",
-                  "splitPercentage": 48.66220735785953
-                },
-                "direction": "row",
-                "splitPercentage": 76.34516149783803
+                "first": "CallService!1z631qn",
+                "second": "CallService!90e1se",
+                "direction": "column",
+                "splitPercentage": 48.66220735785953
               },
               "direction": "row",
-              "splitPercentage": 22.561529751795238
+              "splitPercentage": 48.44013223582317
             },
             "second": {
-              "first": {
-                "first": "CallService!43dz0yr",
-                "second": "CallService!2qnnpsv",
-                "direction": "column"
-              },
+              "first": "CallService!43dz0yr",
               "second": "CallService!6ywrf4",
               "direction": "column",
-              "splitPercentage": 64.83679525222553
+              "splitPercentage": 48.720381645185945
             },
             "direction": "row",
-            "splitPercentage": 85.62162162162163
+            "splitPercentage": 71.89728958630528
           }
         },
         {
-          "title": "Split",
-          "layout": {
-            "first": "Image!49i1pep",
-            "second": "3D!wd5ayb",
-            "direction": "row",
-            "splitPercentage": 47.16473904364486
-          }
+          "title": "3d Space",
+          "layout": "3D!wd5ayb"
+        }
+      ]
+    },
+    "Tab!3a420zm": {
+      "activeTabIdx": 1,
+      "tabs": [
+        {
+          "title": "Log Console",
+          "layout": "RosOut!12aksv8"
         },
         {
-          "title": "TPV",
+          "title": "Logging/Uploading",
           "layout": {
-            "first": "Image!3tf48t5",
+            "first": {
+              "first": "CallService!1wdk26y",
+              "second": "CallService!19ybsmi",
+              "direction": "row"
+            },
             "second": {
-              "first": "3D!6mcngs",
-              "second": "map!irg0ly",
-              "direction": "column"
+              "first": "Indicator!1wnksao",
+              "second": "Indicator!3kli6u9",
+              "direction": "row"
             },
-            "direction": "row",
-            "splitPercentage": 72.94994675186368
+            "direction": "column",
+            "splitPercentage": 53.106138478163466
           }
         }
       ]
@@ -1093,13 +899,18 @@
         "first": "Tab!2iobm2s",
         "second": "Tab!2clm2nl",
         "direction": "row",
-        "splitPercentage": 21.7985092453879
+        "splitPercentage": 29.64674000432109
       },
       "second": "Tab!1w9p6uc",
       "direction": "row",
-      "splitPercentage": 81.83186044878676
+      "splitPercentage": 75.23809523809524
     },
-    "second": "Tab!1dud6cr",
+    "second": {
+      "first": "Tab!1dud6cr",
+      "second": "Tab!3a420zm",
+      "direction": "row",
+      "splitPercentage": 51.79526120819694
+    },
     "direction": "column",
     "splitPercentage": 34.232365145228215
   }
