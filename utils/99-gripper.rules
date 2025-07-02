@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", ATTRS{idProduct}=="6001", ATTRS{idVendor}=="0403", SYMLINK+="ttyUSB_gripper", GROUP="dialout"
