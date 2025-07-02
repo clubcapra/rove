@@ -18,7 +18,11 @@ def generate_launch_description():
             IncludeLaunchDescription(
                 XMLLaunchDescriptionSource(rosbridge_launch_file),
                 launch_arguments=[
-                    ("include_hidden", "true"),
+                    ("include_hidden",       "true"),
+                    ("compression",          "true"),
+                    ("send_buffer_limit",    "2000000"),
+                    ("min_qos_depth",        "1"),
+                    ("max_qos_depth",        "3"),
                 ],
             ),
             Node(
