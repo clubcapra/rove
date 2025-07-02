@@ -1,0 +1,7 @@
+/wifi_roamer_node:
+  ros__parameters:
+    interface_name: "wlan0"            # Name of your Wi-Fi interface (e.g. wlan0, wlp3s0)
+    scan_period_sec: 5.0              # How often to scan for better APs
+    rssi_threshold_dbm: -70            # Trigger roam if current signal is below this
+    min_delta_dbm: 5                   # Only roam if the new AP is at least this much stronger
+    preferred_bssid: ""                # Optional: comma-separated MACs of preferred APs
