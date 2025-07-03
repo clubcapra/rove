@@ -22,6 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'poi_markers_node.py = rove_logging.poi_markers_node:main',
             'rosbag_state_node.py = rove_logging.rosbag_state_node:main',
         ],
     },
