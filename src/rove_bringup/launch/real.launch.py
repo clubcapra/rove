@@ -178,7 +178,7 @@ def generate_launch_description():
             # joint_state_broadcaster_spawner,
             # *delayed_controller_nodes,
             control_node,
-            ffmpeg_manager,
+            # ffmpeg_manager,
             # spacemouse,
             # TimerAction(period=20.0, actions=[
             # gripper,
