@@ -18,7 +18,7 @@ def generate_launch_description():
                 output="screen",
                 parameters=[joy_params_file],
                 remappings=[
-                    # ("/joy", "/rove/joy"),
+                    ("/joy", "/rove/joy"),
                 ]
             ),
         ]
