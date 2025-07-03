@@ -2,7 +2,7 @@
   ros__parameters:
     interface: "wlan0"            # Name of your Wi-Fi interface (e.g. wlan0, wlp3s0)
     check_period: 5.0              # How often to scan for better APs
-    signal_threshold: -80            # Trigger roam if current signal is below this
+    signal_threshold: -70            # Trigger roam if current signal is below this
     target_ssid: "EnRicH-Participants"
     wifi_password: "!enrich2025"
     host_2_ping: "192.168.199.1"
