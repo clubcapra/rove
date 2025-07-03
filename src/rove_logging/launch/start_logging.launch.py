@@ -7,9 +7,14 @@ import os
 from launch.event_handlers import OnShutdown, OnProcessStart
 
 def generate_launch_description():
-    if (not os.path.isdir('./output/bags')): os.mkdir('./output/bags')
-    folder_number = len(next(os.walk('./output/bags'))[1])
-    if(folder_number > 0): os.rename("./output/bags/rosbag_latest", "./output/bags/rosbag_{:02}".format(folder_number-1))
+    output_folder = os.path.abspath(os.path.join(
+        get_package_share_directory("rove_logging"), '../../../../output'
+    ))
+
+    if (not os.path.isdir(os.path.join(output_folder, 'bags'))): os.mkdir(os.path.join(output_folder('bags')))
+    folder_number = len(next(os.walk(os.path.join(output_folder, 'bags')))[1])
+    if(folder_number > 0): os.rename(os.path.join(output_folder, "bags", "rosbag_latest"), 
+                                     os.path.join(output_folder, "bags", "rosbag_{:02}".format(folder_number-1)))
 
     return LaunchDescription([
         Node(
@@ -23,7 +28,7 @@ def generate_launch_description():
                 'bag', 
                 'record', 
                 '-a', 
-                '--output', './output/bags/rosbag_latest', 
+                '--output', output_folder + '/bags/rosbag_latest', 
                 '--use-sim-time', 
                 '--compression-mode', 'file',
                 '--compression-format', 'zstd'],
