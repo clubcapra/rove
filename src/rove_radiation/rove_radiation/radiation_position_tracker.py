@@ -1,8 +1,10 @@
 import datetime
 from math import floor
+import os
 from typing import Optional
 
 import matplotlib
+from ament_index_python import get_package_share_directory
 import rclpy
 import time
 from rclpy.node import Node
@@ -24,6 +26,9 @@ class RadiationPositionTracker(Node):
         super().__init__("radiation_position_tracker")
         self.max_rad_record = 0
         self.SIGMA = 20
+        self.output_folder = os.path.abspath(os.path.join(
+            get_package_share_directory("rove_radiation"), '../../../../output'
+        ))
 
         self.radiation_subscription = self.create_subscription(
             Float32, "/dose_rate", self.radiation_callback, 10
@@ -209,7 +214,7 @@ class RadiationPositionTracker(Node):
         
         plt.title("Enrich 2025 Capra Radiation heatmap", fontsize=16, fontweight='bold', y=0.95)
 
-        plt.savefig("./output/radiation_heatmap.pdf", bbox_inches='tight')
+        plt.savefig(os.path.join(self.output_folder, "radiation_heatmap.pdf"), bbox_inches='tight')
         plt.close()
     
         return normed
@@ -283,7 +288,6 @@ class RadiationPositionTracker(Node):
 
         ax.axis("off")
 
-        # save le pdf
         cbar = fig.colorbar(
             cm.ScalarMappable(norm=matplotlib.colors.Normalize(vmin=0, vmax=self.max_intensity), cmap='jet'),
             ax=ax
@@ -293,8 +297,9 @@ class RadiationPositionTracker(Node):
         ax.set_xticks([])
         ax.set_yticks([])
         plt.title("Enrich 2025 Radiation Map of Recorded Data Points", fontsize=16, fontweight='bold')
-
-        sortie = "output/radiation_map_points.pdf"  # pt etre mettre ca en param en cli
+        
+        # save le pdf
+        sortie = os.path.join(self.output_folder, "radiation_map_points.pdf")  # pt etre mettre ca en param en cli
         fig.savefig(sortie, bbox_inches="tight", pad_inches=0)
         plt.close(fig)
 
