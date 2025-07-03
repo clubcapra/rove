@@ -113,12 +113,14 @@ class WifiRoamer(Node):
         """
         # Check connection state
         state_line = run(f"nmcli -t -f GENERAL.STATE dev show {self.iface}")
+        self.get_logger().info(f"[DEBUG] GENERAL.STATE output: '{state_line}'")
 
         if not state_line.startswith("GENERAL.STATE:100"):
             raise RuntimeError("Interface disconnected")
 
         # Get WiFi connection info
         raw = run("nmcli --escape no -t -f active,bssid,ssid,signal dev wifi")
+        self.get_logger().info(f"[DEBUG] nmcli wifi list:\n{raw}")
         for line in raw.splitlines():
             if not line.strip().startswith("yes"):
                 continue
