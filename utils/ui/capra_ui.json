@@ -321,6 +321,7 @@
     },
     "3D!wd5ayb": {
       "cameraState": {
+        "distance": 5.270401889312207,
         "perspective": true,
         "distance": 10.266841665583094,
         "phi": 35.897575063495246,
@@ -335,12 +336,18 @@
           0,
           0
         ],
+        "targetOffset": [
+          0.16477625566412332,
+          0.5879894901772289,
+          -1.475518171971596e-16
+        ],
         "targetOrientation": [
           0,
           0,
           0,
           1
         ],
+        "thetaOffset": -42.521828691725496,
         "fovy": 45,
         "near": 0.5,
         "far": 5000
@@ -599,6 +606,7 @@
           "alpha": 1
         },
         "/radiation_marker": {
+          "visible": false,
           "visible": false,
           "color": "#ff0000ff",
           "showOutlines": true
@@ -900,7 +908,7 @@
       ]
     },
     "Tab!3a420zm": {
-      "activeTabIdx": 1,
+      "activeTabIdx": 0,
       "tabs": [
         {
           "title": "Log Console",

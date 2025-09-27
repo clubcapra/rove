@@ -1,224 +1,122 @@
 #!/usr/bin/env python3
-"""
-wifi_roamer_node.py  –  automatic Wi‑Fi roaming helper for ROS 2
-
-Author: 2025‑07‑02
-Tested on: Ubuntu 22.04, ROS 2 Humble, NetworkManager 1.42
-
-ROS parameters
---------------
-interface_name         (string, default "wlan0")
-scan_period_sec        (double,  default 10.0)   – how often to rescan
-rssi_threshold_dbm     (int,     default -70)    – if current AP weaker than this, consider roaming
-min_delta_dbm          (int,     default 5)      – required improvement over current RSSI
-preferred_bssid        (string,  default "")     – optional hard preference (comma‑separated list)
-
-Published topics
-----------------
-/wifi_roamer/events    (std_msgs/String)
-"""
-import subprocess
-import shlex
-import re
-import time
-from typing import List, Tuple, Optional
-
-import rclpy
+import os, time, rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 
-# Helpers ──────────────────────────────────────────────────────────────────────
-def run(cmd: str) -> str:
-    """Run a shell command and return stdout; raise on error."""
-    completed = subprocess.run(
-        shlex.split(cmd), check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-    )
-    return completed.stdout.strip()
-
-def parse_nmcli_wifi_list(raw: str) -> List[Tuple[str, str, int]]:
-    """
-    Parse `nmcli -f BSSID,SSID,SIGNAL dev wifi list` output.
-    Returns list of (bssid, ssid, signal_percent) tuples.
-    """
-    rows = []
-    for line in raw.splitlines():
-        if not line or line.startswith("BSSID"):  # header
-            continue
-        parts = re.split(r"\s{2,}", line.strip())
-        if len(parts) >= 3:
-            bssid, ssid, signal = parts[0], parts[1], int(parts[2])
-            rows.append((bssid, ssid, signal))
-    return rows
-
-def wifi_signal_to_dbm(signal_percent: int) -> int:
-    """Convert NM signal % to rough dBm estimate (linear interpolation)."""
-    # 100 % ≈ –30 dBm, ‑100 % ≈ ‑90 dBm
-    return int((signal_percent / 100.0) * 60 - 90)
-
-# Node ─────────────────────────────────────────────────────────────────────────
-class WifiRoamer(Node):
+class WifiRoamerNode(Node):
     def __init__(self):
-        super().__init__("wifi_roamer")
-        # Parameters
-        self.declare_parameter("interface_name", "wlan0")
-        self.declare_parameter("scan_period_sec", 10.0)
-        self.declare_parameter("rssi_threshold_dbm", -70)
-        self.declare_parameter("min_delta_dbm", 10)
-        self.declare_parameter("preferred_bssid", "")
+        super().__init__("wifi_roamer_node")
 
-        self.iface = self.get_parameter("interface_name").get_parameter_value().string_value
-        self.scan_period = self.get_parameter("scan_period_sec").get_parameter_value().double_value
-        self.rssi_thr = self.get_parameter("rssi_threshold_dbm").get_parameter_value().integer_value
-        self.min_delta = self.get_parameter("min_delta_dbm").get_parameter_value().integer_value
-        pref = self.get_parameter("preferred_bssid").get_parameter_value().string_value
-        self.preferred_bssids = {b.strip().lower() for b in pref.split(",") if b.strip()}
+        # ── ROS 2 parameters ────────────────────────────────────────────────────
+        self.declare_parameter("interface",       "wlan0")
+        self.declare_parameter("target_ssid",     "MyWiFi")
+        self.declare_parameter("wifi_password",   "")
+        self.declare_parameter("signal_threshold", -70)   # dBm
+        self.declare_parameter("check_period",     5.0)   # seconds
+        self.declare_parameter("host_2_ping", "8.8.8.8")
+        # ----------------------------------------------------------------------
 
-        # Publisher
-        self.pub = self.create_publisher(String, "/wifi_roamer/events", 10)
+        self.interface        = self.get_parameter("interface").value
+        self.target_ssid      = self.get_parameter("target_ssid").value
+        self.wifi_password    = self.get_parameter("wifi_password").value
+        self.signal_threshold = self.get_parameter("signal_threshold").value
+        self.check_period     = self.get_parameter("check_period").value
+        self.host_2_ping      = self.get_parameter("host_2_ping").value
 
-        # Timer
-        self.timer = self.create_timer(self.scan_period, self.tick)
-        self.get_logger().info("WifiRoamer node started; scanning every %.1fs" % self.scan_period)
+        self.get_logger().info(
+            f"Started wifi_roamer_node on {self.interface}, targeting "
+            f"'{self.target_ssid}', threshold {self.signal_threshold} dBm, "
+            f"checking every {self.check_period}s"
+        )
+        self.timer = self.create_timer(self.check_period, self.check_wifi)
 
-    # ---------------------------------------------------------------------
-    def tick(self):
-        try:
-            current_bssid, current_ssid, current_dbm = self.current_connection()
-        except RuntimeError as e:
-            self.warn(str(e))
-            self.reconnect_if_possible()
-            return
+    # ───────────────────────── helpers ────────────────────────────────────────
+    def run_cmd(self, cmd: str):
+        proc = os.popen(cmd)
+        out  = proc.read().strip()
+        code = proc.close() or 0          # os.popen returns None on success
+        return out, code
 
-        self.debug(f"Current: {current_ssid} {current_bssid} {current_dbm} dBm")
+    def current_ssid(self):
+        out, _ = self.run_cmd(
+            "nmcli -t -f IN-USE,SSID dev wifi | grep '^*' | cut -d: -f2"
+        )
+        self.get_logger().debug(f"SSID query -> '{out}'")
+        return out or None
 
-        if current_dbm > self.rssi_thr:
-            # Good enough, nothing to do
-            return
-
-        best = self.find_better_ap(current_ssid, current_dbm)
-        if best:
-            best_bssid, best_dbm = best
-            self.info(
-                f"Roaming: {current_dbm} dBm too weak (<{self.rssi_thr}); "
-                f"switching to {best_bssid} at {best_dbm} dBm"
-            )
-            self.roam_to(best_bssid)
-
-    # ---------------------------------------------------------------------
-    # NetworkManager interactions
-    def current_connection(self) -> Tuple[str, str, int]:
-        """
-        Return (bssid, ssid, rssi_dbm) of current connection.
-        Raises RuntimeError if not connected or malformed data.
-        """
-        # Check connection state
-        state_line = run(f"nmcli -t -f GENERAL.STATE dev show {self.iface}")
-
-        if not state_line.startswith("GENERAL.STATE:100"):
-            raise RuntimeError("Interface disconnected")
-
-        # Get WiFi connection info
-        raw = run("nmcli --escape no -t -f active,bssid,ssid,signal dev wifi")
-        for line in raw.splitlines():
-            if not line.strip().startswith("yes"):
-                continue
-            parts = line.strip().split(":")
-            if len(parts) < 9:
-                self.get_logger().warn(f"Malformed active connection line: {line}")
-                continue
-            try:
-                active = parts[0]
-                bssid = ":".join(parts[1:7])
-                ssid = parts[7]
-                signal = int(parts[8])
-                dbm = wifi_signal_to_dbm(signal)
-                return bssid.lower(), ssid, dbm
-            except Exception as e:
-                self.get_logger().warn(f"Failed to parse fields: {parts} — {e}")
-
-
-
-    def find_better_ap(self, ssid: str, current_dbm: int) -> Optional[Tuple[str, int]]:
-        """Return (bssid, dbm) of a suitable roaming target, else None."""
-        run(f"nmcli dev wifi rescan ifname {self.iface}")
-        time.sleep(1.0)  # brief pause for fresh scan
-        scan_raw = run("nmcli -f BSSID,SSID,SIGNAL dev wifi list")
-        candidates = [
-            (b.lower(), wifi_signal_to_dbm(sig))
-            for b, s, sig in parse_nmcli_wifi_list(scan_raw)
-            if s == ssid
-        ]
-        if not candidates:
+    def current_signal_dbm(self):
+        # Get SIGNAL% → convert to dBm (approx: quality/2 - 100)
+        out, _ = self.run_cmd(
+            "nmcli -t -f IN-USE,SIGNAL dev wifi | grep '^*' | cut -d: -f2"
+        )
+        if not out:
             return None
-
-        # Prefer manually preferred BSSIDs first
-        candidates.sort(key=lambda x: (x[0] not in self.preferred_bssids, -x[1]))
-        best_bssid, best_dbm = candidates[0]
-        if best_dbm - current_dbm >= self.min_delta and best_dbm > self.rssi_thr:
-            return best_bssid, best_dbm
-        return None
-
-    def roam_to(self, bssid: str):
-        """Ask NetworkManager to roam to the given BSSID."""
         try:
-            run(f"nmcli dev wifi connect {bssid} ifname {self.iface}")
-        except subprocess.CalledProcessError as e:
-            self.warn(f"Roam failed: {e.stderr.strip()}")
+            quality = int(out)           # 0‑100
+            return int(quality / 2 - 100)
+        except ValueError:
+            return None
+    # -------------------------------------------------------------------------
 
-    def reconnect_if_possible(self):
-        """Try to reconnect when interface is completely disconnected."""
-        self.info("Interface disconnected; scanning for known APs…")
-        try:
-            run(f"nmcli dev wifi rescan ifname {self.iface}")
-            scan_raw = run("nmcli -f BSSID,SSID,SIGNAL dev wifi list")
-        except subprocess.CalledProcessError as e:
-            self.warn(f"Scan failed: {e.stderr.strip()}")
+    def reconnect(self):
+        self.get_logger().warn("Re‑associating to target SSID …")
+
+        # ① Disconnect (ignore errors)
+        self.run_cmd(f"sudo nmcli dev disconnect {self.interface}")
+        time.sleep(1)
+
+        # ② Connect
+        pw_arg = f" password '{self.wifi_password}'" if self.wifi_password else ""
+        cmd = (f"sudo nmcli -s dev wifi connect '{self.target_ssid}' "
+               f"ifname {self.interface}{pw_arg}")
+        out, code = self.run_cmd(cmd)
+        if code != 0:
+            self.get_logger().error(
+                f"nmcli connect failed (code {code}): {out or '<no output>'}"
+            )
             return
 
-        # Use last known SSID from connection profiles
-        try:
-            ssid = run("nmcli -t -f name connection show --active")
-        except subprocess.CalledProcessError:
-            self.warn("No active connection profile found")
+        self.get_logger().info(f"nmcli connected: {out or '<no output>'}")
+
+        # ③ Wait a little for link and DHCP; abort after 6 s
+        for _ in range(6):
+            if self.current_ssid() == self.target_ssid:
+                break
+            time.sleep(1)
+
+    # ───────────────────────── main loop ──────────────────────────────────────
+    def check_wifi(self):
+        ssid = self.current_ssid()
+        if ssid != self.target_ssid:
+            self.get_logger().warn(f"Not connected or wrong SSID: {ssid}")
+            self.reconnect()
             return
 
-        candidates = [
-            (b, wifi_signal_to_dbm(sig))
-            for b, s, sig in parse_nmcli_wifi_list(scan_raw)
-            if s == ssid
-        ]
-        if not candidates:
-            self.warn(f"No APs with SSID '{ssid}' found")
+        sig = self.current_signal_dbm()
+        if sig is None:
+            self.get_logger().warn("Cannot read signal strength")
+            self.reconnect()
             return
 
-        best_bssid, best_dbm = max(candidates, key=lambda x: x[1])
-        self.info(f"Reconnecting to {best_bssid} at {best_dbm} dBm")
-        self.roam_to(best_bssid)
+        self.get_logger().info(f"Connected to {ssid} at {sig} dBm")
 
-    # Convenience logging wrappers
-    def info(self, msg: str):
-        self.get_logger().info(msg)
-        self.pub.publish(String(data=msg))
+        # Added: one ping to verify connectivity
+        ping_out, ping_code = self.run_cmd(f"ping -c 1 -W 1 {self.host_2_ping}")
+        if ping_code == 0:
+            self.get_logger().info("Ping successful: network connectivity confirmed")
+        else:
+            self.get_logger().warn("Ping failed: possible connectivity issue, reconnecting")
+            self.reconnect()
+            return
 
-    def warn(self, msg: str):
-        self.get_logger().warn(msg)
-        self.pub.publish(String(data="WARN: " + msg))
+        if sig < self.signal_threshold:
+            self.get_logger().warn(f"Weak signal ({sig} dBm) → reconnect")
+            self.reconnect()
 
-    def debug(self, msg: str):
-        self.get_logger().debug(msg)
-        # No spam on /events for debug lines
-
-# Main ─────────────────────────────────────────────────────────────────────────
-def main():
-    rclpy.init()
-    node = WifiRoamer()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+def main(args=None):
+    rclpy.init(args=args)
+    node = WifiRoamerNode()
+    rclpy.spin(node)
+    node.destroy_node(); rclpy.shutdown()
 
 if __name__ == "__main__":
     main()
