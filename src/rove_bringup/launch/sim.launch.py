@@ -32,7 +32,7 @@ def generate_launch_description():
     pkg_rove_bringup = get_package_share_directory("rove_bringup")
     pkg_rove_description = get_package_share_directory("rove_description")
     pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
-    pkg_ovis = get_package_share_directory("ovis_bringup")
+    # pkg_ovis = get_package_share_directory("ovis_bringup")
     pkg_aws_house = get_package_share_directory("aws_robomaker_small_house_world")
 
     # Get simulation file
@@ -150,17 +150,17 @@ def generate_launch_description():
         }.items(),
     )
 
-    ovis = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_ovis, "launch", "sim.launch.py"),
-        ),
-        launch_arguments={
-            "with_rove": "true",
-            "with_joy": "false",
-            "ovis_base_origin": "0.22 0 0.38 0 0 3.14",
-        }.items(),
-        condition=IfCondition(LaunchConfiguration("with_ovis")),
-    )
+    # ovis = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(pkg_ovis, "launch", "sim.launch.py"),
+    #     ),
+    #     launch_arguments={
+    #         "with_rove": "true",
+    #         "with_joy": "false",
+    #         "ovis_base_origin": "0.22 0 0.38 0 0 3.14",
+    #     }.items(),
+    #     condition=IfCondition(LaunchConfiguration("with_ovis")),
+    # )
 
     # Visualize in RViz
     rviz = Node(
@@ -183,6 +183,6 @@ def generate_launch_description():
             common,
             # human_tracker,
             rviz,
-            ovis,
+            # ovis,
         ]
     )
