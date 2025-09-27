@@ -49,7 +49,7 @@ def generate_launch_description():
             os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
         ),
         launch_arguments={"gz_args": "-v 4 -r " + world_file_path}.items(),
-        condition=UnlessCondition(LaunchConfiguration("small_house")),
+        # condition=UnlessCondition(LaunchConfiguration("small_house")),
     )
 
     # gz_sim_house = IncludeLaunchDescription(
@@ -75,7 +75,7 @@ def generate_launch_description():
             "-z",
             "0",
         ],
-        condition=UnlessCondition(LaunchConfiguration("small_house")),
+        # condition=UnlessCondition(LaunchConfiguration("small_house")),
         output="screen",
     )
 
@@ -94,7 +94,7 @@ def generate_launch_description():
             "-z",
             "0.06",
         ],
-        condition=UnlessCondition(LaunchConfiguration("small_house")),
+        # condition=UnlessCondition(LaunchConfiguration("small_house")),
         output="screen",
     )
 
