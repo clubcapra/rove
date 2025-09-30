@@ -124,6 +124,6 @@ def generate_launch_description():
             twist_mux,
             # rviz,
             teleop,
-            #autonomy,
+            autonomy,
         ]
     )
