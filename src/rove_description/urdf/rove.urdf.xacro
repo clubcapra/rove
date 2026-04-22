@@ -27,13 +27,6 @@
             </geometry>
             <material name="frame_color" />
         </visual>
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <geometry>
-                <mesh filename="file://$(find rove_description)/meshes/base.stl" />
-            </geometry>
-            <material name="frame_color" />
-        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
