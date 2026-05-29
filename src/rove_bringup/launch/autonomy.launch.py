@@ -44,7 +44,7 @@ def generate_launch_description():
 
     nav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_rove_nav, "launch", "navigation.launch.py"),
+            os.path.join(pkg_rove_nav, "navigation.launch.py"),
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,
@@ -55,6 +55,6 @@ def generate_launch_description():
         [
             slam,
             slam3d,
-            # nav,
+            nav,
         ]
     )
